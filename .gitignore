@@ -1,0 +1,7 @@
+# Ignore all files except .gitignore and PICO-8 cartridges.
+*
+!*/
+!.gitignore
+!*.p8
+!*.p8.*
+!*.lua
