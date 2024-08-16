@@ -4,11 +4,15 @@ version 41
 __lua__
 function _init()
 	loop = {
-		x = 64,
-		y = 64,
+		x = 0,
+		y = 0,
 		r = 7,
 		w = 5,
 	}
+	curios = {}
+	speed = 0.2
+
+	camera(-64, -64)
 end
 
 function _update()
@@ -18,13 +22,42 @@ function _update()
 	if (btn(3)) then loop.y = loop.y + 1 end
 	if (btn(4)) then loop.r = loop.r - 1 end
 	if (btn(5)) then loop.r = loop.r + 1 end
+
+	local i = 1
+	while i <= #curios do
+		curios[i].z = curios[i].z - speed
+		if curios[i].z < 1 then
+			deli(curios, i)
+		else
+			i = i + 1
+		end
+	end
+
+	if (t() % 2) == 0 then
+		add_curio(rnd(128), rnd(128), rnd(64), 1)
+	end
 end
 
 function _draw()
 	cls(5)
+	for _, curio in ipairs(curios) do
+		if curio.z >= 1 then
+			circ(curio.x / curio.z, curio.y / curio.z, curio.r / curio.z, 2)
+		end
+	end
 	for w=0,loop.w-1 do
 		circ(loop.x, loop.y, loop.r - w, 14)
 	end
+end
+
+function add_curio(x, y, r, id)
+	add(curios, {
+		x = x,
+		y = y,
+		z = 128,
+		r = r,
+		id = id,
+	})
 end
 
 __gfx__
