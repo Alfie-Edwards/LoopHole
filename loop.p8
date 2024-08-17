@@ -12,12 +12,19 @@ function _init()
 		x = 0,
 		y = 0,
 		z = 1,
-		r = 7,
-		w = 3,
+		r = 0,
+		w = 10,
 	}
+	loop_max_r = 48
+	loop_min_r = 16
+	loop_nudge_amount = 0.5
+	loop.r = loop_max_r
+
 	curios = {}
 	speed = 0.2
 	z_start = 30
+	paralax_amount = 0.9
+	zoom_amount = 0.1
 
 	dust_particles = {}
 	dust_spawn_period = 0.05
@@ -26,11 +33,7 @@ function _init()
 
 	clip_plane = 0.1
 
-	cam = {
-		x = 0,
-		y = 0,
-		pan = 0.5,
-	}
+	cam = {}
 	update_cam()
 
 	guides = {
@@ -47,23 +50,25 @@ function _update()
 	update_mouse()
 
 	-- update loop position & size
-	local mdx = mouse.x - loop.x
-	local mdy = mouse.y - loop.y
+
+	if (btn(5)) then loop.r = loop.r - 2 end
+	if (btn(4)) then loop.r = loop.r + 2 end
+	loop.r = clamp(loop.r, loop_min_r, loop_max_r)
+
+	local loop_nudge_extent = loop_nudge_amount * loop.r
+	local mdx = (mouse.x * (loop_nudge_extent / 64)) - loop.x
+	local mdy = (mouse.y * (loop_nudge_extent / 64)) - loop.y
 	local md = sqrt(mdx * mdx + mdy * mdy)
 	local loop_speed = md / 4
 	if md == 0 or md < loop_speed then
-		loop.x = mouse.x
-		loop.y = mouse.y
+		loop.x = loop.x + mdx
+		loop.y = loop.y + mdy
 	else
 		loop.x = loop.x + mdx * (loop_speed / md)
 		loop.y = loop.y + mdy * (loop_speed / md)
 	end
-	if (btn(4)) then loop.r = loop.r - 1 end
-	if (btn(5)) then loop.r = loop.r + 1 end
-
-	loop.r = clamp(loop.r, loop.w, 32)
-	loop.x = clamp(loop.x, -64, 63)
-	loop.y = clamp(loop.y, -64, 63)
+	loop.x = clamp(loop.x, -loop_nudge_extent, loop_nudge_extent)
+	loop.y = clamp(loop.y, -loop_nudge_extent, loop_nudge_extent)
 
 	-- move & cull old curios
 	local i = 1
@@ -89,7 +94,7 @@ function _update()
 
 	-- add new curios
 	if (t() % 2) == 0 then
-		local r = rnd(22 - loop.w)
+		local r = rnd(0.7 * (loop_max_r - loop.w) - 16) + 16
 		add_curio(rnd(128) - 64, rnd(128) - 64, r, 0)
 	end
 
@@ -171,7 +176,7 @@ function draw_curio(c)
 
 	set_curio_fill_pattern(c.z)
 	local sx, sy = world_to_screen(c.x, c.y, c.z)
-	local sr = c.r / c.z
+	local sr = cam.zoom * (c.r / c.z)
 	sspr(0, 0, 16, 16, sx - sr, sy - sr, 2 * sr, 2 * sr, c.flip_x, c.flip_y)
 	fillp()
 	pal()
@@ -183,7 +188,7 @@ function draw_dust(d)
 	end
 
 	local sx, sy = world_to_screen(d.x, d.y, d.z)
-	pset(sx, sy, 5)
+	pset((cam.zoom * sx) / d.z, (cam.zoom * sy) / d.z, 5)
 end
 
 function draw_ruler()
@@ -249,8 +254,8 @@ function _draw()
 	end
 
 	-- Loop
-	for w=0,loop.w-1 do
-		circ(loop.x, loop.y, loop.r - w, 10)
+	for w=0,(cam.zoom * loop.w-1) \ 2 do
+		circ(cam.zoom * loop.x, cam.zoom * loop.y, (cam.zoom * loop.r) - w, 10)
 	end
 
 	-- Ruler
@@ -294,7 +299,7 @@ function add_dust(x, y)
 end
 
 function world_to_screen(x, y, z)
-	return (x / z) + cam.x - (cam.x / z), (y / z) + cam.y - (cam.y / z)
+	return cam.zoom * ((x / z) + cam.x - (cam.x / z)), cam.zoom * ((y / z) + cam.y - (cam.y / z))
 end
 
 function update_mouse()
@@ -305,8 +310,10 @@ function update_mouse()
 end
 
 function update_cam()
-	cam.x = loop.x * cam.pan
-	cam.y = loop.y * cam.pan
+	cam.x = loop.x * paralax_amount
+	cam.y = loop.y * paralax_amount
+	cam.zoom = 64 / loop.r
+	cam.zoom = 1 + (zoom_amount * (cam.zoom - 1))
 	camera(cam.x - 64, cam.y - 64)
 end
 
