@@ -158,6 +158,7 @@ end
 function draw_dust(d)
 	if d.z >= 0 then
 		pset((d.x) / d.z, (d.y) / d.z, 5)
+	end
 end
 
 function _draw()
