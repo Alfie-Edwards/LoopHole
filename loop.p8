@@ -1,12 +1,19 @@
 pico-8 cartridge // http://www.pico-8.com
 version 41
 __lua__
+
+poke(0x5F2D, 1) -- Mouse
+
 function _init()
+
+	mouse = {}
+	update_mouse()
+
 	loop = {
 		x = 0,
 		y = 0,
 		r = 7,
-		w = 5,
+		w = 3,
 	}
 	curios = {}
 	speed = 0.2
@@ -15,6 +22,8 @@ function _init()
 end
 
 function _update()
+	update_mouse()
+
 	if (btn(0)) then loop.x = loop.x - 1 end
 	if (btn(1)) then loop.x = loop.x + 1 end
 	if (btn(2)) then loop.y = loop.y - 1 end
@@ -22,12 +31,9 @@ function _update()
 	if (btn(4)) then loop.r = loop.r - 1 end
 	if (btn(5)) then loop.r = loop.r + 1 end
 
-	loop.r = max(loop.r - 1, loop.w)
-	loop.r = min(loop.r + 1, 32)
-	loop.x = max(loop.r - 64, loop.x - 1)
-	loop.x = min(64 - loop.r - 1, loop.x + 1)
-	loop.y = max(loop.r - 64, loop.y - 1)
-	loop.y = min(64 - loop.r - 1, loop.y + 1)
+	loop.r = clamp(loop.r, loop.w, 32)
+	loop.x = clamp(loop.x, loop.r - 64, 64 - loop.r - 1)
+	loop.y = clamp(loop.y, loop.r - 64, 64 - loop.r - 1)
 
 	local i = 1
 	while i <= #curios do
@@ -55,6 +61,17 @@ function _draw()
 	for w=0,loop.w-1 do
 		circ(loop.x, loop.y, loop.r - w, 10)
 	end
+
+	pset(mouse.x - 1, mouse.y, 7)
+	pset(mouse.x + 1, mouse.y, 7)
+	pset(mouse.x, mouse.y - 1, 7)
+	pset(mouse.x, mouse.y + 1, 7)
+end
+
+function clamp(x, min_x, max_x)
+	x = max(x, min_x)
+	x = min(x, max_x)
+	return x
 end
 
 function add_curio(x, y, r, id)
@@ -67,6 +84,13 @@ function add_curio(x, y, r, id)
 		flip_x = rnd(1) < 0.5,
 		flip_y = rnd(1) < 0.5,
 	}, 1)
+end
+
+function update_mouse()
+		mouse.x = stat(32) - 64
+		mouse.y = stat(33) - 64
+		mouse.x = clamp(mouse.x, -64, 63)
+		mouse.y = clamp(mouse.y, -64, 63)
 end
 
 __gfx__
