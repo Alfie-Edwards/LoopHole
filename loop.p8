@@ -19,10 +19,6 @@ function _init()
 	z_start = 30
 
 	camera(-64, -64)
-
-	-- -- TODO #temp
-	-- local r = rnd(64)
-	-- add_curio(rnd(128 - 2 * r) - 64 + r, rnd(128 - 2 * r) - 64 + r, r, 0)
 end
 
 function _update()
