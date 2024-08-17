@@ -17,16 +17,17 @@ function _init()
 		health = 0,
 	}
 	loop_max_r = 48
-	loop_min_r = 16
+	loop_min_r = 4
 	loop_nudge_amount = 0.5
 	loop.r = loop_max_r
 	loop_max_health = 3
 	loop.health = loop_max_health
+	loop_resize_rate = 2.5
 
 	curios = {}
 	speed = 0.2
 	z_start = 30
-	paralax_amount = 0.9
+	paralax_amount = 0.1
 	zoom_amount = 0.1
 
 	dust_particles = {}
@@ -54,8 +55,8 @@ function _update()
 
 	-- update loop position & size
 
-	if (btn(5)) then loop.r = loop.r - 2 end
-	if (btn(4)) then loop.r = loop.r + 2 end
+	if (btn(5)) then loop.r = loop.r - loop_resize_rate end
+	if (btn(4)) then loop.r = loop.r + loop_resize_rate end
 	loop.r = clamp(loop.r, loop_min_r, loop_max_r)
 
 	local loop_nudge_extent = loop_nudge_amount * loop.r
@@ -205,7 +206,7 @@ function draw_dust(d)
 	end
 
 	local sx, sy = world_to_screen(d.x, d.y, d.z)
-	pset((cam.zoom * sx) / d.z, (cam.zoom * sy) / d.z, 5)
+	pset(sx / d.z, sy / d.z, 5)
 end
 
 function draw_with_outline(outline_col, fn)
@@ -293,7 +294,7 @@ function _draw()
 	end
 
 	-- Loop
-	for w=0,(cam.zoom * loop.w-1) \ 2 do
+	for w=0,(cam.zoom * loop.w-1) * loop.r/64  do
 		circ(cam.zoom * loop.x, cam.zoom * loop.y, (cam.zoom * loop.r) - w, 10)
 	end
 
@@ -349,7 +350,7 @@ function add_dust(x, y)
 end
 
 function world_to_screen(x, y, z)
-	return cam.zoom * ((x / z) + cam.x - (cam.x / z)), cam.zoom * ((y / z) + cam.y - (cam.y / z))
+	return cam.zoom * ((x / z) - cam.x + (cam.x / z)), cam.zoom * ((y / z) - cam.y + (cam.y / z))
 end
 
 function update_mouse()
