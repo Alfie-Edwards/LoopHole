@@ -354,10 +354,10 @@ function add_curio_line(x1, y1, x2, y2, color, r, infinite)
 	if infinite then
 		local dx = x2 - x1
 		local dy = y2 - y1
-		x1 -= (dx * 1000)
-		x2 += (dx * 1000)
-		y1 -= (dy * 1000)
-		y2 += (dy * 1000)
+		x1 -= (dx * 200)
+		x2 += (dx * 200)
+		y1 -= (dy * 200)
+		y2 += (dy * 200)
 	end
 
 	add(curios, {
