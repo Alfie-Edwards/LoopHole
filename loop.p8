@@ -2,6 +2,8 @@ pico-8 cartridge // http://www.pico-8.com
 version 42
 __lua__
 
+#include timeline.lua
+
 poke(0x5F2D, 1) -- Mouse
 
 function _init()
@@ -24,15 +26,9 @@ function _init()
 	loop.health = loop_max_health
 	loop_resize_rate = 2.5
 
-	speed = 0.2
-	z_start = 30
+	z_start = 10
 	paralax_amount = 0.1
 	zoom_amount = 0.3
-
-	dust_particles = {}
-	dust_spawn_period = 0.05
-	t_last_dust = 0
-	dust_z_start_max = 20
 
 	clip_plane = 0.001
 
@@ -47,13 +43,30 @@ function _init()
 
 	curios = {}
 	speed = 0.08
+
+	timeline_idx = 1
+	t_started_scene = 0
+end
+
+function scene_progress()
+	-- 30 is because speed is applied to curios in _update at 30fps
+	return (t() - t_started_scene) * speed * 30
 end
 
 function _update()
 	update_mouse()
 
-	-- update loop position & size
+	if scene_should_end(timeline_idx, scene_progress()) then
+		timeline_idx = go_to_next_scene(timeline_idx)
+		t_started_scene = t()
+	else
+		local new_obstacles = update_scene(timeline_idx, scene_progress())
+		for _, obstacle in ipairs(new_obstacles) do
+			add(curios, obstacle, 1)
+		end
+	end
 
+	-- update loop position & size
 	if (btn(5)) then loop.r = loop.r - loop_resize_rate end
 	if (btn(4)) then loop.r = loop.r + loop_resize_rate end
 	loop.r = clamp(loop.r, loop_min_r, loop_max_r)
@@ -84,35 +97,16 @@ function _update()
 		end
 	end
 
-	-- move & cull old dust
-	i = 1
-	while i <= #dust_particles do
-		if dust_particles[i].z < clip_plane then
-			deli(dust_particles, i)
-		else
-			dust_particles[i].z = dust_particles[i].z - speed
-			i = i + 1
-		end
-	end
-
-	-- add new curios
-	if (t() % 2) == 0 then
-		local r = rnd(0.7 * (loop_max_r - loop.w) - 16) + 16
-		add_curio(rnd(16) - 8, rnd(16) - 8, r, 0)
-	end
-	-- add new curios
-	if (t() % 5) == 0 then
-		local r = rnd(0.7 * (loop_max_r - loop.w) - 16) + 16
-		add_curio_line(rnd(32) - 16, rnd(32) - 16, rnd(32) - 16, rnd(32) - 16, 2, 10, rnd(1) < 1)
-	end
-
-	-- add new dust
-	if t() - t_last_dust > dust_spawn_period then
-		local range = 64
-		add_dust(rnd_range(-range, range) * dust_z_start_max + cam.x,
-		         rnd_range(-range, range) * dust_z_start_max + cam.y)
-		t_last_dust = t()
-	end
+	-- -- add new curios
+	-- if (t() % 2) == 0 then
+	-- 	local r = rnd(0.7 * (loop_max_r - loop.w) - 16) + 16
+	-- 	add_curio(rnd(16) - 8, rnd(16) - 8, r, 0)
+	-- end
+	-- -- add new curios
+	-- if (t() % 5) == 0 then
+	-- 	local r = rnd(0.7 * (loop_max_r - loop.w) - 16) + 16
+	-- 	add_curio_line(rnd(32) - 16, rnd(32) - 16, rnd(32) - 16, rnd(32) - 16, 2, 10, rnd(1) < 1)
+	-- end
 
 	for _, curio in ipairs(curios) do
 		if (not curio.has_hit_player) and curio_collides(curio) then
@@ -208,15 +202,6 @@ function draw_curio(c)
 	pal()
 end
 
-function draw_dust(d)
-	if d.z <= clip_plane then
-		return
-	end
-
-	local sx, sy = world_to_screen(d.x, d.y, d.z)
-	pset(sx / d.z, sy / d.z, 5)
-end
-
 function draw_with_outline(outline_col, fn)
 	-- fn is expected to take (x_offset, y_offset) and not reset the palette
 	-- before drawing...
@@ -285,12 +270,7 @@ function draw_health(x_offset, y_offset)
 end
 
 function _draw()
-	cls(0)
-
-	-- Dust
-	for _, dust in ipairs(dust_particles) do
-		draw_dust(dust)
-	end
+	draw_background(timeline_idx, scene_progress())
 
 	-- Curios ahead of the loop
 	for _, curio in ipairs(curios) do
@@ -407,14 +387,6 @@ end
 
 function rnd_range(min, max)
 	return rnd(max - min) + min
-end
-
-function add_dust(x, y)
-	add(dust_particles, {
-		x = x,
-		y = y,
-		z = rnd_range(dust_z_start_max * 0.5, dust_z_start_max),
-	}, 1)
 end
 
 function world_to_screen(x, y, z)
@@ -764,14 +736,14 @@ sprite_index = {
 
 
 __gfx__
-00000000650000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-00000000655550000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-00000006655560000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-00066666655560000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-00666666555555000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-06666566555555660000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-06565556655555560000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-06555566655655550000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0000000065000000ff7777ff00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0000000065555000f777777f00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+00000006655560007770077700000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+00066666655560007700007700000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+00666666555555007700007700000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+06666566555555667770077700000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0656555665555556f777777f00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0655556665565555ff7777ff00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 65555666555665500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 55556666555555000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 65556555555555000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
