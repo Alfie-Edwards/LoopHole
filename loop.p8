@@ -19,9 +19,9 @@ function _init()
 	z_start = 30
 
 	dust_particles = {}
-	dust_spawn_period = 0.1
+	dust_spawn_period = 0.05
 	t_last_dust = 0
-	dust_z_start_max = 7
+	dust_z_start_max = 20
 
 	cam = {
 		x = 0,
@@ -62,7 +62,7 @@ function _update()
 	loop.x = clamp(loop.x, -64, 63)
 	loop.y = clamp(loop.y, -64, 63)
 
-	-- cull old curios (TODO: check collision)
+	-- move & cull old curios
 	local i = 1
 	while i <= #curios do
 		if curios[i].z < 1 then
@@ -73,13 +73,13 @@ function _update()
 		end
 	end
 
-	-- cull old dust
+	-- move & cull old dust
 	i = 1
 	while i <= #dust_particles do
-		dust_particles[i].z = dust_particles[i].z - speed
 		if dust_particles[i].z <= 0 then
 			deli(dust_particles, i)
 		else
+			dust_particles[i].z = dust_particles[i].z - speed
 			i = i + 1
 		end
 	end
@@ -92,9 +92,9 @@ function _update()
 
 	-- add new dust
 	if t() - t_last_dust > dust_spawn_period then
-		local range = 128 * 1.5
-		local cam_x, cam_y = get_cam()
-		add_dust(rnd(range) + cam_x - 64, rnd(range) + cam_y - 64)
+		local range = 64
+		add_dust(rnd_range(-range, range) * dust_z_start_max + cam.x,
+		         rnd_range(-range, range) * dust_z_start_max + cam.y)
 		t_last_dust = t()
 	end
 
@@ -103,10 +103,6 @@ function _update()
 	end
 
 	update_cam()
-end
-
-function get_cam()
-	return peek2(0x5f28), peek2(0x5f2a)
 end
 
 function lerp_from_list(t_start, t_end, t, list)
@@ -162,7 +158,8 @@ end
 
 function draw_dust(d)
 	if d.z >= 0 then
-		pset((d.x) / d.z, (d.y) / d.z, 5)
+		local sx, sy = world_to_screen(d.x, d.y, d.z)
+		pset(sx, sy, 5)
 	end
 end
 
@@ -173,6 +170,8 @@ function _draw()
 	for _, curio in ipairs(curios) do
 		draw_curio(curio)
 	end
+
+	-- Dust
 	for _, dust in ipairs(dust_particles) do
 		draw_dust(dust)
 	end
