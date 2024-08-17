@@ -14,11 +14,14 @@ function _init()
 		z = 1,
 		r = 0,
 		w = 10,
+		health = 0,
 	}
 	loop_max_r = 48
 	loop_min_r = 16
 	loop_nudge_amount = 0.5
 	loop.r = loop_max_r
+	loop_max_health = 3
+	loop.health = loop_max_health
 
 	curios = {}
 	speed = 0.2
@@ -107,10 +110,22 @@ function _update()
 	end
 
 	for _, curio in ipairs(curios) do
-		curio_collides(curio)
+		if (not curio.has_hit_player) and curio_collides(curio) then
+			curio.has_hit_player = true
+			loop.health = loop.health - 1
+			printh("hit (health is now "..loop.health..")")
+			if loop.health == 0 then
+				die()
+			end
+		end
 	end
 
 	update_cam()
+end
+
+function die()
+	-- TODO #finish
+	printh("dead!!!!")
 end
 
 function proportion(t_start, t_end, t)
@@ -283,6 +298,7 @@ function add_curio(x, y, r, id)
 		id = id,
 		flip_x = rnd(1) < 0.5,
 		flip_y = rnd(1) < 0.5,
+		has_hit_player = false,
 	}, 1)
 end
 
@@ -331,7 +347,6 @@ function curio_collides(curio)
 				local dy = (loop.y - curio.y - y)
 				local sqd = dx * dx + dy * dy
 				if sqd < loop.r * loop.r and (sqd > (loop.r - loop.w) * (loop.r - loop.w)) then
-					printh("hit")
 					return true
 				end
 			end
