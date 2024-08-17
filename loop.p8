@@ -283,6 +283,7 @@ function _draw()
 			draw_curio(curio)
 		end
 	end
+
 	-- Ruler
 	draw_ruler()
 
