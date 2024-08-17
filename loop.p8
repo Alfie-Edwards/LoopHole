@@ -27,7 +27,7 @@ function _init()
 	speed = 0.2
 	z_start = 30
 	paralax_amount = 0.1
-	zoom_amount = 0.08
+	zoom_amount = 0.3
 
 	dust_particles = {}
 	dust_spawn_period = 0.05
@@ -399,7 +399,7 @@ end
 function update_cam()
 	cam.x = loop.x * paralax_amount
 	cam.y = loop.y * paralax_amount
-	cam.zoom = 64 / loop.r
+	cam.zoom = 8 / sqrt(loop.r)
 	cam.zoom = 1 + (zoom_amount * (cam.zoom - 1))
 	camera(cam.x - 64, cam.y - 64)
 end
