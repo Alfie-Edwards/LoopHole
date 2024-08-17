@@ -108,9 +108,17 @@ function _update()
 	update_cam()
 end
 
+function proportion(t_start, t_end, t)
+	return (t - t_start) / (t_end - t_start)
+end
+
+function lerp(t_start, t_end, t)
+	return (1 - t) * t_start + t * t_end
+end
+
 function lerp_from_list(t_start, t_end, t, list)
 	-- lerp `t` between `t_start` and `t_end`, and use that to index `list`
-	return list[flr(((t - t_start) / (t_end - t_start)) * #list) + 1]
+	return list[flr(proportion(t_start, t_end, t) * #list) + 1]
 end
 
 function set_curio_fill_pattern(z)
@@ -178,6 +186,28 @@ function draw_dust(d)
 	pset(sx, sy, 5)
 end
 
+function draw_ruler()
+	pal()
+
+	local x_pad = 3
+	local y_pad = 5
+
+	local x = (64 - x_pad) + cam.x
+	local y_start = (y_pad - 64) + cam.y
+	local y_end   = (64 - y_pad) + cam.y
+
+	line(x, y_start,
+		 x, y_end,
+		 12)
+
+	for _, curio in ipairs(curios) do
+		if curio.z >= loop.z then
+			local y = lerp(y_start, y_end - 1, proportion(z_start, loop.z, curio.z))
+			rectfill(x - 1, y - 1, x + 1, y + 1, 8)
+		end
+	end
+end
+
 function _draw()
 	cls(0)
 
@@ -222,6 +252,9 @@ function _draw()
 	for w=0,loop.w-1 do
 		circ(loop.x, loop.y, loop.r - w, 10)
 	end
+
+	-- Ruler
+	draw_ruler()
 
 	-- Cursor
 	pset(mouse.x + cam.x - 1, mouse.y + cam.y, 7)
