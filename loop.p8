@@ -27,7 +27,7 @@ function _init()
 	speed = 0.2
 	z_start = 30
 	paralax_amount = 0.1
-	zoom_amount = 0.1
+	zoom_amount = 0.08
 
 	dust_particles = {}
 	dust_spawn_period = 0.05
@@ -478,7 +478,7 @@ function linefill(ax,ay,bx,by,r,c)
 end
 
 function line_segment_circle_intersection(x1, y1, x2, y2, lw, r, cx, cy, cw)
-	if point_circle_intersection(x1, y1, r + lw - cw, cx, cy) or point_circle_intersection(x2, y2, r + lw - cw, cx, cy) then
+	if point_circle_intersection(x1, y1, r + lw - cw, cx, cy) and point_circle_intersection(x2, y2, r + lw - cw, cx, cy) then
 		return false
 	end
 	local dx, dy = x2 - x1, y2 - y1
@@ -493,6 +493,243 @@ function point_circle_intersection(x, y, r, cx, cy)
 	return (dx * dx) + (dy * dy) < (r * r)
 end
 
+sprite_index = {
+	eye = {
+		x = 1 * 16,
+		y = 0 * 16,
+		w = 16,
+		h = 16,
+		corner = true
+	},
+	bloodcell = {
+		x = 2 * 16,
+		y = 0 * 16,
+		w = 16,
+		h = 16,
+	},
+	bloodcell2 = {
+		x = 3 * 16,
+		y = 0 * 16,
+		w = 16,
+		h = 7,
+	},
+	bloodcell3 = {
+		x = 3 * 16,
+		y = 0 * 16 + 7,
+		w = 16,
+		h = 9,
+	},
+	bateria = {
+		x = 4 * 16,
+		y = 0 * 16,
+		w = 16,
+		h = 16,
+	},
+	bateria2 = {
+		x = 5 * 16,
+		y = 0 * 16,
+		w = 16,
+		h = 7,
+	},
+	bateria3 = {
+		x = 5 * 16,
+		y = 0 * 16 + 7,
+		w = 16,
+		h = 9,
+	},
+	cell = {
+		x = 6 * 16,
+		y = 0 * 16,
+		w = 16,
+		h = 16,
+	},
+	cell2 = {
+		x = 7 * 16,
+		y = 0 * 16,
+		w = 16,
+		h = 7,
+	},
+	cell3 = {
+		x = 7 * 16,
+		y = 0 * 16 + 7,
+		w = 16,
+		h = 9,
+	},
+	virus = {
+		x = 0 * 16,
+		y = 1 * 16,
+		w = 16,
+		h = 16,
+	},
+	virus2 = {
+		x = 1 * 16,
+		y = 1 * 16,
+		w = 16,
+		h = 16,
+	},
+	virus3 = {
+		x = 2 * 16,
+		y = 1 * 16,
+		w = 16,
+		h = 16,
+	},
+	virus4 = {
+		x = 3 * 16,
+		y = 1 * 16,
+		w = 16,
+		h = 16,
+	},
+	virus5 = {
+		x = 4 * 16,
+		y = 1 * 16,
+		w = 16,
+		h = 5,
+	},
+	virus6 = {
+		x = 4 * 16,
+		y = 1 * 16 + 5,
+		w = 16,
+		h = 7,
+	},
+	virus7 = {
+		x = 4 * 16,
+		y = 1 * 16 + 13,
+		w = 16,
+		h = 3,
+	},
+	atom = {
+		x = 5 * 16,
+		y = 1 * 16,
+		w = 16,
+		h = 16,
+	},
+	dna = {
+		x = 0 * 16,
+		y = 2 * 16,
+		w = 32,
+		h = 16,
+	},
+	meteor = {
+		x = 3 * 16,
+		y = 2 * 16,
+		w = 32,
+		h = 32,
+	},
+	nebula = {
+		x = 5 * 16,
+		y = 2 * 16,
+		w = 16,
+		h = 16,
+	},
+	star = {
+		x = 6 * 16,
+		y = 2 * 16,
+		w = 16,
+		h = 16,
+	},
+	star2 = {
+		x = 6 * 16,
+		y = 2 * 16,
+		w = 16,
+		h = 16,
+	},
+	cloud = {
+		x = 0 * 16,
+		y = 3 * 16,
+		w = 16,
+		h = 16,
+	},
+	cloud2 = {
+		x = 1 * 16,
+		y = 3 * 16,
+		w = 16,
+		h = 16,
+	},
+	meteor2 = {
+		x = 2 * 16,
+		y = 3 * 16,
+		w = 16,
+		h = 16,
+	},
+	nebula2 = {
+		x = 5 * 16,
+		y = 3 * 16,
+		w = 16,
+		h = 16,
+	},
+	galaxy = {
+		x = 6 * 16,
+		y = 3 * 16,
+		w = 16,
+		h = 16,
+	},
+	galaxy2 = {
+		x = 7 * 16,
+		y = 3 * 16,
+		w = 16,
+		h = 16,
+	},
+	planet = {
+		x = 0 * 16,
+		y = 4 * 16,
+		w = 16,
+		h = 16,
+	},
+	planet2 = {
+		x = 1 * 16,
+		y = 4 * 16,
+		w = 16,
+		h = 16,
+	},
+	planet3 = {
+		x = 2 * 16,
+		y = 4 * 16,
+		w = 16,
+		h = 16,
+	},
+	earth = {
+		x = 3 * 16,
+		y = 4 * 16,
+		w = 16,
+		h = 16,
+	},
+	galaxy3 = {
+		x = 4 * 16,
+		y = 4 * 16,
+		w = 16,
+		h = 16,
+	},
+	ringplanet = {
+		x = 5 * 16,
+		y = 4 * 16,
+		w = 16,
+		h = 16,
+	},
+	ringplanet2 = {
+		x = 6 * 16,
+		y = 4 * 16,
+		w = 32,
+		h = 32,
+	},
+	plastic = {
+		x = 0 * 16,
+		y = 5 * 16,
+		w = 16,
+		h = 16,
+	},
+	plastic2 = {
+		x = 1 * 16,
+		y = 5 * 16,
+		w = 16,
+		h = 16,
+	},
+	plastic3 = {
+		x = 2 * 16,
+		y = 5 * 16,
+		w = 16,
+		h = 16,
+	},
+}
 
 
 __gfx__

@@ -5,7 +5,7 @@
 * [x] curio management/loading
 * [ ] background management/loading
 * [x] controls
-* [ ] lines
+* [x] lines
 * [ ] curio index
     * [ ] spite sheet loc
     * [ ] size
