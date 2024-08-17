@@ -24,10 +24,17 @@ end
 function _update()
 	update_mouse()
 
-	if (btn(0)) then loop.x = loop.x - 1 end
-	if (btn(1)) then loop.x = loop.x + 1 end
-	if (btn(2)) then loop.y = loop.y - 1 end
-	if (btn(3)) then loop.y = loop.y + 1 end
+	local mdx = mouse.x - loop.x
+	local mdy = mouse.y - loop.y
+	local md = sqrt(mdx * mdx + mdy * mdy)
+	local loop_speed = md * sqrt(loop.r) / 64
+	if md < loop_speed then
+		loop.x = mouse.x
+		loop.y = mouse.y
+	else
+		loop.x = loop.x + mdx * (loop_speed / md)
+		loop.y = loop.y + mdy * (loop_speed / md)
+	end
 	if (btn(4)) then loop.r = loop.r - 1 end
 	if (btn(5)) then loop.r = loop.r + 1 end
 
@@ -73,6 +80,7 @@ function clamp(x, min_x, max_x)
 	x = min(x, max_x)
 	return x
 end
+
 
 function add_curio(x, y, r, id)
 	add(curios, {
