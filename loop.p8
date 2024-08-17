@@ -52,7 +52,6 @@ function _update()
 		end
 	end
 
-	-- if (t() % 1) == 0 then
 	if (t() % 2) == 0 then
 		local r = rnd(64)
 		add_curio(rnd(128 - 2 * r) - 64 + r, rnd(128 - 2 * r) - 64 + r, r, 0)
