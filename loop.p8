@@ -11,6 +11,7 @@ function _init()
 	loop = {
 		x = 0,
 		y = 0,
+		z = 1,
 		r = 7,
 		w = 3,
 	}
@@ -22,6 +23,8 @@ function _init()
 	dust_spawn_period = 0.05
 	t_last_dust = 0
 	dust_z_start_max = 20
+
+	clip_plane = 0.1
 
 	cam = {
 		x = 0,
@@ -65,7 +68,7 @@ function _update()
 	-- move & cull old curios
 	local i = 1
 	while i <= #curios do
-		if curios[i].z < 1 then
+		if curios[i].z < clip_plane then
 			deli(curios, i)
 		else
 			curios[i].z = curios[i].z - speed
@@ -76,7 +79,7 @@ function _update()
 	-- move & cull old dust
 	i = 1
 	while i <= #dust_particles do
-		if dust_particles[i].z <= 0 then
+		if dust_particles[i].z < clip_plane then
 			deli(dust_particles, i)
 		else
 			dust_particles[i].z = dust_particles[i].z - speed
@@ -112,7 +115,7 @@ end
 
 function set_curio_fill_pattern(z)
 	pal()
-	if z >= 1 then
+	if z >= loop.z then
 		-- map the secondary palette so that everything will go to lilac (13).
 		-- giving `.010` to `fillp` means that for sprites, the colours for the fill pattern
 		-- "are taken from the secondary palette". what this actually means is that:
@@ -142,25 +145,37 @@ function set_curio_fill_pattern(z)
 				0b0111110101111101.010,
 				0b1111111111111111.010,
 			}))
+	else
+		fillp(lerp_from_list(loop.z, clip_plane, z, {
+				0b0101101001011010.110,
+				0b0111110101111101.110,
+				0b1111111111111111.110,
+				0b1111111111111111.110,
+				0b1111111111111111.110,
+			}))
 	end
 end
 
 function draw_curio(c)
-	if c.z >= 1 then
-		set_curio_fill_pattern(c.z)
-		local sx, sy = world_to_screen(c.x, c.y, c.z)
-		local sr = c.r / c.z
-		sspr(0, 0, 16, 16, sx - sr, sy - sr, 2 * sr, 2 * sr, c.flip_x, c.flip_y)
-		fillp()
-		pal()
+	if c.z <= clip_plane then
+		return
 	end
+
+	set_curio_fill_pattern(c.z)
+	local sx, sy = world_to_screen(c.x, c.y, c.z)
+	local sr = c.r / c.z
+	sspr(0, 0, 16, 16, sx - sr, sy - sr, 2 * sr, 2 * sr, c.flip_x, c.flip_y)
+	fillp()
+	pal()
 end
 
 function draw_dust(d)
-	if d.z >= 0 then
-		local sx, sy = world_to_screen(d.x, d.y, d.z)
-		pset(sx, sy, 5)
+	if d.z <= clip_plane then
+		return
 	end
+
+	local sx, sy = world_to_screen(d.x, d.y, d.z)
+	pset(sx, sy, 5)
 end
 
 function _draw()
@@ -263,7 +278,7 @@ function update_cam()
 end
 
 function curio_collides(curio)
-	if curio.z > 1 then
+	if curio.z > loop.z then
 		return false
 	end
 
