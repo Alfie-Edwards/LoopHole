@@ -1,11 +1,10 @@
 pico-8 cartridge // http://www.pico-8.com
-version 41
+version 42
 __lua__
 
 poke(0x5F2D, 1) -- Mouse
 
 function _init()
-
 	mouse = {}
 	update_mouse()
 
@@ -17,8 +16,13 @@ function _init()
 	}
 	curios = {}
 	speed = 0.2
+	z_start = 30
 
 	camera(-64, -64)
+
+	-- -- TODO #temp
+	-- local r = rnd(64)
+	-- add_curio(rnd(128 - 2 * r) - 64 + r, rnd(128 - 2 * r) - 64 + r, r, 0)
 end
 
 function _update()
@@ -52,17 +56,60 @@ function _update()
 		end
 	end
 
+	-- if (t() % 1) == 0 then
 	if (t() % 2) == 0 then
 		local r = rnd(64)
 		add_curio(rnd(128 - 2 * r) - 64 + r, rnd(128 - 2 * r) - 64 + r, r, 0)
 	end
 end
 
+function lerp_from_list(t_start, t_end, t, list)
+	-- lerp `t` between `t_start` and `t_end`, and use that to index `list`
+	return list[flr(((t - t_start) / (t_end - t_start)) * #list) + 1]
+end
+
+function set_curio_fill_pattern(z)
+	pal()
+	if z >= 1 then
+		-- map the secondary palette so that everything will go to lilac (13).
+		-- giving `.010` to `fillp` means that for sprites, the colours for the fill pattern
+		-- "are taken from the secondary palette". what this actually means is that:
+		--
+		-- * `1`s in the fill pattern will mean taking a colour from the *low bits* of the
+		--   colour in the secondary palette that's mapped to from the sprite's colour.
+		-- * `0`s are the same, but for the *high bits* of the colour in the secondary
+		--   palette.
+		--
+		-- so if we were being explicit in setting the secondary palette, then instead of it
+		-- being (intuitively) this:
+		--
+		-- pal({[0]=13, [1]=13, [2]=13, ...}, 2)
+		--
+		-- we actually want this:
+		--
+		-- pal({[0]=0xd0, [1]=0xd1, [2]=0xd2, ...}, 2)
+		for i=0,15 do pal(i, 13+i*16, 2) end
+		fillp(lerp_from_list(z_start, 0.2 * z_start, z, {
+				0b0000000000000000.010,
+				0b1000001010000010.010,
+				0b0101101001011010.010,
+				0b0111110101111101.010,
+			}))
+	end
+end
+
+function draw_curio(c)
+	set_curio_fill_pattern(c.z)
+	sspr(0, 0, 16, 16, (c.x - 8) / c.z, (c.y - 8) / c.z, 2 * c.r / c.z, 2 * c.r / c.z, c.flip_x, c.flip_y)
+	fillp()
+	pal()
+end
+
 function _draw()
 	cls(0)
 	for _, curio in ipairs(curios) do
 		if curio.z >= 1 then
-			sspr(0, 0, 16, 16, (curio.x - 8) / curio.z, (curio.y - 8) / curio.z, 2 * curio.r / curio.z, 2 * curio.r / curio.z, curio.flip_x, curio.flip_y)
+			draw_curio(curio)
 		end
 	end
 	for w=0,loop.w-1 do
@@ -81,12 +128,11 @@ function clamp(x, min_x, max_x)
 	return x
 end
 
-
 function add_curio(x, y, r, id)
 	add(curios, {
 		x = x,
 		y = y,
-		z = 128,
+		z = z_start,
 		r = r,
 		id = id,
 		flip_x = rnd(1) < 0.5,
@@ -95,10 +141,10 @@ function add_curio(x, y, r, id)
 end
 
 function update_mouse()
-		mouse.x = stat(32) - 64
-		mouse.y = stat(33) - 64
-		mouse.x = clamp(mouse.x, -64, 63)
-		mouse.y = clamp(mouse.y, -64, 63)
+	mouse.x = stat(32) - 64
+	mouse.y = stat(33) - 64
+	mouse.x = clamp(mouse.x, -64, 63)
+	mouse.y = clamp(mouse.y, -64, 63)
 end
 
 __gfx__
