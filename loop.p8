@@ -421,6 +421,7 @@ function curio_collides(curio)
 					local inner_radius = loop.r - true_loop_width()
 					if sqd < loop.r * loop.r and (sqd > inner_radius * inner_radius) then
 						return true
+					end
 				end
 			end
 		end
