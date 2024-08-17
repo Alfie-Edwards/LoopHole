@@ -251,16 +251,16 @@ end
 function _draw()
 	cls(0)
 
+	-- Dust
+	for _, dust in ipairs(dust_particles) do
+		draw_dust(dust)
+	end
+
 	-- Curios ahead of the loop
 	for _, curio in ipairs(curios) do
 		if curio.z > loop.z then
 			draw_curio(curio)
 		end
-	end
-
-	-- Dust
-	for _, dust in ipairs(dust_particles) do
-		draw_dust(dust)
 	end
 
 	-- Guides
@@ -291,7 +291,7 @@ function _draw()
 	end
 
 	-- Loop
-	for w=0,(cam.zoom * loop.w-1) * loop.r/64  do
+	for w=0,true_loop_width() do
 		circ(cam.zoom * loop.x, cam.zoom * loop.y, (cam.zoom * loop.r) - w, 10)
 	end
 
@@ -313,6 +313,10 @@ function _draw()
 	pset(mouse.x + cam.x + 1, mouse.y + cam.y, 7)
 	pset(mouse.x + cam.x, mouse.y + cam.y - 1, 7)
 	pset(mouse.x + cam.x, mouse.y + cam.y + 1, 7)
+end
+
+function true_loop_width()
+	return (cam.zoom * loop.w-1) * loop.r/64
 end
 
 function clamp(x, min_x, max_x)
@@ -378,7 +382,8 @@ function curio_collides(curio)
 				local dx = (loop.x - curio.x - x)
 				local dy = (loop.y - curio.y - y)
 				local sqd = dx * dx + dy * dy
-				if sqd < loop.r * loop.r and (sqd > (loop.r - loop.w) * (loop.r - loop.w)) then
+				local inner_radius = loop.r - true_loop_width()
+				if sqd < loop.r * loop.r and (sqd > inner_radius * inner_radius) then
 					return true
 				end
 			end
