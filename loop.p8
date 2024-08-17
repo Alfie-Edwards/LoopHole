@@ -22,6 +22,13 @@ function _update()
 	if (btn(4)) then loop.r = loop.r - 1 end
 	if (btn(5)) then loop.r = loop.r + 1 end
 
+	loop.r = max(loop.r - 1, loop.w)
+	loop.r = min(loop.r + 1, 32)
+	loop.x = max(loop.r - 64, loop.x - 1)
+	loop.x = min(64 - loop.r - 1, loop.x + 1)
+	loop.y = max(loop.r - 64, loop.y - 1)
+	loop.y = min(64 - loop.r - 1, loop.y + 1)
+
 	local i = 1
 	while i <= #curios do
 		curios[i].z = curios[i].z - speed
