@@ -103,7 +103,7 @@ function _update()
 	-- add new curios
 	if (t() % 5) == 0 then
 		local r = rnd(0.7 * (loop_max_r - loop.w) - 16) + 16
-		add_curio_line(rnd(32) - 16, rnd(32) - 16, rnd(32) - 16, rnd(32) - 16, 9, 10, rnd(1) < 1)
+		add_curio_line(rnd(32) - 16, rnd(32) - 16, rnd(32) - 16, rnd(32) - 16, 2, 10, rnd(1) < 1)
 	end
 
 	-- add new dust
@@ -166,17 +166,17 @@ function set_curio_fill_pattern(z)
 		-- we actually want this:
 		--
 		-- pal({[0]=0xd0, [1]=0xd1, [2]=0xd2, ...}, 2)
-		for i=0,15 do pal(i, 13+i*16, 2) end
+		for i=0,15 do pal(i, i+(13*16), 2) end
 		fillp(lerp_from_list(z_start, 1, z, {
-				0b0000000000000000.010,
-				0b0000000000000000.010,
-				0b0000000000000000.010,
-				0b0000000000000000.010,
-				0b0000000000000000.010,
-				0b1000001010000010.010,
-				0b0101101001011010.010,
-				0b0111110101111101.010,
 				0b1111111111111111.010,
+				0b1111111111111111.010,
+				0b1111111111111111.010,
+				0b1111111111111111.010,
+				0b1111111111111111.010,
+				0b0111110101111101.010,
+				0b1010010110100101.010,
+				0b1000001010000010.010,
+				0b0000000000000000.010,
 			}))
 	else
 		fillp(lerp_from_list(loop.z, clip_plane, z, {
@@ -437,7 +437,6 @@ function linefill(ax,ay,bx,by,r,c)
 	ay += 64
 	bx += 64
 	by += 64
-	if(c) color(c)
 	local dx,dy=bx-ax,by-ay
 	-- avoid overflow
 	-- credits: https://www.lexaloffle.com/bbs/?tid=28999
@@ -467,7 +466,7 @@ function linefill(ax,ay,bx,by,r,c)
 			-- open span?
 			local span=spans[y]
 			if span then
-			rectfill(x0 - 64,y - 64,span - 64,y - 64)
+			rectfill(x0 - 64,y - 64,span - 64,y - 64, c + 13 * 16)
 			else
 			spans[y]=x0
 			end
