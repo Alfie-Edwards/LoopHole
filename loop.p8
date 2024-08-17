@@ -208,15 +208,27 @@ function draw_dust(d)
 	pset((cam.zoom * sx) / d.z, (cam.zoom * sy) / d.z, 5)
 end
 
-function draw_ruler()
-	pal()
+function draw_with_outline(outline_col, fn)
+	-- fn is expected to take (x_offset, y_offset) and not reset the palette
+	-- before drawing...
+	for y = -1, 1 do
+		for x = -1, 1 do
+			for i=0,15 do pal(i, outline_col) end
+			fn(x, y)
+		end
+	end
 
+	pal()
+	fn(0, 0)
+end
+
+function draw_ruler(x_offset, y_offset)
 	local x_pad = 3
 	local y_pad = 5
 
-	local x = (64 - x_pad) + cam.x
-	local y_start = (y_pad - 64) + cam.y
-	local y_end   = (64 - y_pad) + cam.y
+	local x = (64 - x_pad) + cam.x + x_offset
+	local y_start = (y_pad - 64) + cam.y + y_offset
+	local y_end   = (64 - y_pad) + cam.y + y_offset
 
 	line(x, y_start,
 		 x, y_end,
@@ -228,6 +240,14 @@ function draw_ruler()
 			rectfill(x - 1, y - 1, x + 1, y + 1, 8)
 		end
 	end
+end
+
+function draw_health(x_offset, y_offset)
+	local health_str = ""
+	for i = 0, loop.health - 1 do
+		health_str = health_str.."♥\n"
+	end
+	print(health_str, (10 - 64) + cam.x + x_offset, (10 - 64) + cam.y + y_offset, 8)
 end
 
 function _draw()
@@ -285,14 +305,10 @@ function _draw()
 	end
 
 	-- Ruler
-	draw_ruler()
+	draw_with_outline(1, draw_ruler)
 
 	-- Health
-	local health_str = ""
-	for i = 0, loop.health - 1 do
-		health_str = health_str.."♥\n"
-	end
-	print(health_str, (10 - 64) + cam.x, (10 - 64) + cam.y, 8)
+	draw_with_outline(2, draw_health)
 
 	-- Cursor
 	pset(mouse.x + cam.x - 1, mouse.y + cam.y, 7)
