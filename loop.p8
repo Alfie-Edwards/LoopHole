@@ -175,8 +175,10 @@ function set_curio_fill_pattern(z)
 			}))
 	else
 		fillp(lerp_from_list(loop.z, clip_plane, z, {
+				0b0000000000000000.110,
 				0b0101101001011010.110,
 				0b0111110101111101.110,
+				0b1111111111111111.110,
 				0b1111111111111111.110,
 				0b1111111111111111.110,
 				0b1111111111111111.110,
@@ -231,9 +233,11 @@ end
 function _draw()
 	cls(0)
 
-	-- Curios
+	-- Curios ahead of the loop
 	for _, curio in ipairs(curios) do
-		draw_curio(curio)
+		if curio.z > loop.z then
+			draw_curio(curio)
+		end
 	end
 
 	-- Dust
@@ -273,6 +277,12 @@ function _draw()
 		circ(cam.zoom * loop.x, cam.zoom * loop.y, (cam.zoom * loop.r) - w, 10)
 	end
 
+	-- Curios at/behind the loop
+	for _, curio in ipairs(curios) do
+		if curio.z <= loop.z then
+			draw_curio(curio)
+		end
+	end
 	-- Ruler
 	draw_ruler()
 
