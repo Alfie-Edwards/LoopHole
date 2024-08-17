@@ -97,16 +97,19 @@ function _update()
 		end
 	end
 
-	-- -- add new curios
-	-- if (t() % 2) == 0 then
-	-- 	local r = rnd(0.7 * (loop_max_r - loop.w) - 16) + 16
-	-- 	add_curio(rnd(16) - 8, rnd(16) - 8, r, 0)
-	-- end
-	-- -- add new curios
-	-- if (t() % 5) == 0 then
-	-- 	local r = rnd(0.7 * (loop_max_r - loop.w) - 16) + 16
-	-- 	add_curio_line(rnd(32) - 16, rnd(32) - 16, rnd(32) - 16, rnd(32) - 16, 2, 10, rnd(1) < 1)
-	-- end
+	-- add new curios
+	if (t() % 2) == 0 then
+		local r = rnd(0.7 * (loop_max_r - loop.w) - 16) + 16
+		add_curio(rnd(16) - 8, rnd(16) - 8, r, 0)
+	end
+	-- add new line curios
+	if (t() % 5) == 0 then
+		local r = rnd(0.7 * (loop_max_r - loop.w) - 16) + 16
+		local a = rnd(1)
+		local offset = rnd(128) - 64
+		local sa, ca = sin(a), cos(a)
+		add_curio_line(-ca + offset * sa, -sa + offset * ca, ca + offset * sa, sa + offset * ca, 2, 10, rnd(1) < 1)
+	end
 
 	for _, curio in ipairs(curios) do
 		if (not curio.has_hit_player) and curio_collides(curio) then
@@ -366,10 +369,10 @@ function add_curio_line(x1, y1, x2, y2, color, r, infinite)
 	if infinite then
 		local dx = x2 - x1
 		local dy = y2 - y1
-		x1 -= (dx * 200)
-		x2 += (dx * 200)
-		y1 -= (dy * 200)
-		y2 += (dy * 200)
+		x1 -= (dx * 100)
+		x2 += (dx * 100)
+		y1 -= (dy * 100)
+		y2 += (dy * 100)
 	end
 
 	add(curios, {
@@ -481,19 +484,25 @@ function linefill(ax,ay,bx,by,r,c)
 end
 
 function line_segment_circle_intersection(x1, y1, x2, y2, lw, r, cx, cy, cw)
-	if point_circle_intersection(x1, y1, r + lw - cw, cx, cy) and point_circle_intersection(x2, y2, r + lw - cw, cx, cy) then
+	if point_circle_intersection(x1, y1, r - lw - cw, cx, cy) and point_circle_intersection(x2, y2, r - lw - cw, cx, cy) then
 		return false
 	end
 	local dx, dy = x2 - x1, y2 - y1
-	local t = ((cx - x1) * dx + (cy - y1) * dy) / (dx^2 + dy^2)
+	local scale = 1 / max(abs(dx), abs(dy)) -- avoid overflows.
+	local sdx, sdy = dx * scale, dy * scale
+	local t = ((cx - x1) * scale * sdx + (cy - y1) * scale * sdy) / (sdx * sdx + sdy * sdy)
 	t = clamp(t, 0, 1)
 	local tx, ty = x1 + t * dx, y1 + t * dy
 	return point_circle_intersection(tx, ty, r + lw, cx, cy)
 end
 
 function point_circle_intersection(x, y, r, cx, cy)
-	local dx, dy = (cx - x), (cy - y)
-	return (dx * dx) + (dy * dy) < (r * r)
+	return approx_dist(cx - x, cy - y) < r
+end
+
+function approx_dist(dx, dy)
+ local x,y=abs(dx),abs(dy)
+ return max(x, y) * 0.9609 + min(x, y) * 0.3984
 end
 
 sprite_index = {
