@@ -239,16 +239,41 @@ function draw_ruler(x_offset, y_offset)
 	local y_start = (y_pad - 64) + cam.y + y_offset
 	local y_end   = (64 - y_pad) + cam.y + y_offset
 
+	-- Highlight on beat.
+	local beat_state = get_beat_state()
+	if beat_state == "good" then
+		for i=0,15 do pal(i, 11) end
+	elseif beat_state == "bad" then
+		for i=0,15 do pal(i, 8) end
+	end
+
 	line(x, y_start,
 		 x, y_end,
 		 12)
 
+	local ruler_z_start = z_start / 6
+
 	for _, curio in ipairs(curios) do
-		if curio.z >= loop.z then
-			local y = lerp(y_start, y_end - 1, proportion(z_start, loop.z, curio.z))
-			rectfill(x - 1, y - 1, x + 1, y + 1, 8)
+		if curio.z >= loop.z and curio.z < ruler_z_start then
+			local y = lerp(y_start, y_end - 1, proportion(ruler_z_start, loop.z, curio.z))
+			print("◆", x - 3, y - 1, 8)
 		end
 	end
+
+	pal()
+end
+
+function get_beat_state()
+	for _, curio in ipairs(curios) do
+		if curio.z <= loop.z and (loop.z - curio.z) < 0.5 then
+				if curio.has_hit_player then
+					return "bad"
+				else
+					return "good"
+				end
+		end
+	end
+	return "none"
 end
 
 function draw_health(x_offset, y_offset)
@@ -302,8 +327,15 @@ function _draw()
 	end
 
 	-- Loop
+	local loop_col = 10
+	local beat_state = get_beat_state()
+	if beat_state == "good" then
+		loop_col = 11
+	elseif beat_state == "bad" then
+		loop_col = 8
+	end
 	for w=0,true_loop_width() do
-		circ(cam.zoom * loop.x, cam.zoom * loop.y, (cam.zoom * loop.r) - w, 10)
+		circ(cam.zoom * loop.x, cam.zoom * loop.y, (cam.zoom * loop.r) - w, loop_col)
 	end
 
 	-- Curios at/behind the loop
