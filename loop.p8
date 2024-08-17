@@ -24,7 +24,6 @@ function _init()
 	loop.health = loop_max_health
 	loop_resize_rate = 2.5
 
-	curios = {}
 	speed = 0.2
 	z_start = 30
 	paralax_amount = 0.1
@@ -100,6 +99,11 @@ function _update()
 	if (t() % 2) == 0 then
 		local r = rnd(0.7 * (loop_max_r - loop.w) - 16) + 16
 		add_curio(rnd(16) - 8, rnd(16) - 8, r, 0)
+	end
+	-- add new curios
+	if (t() % 5) == 0 then
+		local r = rnd(0.7 * (loop_max_r - loop.w) - 16) + 16
+		add_curio_line(rnd(32) - 16, rnd(32) - 16, rnd(32) - 16, rnd(32) - 16, 9, 10, rnd(1) < 1)
 	end
 
 	-- add new dust
@@ -190,9 +194,16 @@ function draw_curio(c)
 	end
 
 	set_curio_fill_pattern(c.z)
-	local sx, sy = world_to_screen(c.x, c.y, c.z)
-	local sr = cam.zoom * (c.r / c.z)
-	sspr(0, 0, 16, 16, sx - sr, sy - sr, 2 * sr, 2 * sr, c.flip_x, c.flip_y)
+	if c.type == "sprite" then
+		local sx, sy = world_to_screen(c.x, c.y, c.z)
+		local sr = cam.zoom * (c.r / c.z)
+		sspr(0, 0, 16, 16, sx - sr, sy - sr, 2 * sr, 2 * sr, c.flip_x, c.flip_y)
+	elseif c.type == "line" then
+		local sx1, sy1 = world_to_screen(c.x1, c.y1, c.z)
+		local sx2, sy2 = world_to_screen(c.x2, c.y2, c.z)
+
+		linefill(sx1, sy1, sx2, sy2, cam.zoom * (c.weight / c.z), c.color)
+	end
 	fillp()
 	pal()
 end
@@ -327,6 +338,7 @@ end
 
 function add_curio(x, y, r, id)
 	add(curios, {
+		type = "sprite",
 		x = x,
 		y = y,
 		z = z_start,
@@ -334,6 +346,29 @@ function add_curio(x, y, r, id)
 		id = id,
 		flip_x = rnd(1) < 0.5,
 		flip_y = rnd(1) < 0.5,
+		has_hit_player = false,
+	}, 1)
+end
+
+function add_curio_line(x1, y1, x2, y2, color, weight, infinite)
+	if infinite then
+		local dx = x2 - x1
+		local dy = y2 - y1
+		x1 -= (dx * 1000)
+		x2 += (dx * 1000)
+		y1 -= (dy * 1000)
+		y2 += (dy * 1000)
+	end
+
+	add(curios, {
+		type = "line",
+		x1 = x1,
+		y1 = y1,
+		x2 = x2,
+		y2 = y2,
+		z = z_start,
+		color = color,
+		weight = weight,
 		has_hit_player = false,
 	}, 1)
 end
@@ -374,23 +409,71 @@ function curio_collides(curio)
 		return false
 	end
 
-	local sx = (curio.id % 8) * 16 + 8
-	local sy = (curio.id \ 8) * 16 + 8
-	for y = -8, 7 do
-		for x = -8, 7 do
-			if sget(sx + x, sy + y) ~= 0 then
-				local dx = (loop.x - curio.x - x)
-				local dy = (loop.y - curio.y - y)
-				local sqd = dx * dx + dy * dy
-				local inner_radius = loop.r - true_loop_width()
-				if sqd < loop.r * loop.r and (sqd > inner_radius * inner_radius) then
-					return true
+	if curio.type == "sprite" then
+		local sx = (curio.id % 8) * 16 + 8
+		local sy = (curio.id \ 8) * 16 + 8
+		for y = -8, 7 do
+			for x = -8, 7 do
+				if sget(sx + x, sy + y) ~= 0 then
+					local dx = (loop.x - curio.x - x)
+					local dy = (loop.y - curio.y - y)
+					local sqd = dx * dx + dy * dy
+					local inner_radius = loop.r - true_loop_width()
+					if sqd < loop.r * loop.r and (sqd > inner_radius * inner_radius) then
+						return true
 				end
 			end
 		end
 	end
 	return false
 end
+
+
+function linefill(ax,ay,bx,by,r,c)
+ ax += 64
+ ay += 64
+ bx += 64
+ by += 64
+ if(c) color(c)
+ local dx,dy=bx-ax,by-ay
+ -- avoid overflow
+ -- credits: https://www.lexaloffle.com/bbs/?tid=28999
+ local d=max(abs(dx),abs(dy))
+ local n=min(abs(dx),abs(dy))/d
+ d*=sqrt(n*n+1)
+ if(d<0.001) return
+ local ca,sa=dx/d,-dy/d
+
+ -- polygon points
+ local s={
+  {0,-r},{d,-r},{d,r},{0,r}
+ }
+ local u,v,spans=s[4][1],s[4][2],{}
+ local x0,y0=ax+u*ca+v*sa,ay-u*sa+v*ca
+ for i=1,4 do
+  local u,v=s[i][1],s[i][2]
+  local x1,y1=ax+u*ca+v*sa,ay-u*sa+v*ca
+  local _x1,_y1=x1,y1
+  if(y0>y1) x0,y0,x1,y1=x1,y1,x0,y0
+  local dx=(x1-x0)/(y1-y0)
+  if(y0<0) x0-=y0*dx y0=-1
+  local cy0=y0\1+1
+  -- sub-pix shift
+  x0+=(cy0-y0)*dx
+  for y=y0\1+1,min(y1\1,127) do
+   -- open span?
+   local span=spans[y]
+   if span then
+    rectfill(x0 - 64,y - 64,span - 64,y - 64)
+   else
+    spans[y]=x0
+   end
+   x0+=dx
+  end
+  x0,y0=_x1,_y1
+ end
+end
+
 
 __gfx__
 00000000650000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
