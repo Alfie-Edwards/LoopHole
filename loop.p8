@@ -35,7 +35,7 @@ function _init()
 	t_last_dust = 0
 	dust_z_start_max = 20
 
-	clip_plane = 0.1
+	clip_plane = 0.001
 
 	cam = {}
 	update_cam()
@@ -99,7 +99,7 @@ function _update()
 	-- add new curios
 	if (t() % 2) == 0 then
 		local r = rnd(0.7 * (loop_max_r - loop.w) - 16) + 16
-		add_curio(rnd(128) - 64, rnd(128) - 64, r, 0)
+		add_curio(rnd(16) - 8, rnd(16) - 8, r, 0)
 	end
 
 	-- add new dust
@@ -176,12 +176,9 @@ function set_curio_fill_pattern(z)
 			}))
 	else
 		fillp(lerp_from_list(loop.z, clip_plane, z, {
-				0b0000000000000000.110,
 				0b0101101001011010.110,
 				0b0111110101111101.110,
-				0b1111111111111111.110,
-				0b1111111111111111.110,
-				0b1111111111111111.110,
+				0b1111011111011111.110,
 				0b1111111111111111.110,
 			}))
 	end
