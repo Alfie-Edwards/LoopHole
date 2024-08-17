@@ -65,10 +65,10 @@ function _update()
 	-- cull old curios (TODO: check collision)
 	local i = 1
 	while i <= #curios do
-		curios[i].z = curios[i].z - speed
 		if curios[i].z < 1 then
 			deli(curios, i)
 		else
+			curios[i].z = curios[i].z - speed
 			i = i + 1
 		end
 	end
@@ -96,6 +96,10 @@ function _update()
 		local cam_x, cam_y = get_cam()
 		add_dust(rnd(range) + cam_x - 64, rnd(range) + cam_y - 64)
 		t_last_dust = t()
+	end
+
+	for _, curio in ipairs(curios) do
+		curio_collides(curio)
 	end
 
 	update_cam()
@@ -251,6 +255,29 @@ function update_cam()
 	cam.x = loop.x * cam.pan
 	cam.y = loop.y * cam.pan
 	camera(cam.x - 64, cam.y - 64)
+end
+
+function curio_collides(curio)
+	if curio.z > 1 then
+		return false
+	end
+
+	local sx = (curio.id % 8) * 16 + 8
+	local sy = (curio.id \ 8) * 16 + 8
+	for y = -8, 7 do
+		for x = -8, 7 do
+			if sget(sx + x, sy + y) ~= 0 then
+				local dx = (loop.x - curio.x - x)
+				local dy = (loop.y - curio.y - y)
+				local sqd = dx * dx + dy * dy
+				if sqd < loop.r * loop.r and (sqd > (loop.r - loop.w) * (loop.r - loop.w)) then
+					printh("hit")
+					return true
+				end
+			end
+		end
+	end
+	return false
 end
 
 __gfx__
