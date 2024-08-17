@@ -23,7 +23,21 @@ function _init()
 	t_last_dust = 0
 	dust_z_start_max = 7
 
-	camera(-64, -64)
+	cam = {
+		x = 0,
+		y = 0,
+		pan = 0.5,
+	}
+	update_cam()
+
+	guides = {
+		spans = {{-2, 2}},
+		depths = {1, 1.05, 1.1},
+		color = 1,
+	}
+
+	curios = {}
+	speed = 0.08
 end
 
 function _update()
@@ -33,8 +47,8 @@ function _update()
 	local mdx = mouse.x - loop.x
 	local mdy = mouse.y - loop.y
 	local md = sqrt(mdx * mdx + mdy * mdy)
-	local loop_speed = md * sqrt(loop.r) / 64
-	if md < loop_speed then
+	local loop_speed = md / 4
+	if md == 0 or md < loop_speed then
 		loop.x = mouse.x
 		loop.y = mouse.y
 	else
@@ -45,8 +59,8 @@ function _update()
 	if (btn(5)) then loop.r = loop.r + 1 end
 
 	loop.r = clamp(loop.r, loop.w, 32)
-	loop.x = clamp(loop.x, loop.r - 64, 64 - loop.r - 1)
-	loop.y = clamp(loop.y, loop.r - 64, 64 - loop.r - 1)
+	loop.x = clamp(loop.x, -64, 63)
+	loop.y = clamp(loop.y, -64, 63)
 
 	-- cull old curios (TODO: check collision)
 	local i = 1
@@ -72,8 +86,8 @@ function _update()
 
 	-- add new curios
 	if (t() % 2) == 0 then
-		local r = rnd(64)
-		add_curio(rnd(128 - 2 * r) - 64 + r, rnd(128 - 2 * r) - 64 + r, r, 0)
+		local r = rnd(22 - loop.w)
+		add_curio(rnd(128) - 64, rnd(128) - 64, r, 0)
 	end
 
 	-- add new dust
@@ -83,6 +97,8 @@ function _update()
 		add_dust(rnd(range) + cam_x - 64, rnd(range) + cam_y - 64)
 		t_last_dust = t()
 	end
+
+	update_cam()
 end
 
 function get_cam()
@@ -127,7 +143,9 @@ end
 function draw_curio(c)
 	if c.z >= 1 then
 		set_curio_fill_pattern(c.z)
-		sspr(0, 0, 16, 16, (c.x - 8) / c.z, (c.y - 8) / c.z, 2 * c.r / c.z, 2 * c.r / c.z, c.flip_x, c.flip_y)
+		local sx, sy = world_to_screen(c.x, c.y, c.z)
+		local sr = c.r / c.z
+		sspr(0, 0, 16, 16, sx - sr, sy - sr, 2 * sr, 2 * sr, c.flip_x, c.flip_y)
 		fillp()
 		pal()
 	end
@@ -136,25 +154,56 @@ end
 function draw_dust(d)
 	if d.z >= 0 then
 		pset((d.x) / d.z, (d.y) / d.z, 5)
-	end
 end
 
 function _draw()
 	cls(0)
+
+	-- Curios
 	for _, curio in ipairs(curios) do
 		draw_curio(curio)
 	end
 	for _, dust in ipairs(dust_particles) do
 		draw_dust(dust)
 	end
+
+	-- Guides
+	for _, depth in ipairs(guides.depths) do
+		for _, span in ipairs(guides.spans) do
+			local x, x1, x2, y, y1, y2
+
+			-- top
+			x1, y = world_to_screen(span[1], -64, depth)
+			x2, y = world_to_screen(span[2], -64, depth)
+			line(x1, y, x2, y, guides.color)
+
+			-- bottom
+			x1, y = world_to_screen(span[1], 63, depth)
+			x2, y = world_to_screen(span[2], 63, depth)
+			line(x1, y, x2, y, guides.color)
+
+			-- left
+			x, y1 = world_to_screen(-64, span[1], depth)
+			x, y2 = world_to_screen(-64, span[2], depth)
+			line(x, y1, x, y2, guides.color)
+
+			-- right
+			x, y1 = world_to_screen(63, span[1], depth)
+			x, y2 = world_to_screen(63, span[2], depth)
+			line(x, y1, x, y2, guides.color)
+		end
+	end
+
+	-- Loop
 	for w=0,loop.w-1 do
 		circ(loop.x, loop.y, loop.r - w, 10)
 	end
 
-	pset(mouse.x - 1, mouse.y, 7)
-	pset(mouse.x + 1, mouse.y, 7)
-	pset(mouse.x, mouse.y - 1, 7)
-	pset(mouse.x, mouse.y + 1, 7)
+	-- Cursor
+	pset(mouse.x + cam.x - 1, mouse.y + cam.y, 7)
+	pset(mouse.x + cam.x + 1, mouse.y + cam.y, 7)
+	pset(mouse.x + cam.x, mouse.y + cam.y - 1, 7)
+	pset(mouse.x + cam.x, mouse.y + cam.y + 1, 7)
 end
 
 function clamp(x, min_x, max_x)
@@ -187,11 +236,21 @@ function add_dust(x, y)
 	}, 1)
 end
 
+function world_to_screen(x, y, z)
+	return (x / z) + cam.x - (cam.x / z), (y / z) + cam.y - (cam.y / z)
+end
+
 function update_mouse()
 	mouse.x = stat(32) - 64
 	mouse.y = stat(33) - 64
 	mouse.x = clamp(mouse.x, -64, 63)
 	mouse.y = clamp(mouse.y, -64, 63)
+end
+
+function update_cam()
+	cam.x = loop.x * cam.pan
+	cam.y = loop.y * cam.pan
+	camera(cam.x - 64, cam.y - 64)
 end
 
 __gfx__
