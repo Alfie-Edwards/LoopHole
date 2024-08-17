@@ -276,6 +276,13 @@ function _draw()
 	-- Ruler
 	draw_ruler()
 
+	-- Health
+	local health_str = ""
+	for i = 0, loop.health - 1 do
+		health_str = health_str.."♥\n"
+	end
+	print(health_str, (10 - 64) + cam.x, (10 - 64) + cam.y, 8)
+
 	-- Cursor
 	pset(mouse.x + cam.x - 1, mouse.y + cam.y, 7)
 	pset(mouse.x + cam.x + 1, mouse.y + cam.y, 7)
