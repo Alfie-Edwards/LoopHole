@@ -202,7 +202,7 @@ function draw_curio(c)
 		local sx1, sy1 = world_to_screen(c.x1, c.y1, c.z)
 		local sx2, sy2 = world_to_screen(c.x2, c.y2, c.z)
 
-		linefill(sx1, sy1, sx2, sy2, cam.zoom * (c.weight / c.z), c.color)
+		linefill(sx1, sy1, sx2, sy2, cam.zoom * (c.r / c.z), c.color)
 	end
 	fillp()
 	pal()
@@ -350,7 +350,7 @@ function add_curio(x, y, r, id)
 	}, 1)
 end
 
-function add_curio_line(x1, y1, x2, y2, color, weight, infinite)
+function add_curio_line(x1, y1, x2, y2, color, r, infinite)
 	if infinite then
 		local dx = x2 - x1
 		local dy = y2 - y1
@@ -367,8 +367,8 @@ function add_curio_line(x1, y1, x2, y2, color, weight, infinite)
 		x2 = x2,
 		y2 = y2,
 		z = z_start,
+		r = r,
 		color = color,
-		weight = weight,
 		has_hit_player = false,
 	}, 1)
 end
@@ -425,55 +425,74 @@ function curio_collides(curio)
 				end
 			end
 		end
+	elseif curio.type == "line" then
+		return line_segment_circle_intersection(curio.x1, curio.y1, curio.x2, curio.y2, curio.r, loop.r, loop.x, loop.y, true_loop_width())
 	end
 	return false
 end
 
 
 function linefill(ax,ay,bx,by,r,c)
- ax += 64
- ay += 64
- bx += 64
- by += 64
- if(c) color(c)
- local dx,dy=bx-ax,by-ay
- -- avoid overflow
- -- credits: https://www.lexaloffle.com/bbs/?tid=28999
- local d=max(abs(dx),abs(dy))
- local n=min(abs(dx),abs(dy))/d
- d*=sqrt(n*n+1)
- if(d<0.001) return
- local ca,sa=dx/d,-dy/d
+	ax += 64
+	ay += 64
+	bx += 64
+	by += 64
+	if(c) color(c)
+	local dx,dy=bx-ax,by-ay
+	-- avoid overflow
+	-- credits: https://www.lexaloffle.com/bbs/?tid=28999
+	local d=max(abs(dx),abs(dy))
+	local n=min(abs(dx),abs(dy))/d
+	d*=sqrt(n*n+1)
+	if(d<0.001) return
+	local ca,sa=dx/d,-dy/d
 
- -- polygon points
- local s={
-  {0,-r},{d,-r},{d,r},{0,r}
- }
- local u,v,spans=s[4][1],s[4][2],{}
- local x0,y0=ax+u*ca+v*sa,ay-u*sa+v*ca
- for i=1,4 do
-  local u,v=s[i][1],s[i][2]
-  local x1,y1=ax+u*ca+v*sa,ay-u*sa+v*ca
-  local _x1,_y1=x1,y1
-  if(y0>y1) x0,y0,x1,y1=x1,y1,x0,y0
-  local dx=(x1-x0)/(y1-y0)
-  if(y0<0) x0-=y0*dx y0=-1
-  local cy0=y0\1+1
-  -- sub-pix shift
-  x0+=(cy0-y0)*dx
-  for y=y0\1+1,min(y1\1,127) do
-   -- open span?
-   local span=spans[y]
-   if span then
-    rectfill(x0 - 64,y - 64,span - 64,y - 64)
-   else
-    spans[y]=x0
-   end
-   x0+=dx
-  end
-  x0,y0=_x1,_y1
- end
+	-- polygon points
+	local s={
+		{0,-r},{d,-r},{d,r},{0,r}
+	}
+	local u,v,spans=s[4][1],s[4][2],{}
+	local x0,y0=ax+u*ca+v*sa,ay-u*sa+v*ca
+	for i=1,4 do
+		local u,v=s[i][1],s[i][2]
+		local x1,y1=ax+u*ca+v*sa,ay-u*sa+v*ca
+		local _x1,_y1=x1,y1
+		if(y0>y1) x0,y0,x1,y1=x1,y1,x0,y0
+		local dx=(x1-x0)/(y1-y0)
+		if(y0<0) x0-=y0*dx y0=-1
+		local cy0=y0\1+1
+		-- sub-pix shift
+		x0+=(cy0-y0)*dx
+		for y=y0\1+1,min(y1\1,127) do
+			-- open span?
+			local span=spans[y]
+			if span then
+			rectfill(x0 - 64,y - 64,span - 64,y - 64)
+			else
+			spans[y]=x0
+			end
+			x0+=dx
+		end
+		x0,y0=_x1,_y1
+	end
 end
+
+function line_segment_circle_intersection(x1, y1, x2, y2, lw, r, cx, cy, cw)
+	if point_circle_intersection(x1, y1, r + lw - cw, cx, cy) or point_circle_intersection(x2, y2, r + lw - cw, cx, cy) then
+		return false
+	end
+	local dx, dy = x2 - x1, y2 - y1
+	local t = ((cx - x1) * dx + (cy - y1) * dy) / (dx^2 + dy^2)
+	t = clamp(t, 0, 1)
+	local tx, ty = x1 + t * dx, y1 + t * dy
+	return point_circle_intersection(tx, ty, r + lw, cx, cy)
+end
+
+function point_circle_intersection(x, y, r, cx, cy)
+	local dx, dy = (cx - x), (cy - y)
+	return (dx * dx) + (dy * dy) < (r * r)
+end
+
 
 
 __gfx__
