@@ -18,12 +18,18 @@ function _init()
 	speed = 0.2
 	z_start = 30
 
+	dust_particles = {}
+	dust_spawn_period = 0.1
+	t_last_dust = 0
+	dust_z_start_max = 7
+
 	camera(-64, -64)
 end
 
 function _update()
 	update_mouse()
 
+	-- update loop position & size
 	local mdx = mouse.x - loop.x
 	local mdy = mouse.y - loop.y
 	local md = sqrt(mdx * mdx + mdy * mdy)
@@ -42,6 +48,7 @@ function _update()
 	loop.x = clamp(loop.x, loop.r - 64, 64 - loop.r - 1)
 	loop.y = clamp(loop.y, loop.r - 64, 64 - loop.r - 1)
 
+	-- cull old curios (TODO: check collision)
 	local i = 1
 	while i <= #curios do
 		curios[i].z = curios[i].z - speed
@@ -52,10 +59,34 @@ function _update()
 		end
 	end
 
+	-- cull old dust
+	i = 1
+	while i <= #dust_particles do
+		dust_particles[i].z = dust_particles[i].z - speed
+		if dust_particles[i].z <= 0 then
+			deli(dust_particles, i)
+		else
+			i = i + 1
+		end
+	end
+
+	-- add new curios
 	if (t() % 2) == 0 then
 		local r = rnd(64)
 		add_curio(rnd(128 - 2 * r) - 64 + r, rnd(128 - 2 * r) - 64 + r, r, 0)
 	end
+
+	-- add new dust
+	if t() - t_last_dust > dust_spawn_period then
+		local range = 128 * 1.5
+		local cam_x, cam_y = get_cam()
+		add_dust(rnd(range) + cam_x - 64, rnd(range) + cam_y - 64)
+		t_last_dust = t()
+	end
+end
+
+function get_cam()
+	return peek2(0x5f28), peek2(0x5f2a)
 end
 
 function lerp_from_list(t_start, t_end, t, list)
@@ -94,18 +125,27 @@ function set_curio_fill_pattern(z)
 end
 
 function draw_curio(c)
-	set_curio_fill_pattern(c.z)
-	sspr(0, 0, 16, 16, (c.x - 8) / c.z, (c.y - 8) / c.z, 2 * c.r / c.z, 2 * c.r / c.z, c.flip_x, c.flip_y)
-	fillp()
-	pal()
+	if c.z >= 1 then
+		set_curio_fill_pattern(c.z)
+		sspr(0, 0, 16, 16, (c.x - 8) / c.z, (c.y - 8) / c.z, 2 * c.r / c.z, 2 * c.r / c.z, c.flip_x, c.flip_y)
+		fillp()
+		pal()
+	end
+end
+
+function draw_dust(d)
+	if d.z >= 0 then
+		pset((d.x) / d.z, (d.y) / d.z, 5)
+	end
 end
 
 function _draw()
 	cls(0)
 	for _, curio in ipairs(curios) do
-		if curio.z >= 1 then
-			draw_curio(curio)
-		end
+		draw_curio(curio)
+	end
+	for _, dust in ipairs(dust_particles) do
+		draw_dust(dust)
 	end
 	for w=0,loop.w-1 do
 		circ(loop.x, loop.y, loop.r - w, 10)
@@ -132,6 +172,18 @@ function add_curio(x, y, r, id)
 		id = id,
 		flip_x = rnd(1) < 0.5,
 		flip_y = rnd(1) < 0.5,
+	}, 1)
+end
+
+function rnd_range(min, max)
+	return rnd(max - min) + min
+end
+
+function add_dust(x, y)
+	add(dust_particles, {
+		x = x,
+		y = y,
+		z = rnd_range(dust_z_start_max * 0.5, dust_z_start_max),
 	}, 1)
 end
 
