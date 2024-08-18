@@ -46,6 +46,7 @@ function draw_title_screen(t_started)
 	logo_x += cam_x
 	logo_y += cam_y
 
+	pal(9, 9, 1)
 	spr(logo_idx, logo_x, logo_y, logo_sw, logo_sh)
 
 	-- prompt
