@@ -212,11 +212,9 @@ function update_gameplay_screen(t_started)
 		assert(woosh ~= nil)
 
 		local time_left = (curio.z - loop.z) / (speed * 30)
-		if time_left > 0 then
-			if time_left + (1 / 30) > woosh.crossover_point and
-			   time_left <= woosh.crossover_point then
-				sfx(woosh.idx)
-			end
+		if time_left + (1 / 30) > woosh.crossover_point and
+		   time_left <= woosh.crossover_point then
+			sfx(woosh.idx)
 		end
 	end
 
@@ -611,7 +609,7 @@ wooshes = {
 	},
 	glug = {
 		idx = 18,
-		crossover_point = 0,
+		crossover_point = 0.033,
 	},
 }
 
