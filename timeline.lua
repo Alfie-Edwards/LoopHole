@@ -166,9 +166,9 @@ timeline = {
 				progress = 0,
 				curio = {
 					type = "sprite",
+					sprite_name = "asteroid",
 					x = 0, y = 0,
 					r = 16,
-					id = 0,
 					flip_x = rnd(1) < 0.5,
 					flip_y = rnd(1) < 0.5,
 				},
@@ -177,9 +177,9 @@ timeline = {
 				progress = 20,
 				curio = {
 					type = "sprite",
+					sprite_name = "asteroid",
 					x = 12, y = 12,
 					r = 12,
-					id = 0,
 					flip_x = rnd(1) < 0.5,
 					flip_y = rnd(1) < 0.5,
 				},
@@ -191,45 +191,45 @@ timeline = {
 				progress = 0,
 				curio = {
 					type = "sprite",
+					sprite_name = "blood_cell",
 					x = -16, y = -16,
 					r = 8,
-					id = 2,
 				},
 			},
 			{
 				progress = 2.5,
 				curio = {
 					type = "sprite",
+					sprite_name = "blood_cell",
 					x = -8, y = -8,
 					r = 8,
-					id = 2,
 				},
 			},
 			{
 				progress = 5,
 				curio = {
 					type = "sprite",
+					sprite_name = "blood_cell",
 					x = 0, y = 0,
 					r = 8,
-					id = 2,
 				},
 			},
 			{
 				progress = 7.5,
 				curio = {
 					type = "sprite",
+					sprite_name = "blood_cell",
 					x = 8, y = 8,
 					r = 8,
-					id = 2,
 				},
 			},
 			{
 				progress = 10,
 				curio = {
 					type = "sprite",
+					sprite_name = "blood_cell",
 					x = 16, y = 16,
 					r = 8,
-					id = 2,
 				},
 			},
 		}, _make_dust_spawner(14)),
@@ -271,8 +271,7 @@ function update_scene(idx, progress)  -- returns any new curios to handle
 		return {}
 	end
 
-	local res = current.update(current, progress)
-	return res
+	return current.update(current, progress)
 end
 
 function scene_should_end(idx, progress)
