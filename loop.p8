@@ -89,6 +89,16 @@ function init_gameplay_screen()
 	t_started_scene = t()
 end
 
+function cleanup_gameplay_screen()
+	assert(timeline_idx ~= nil)
+	local current_scene = scene(timeline_idx)
+	assert(current_scene ~= nil)
+
+	if current_scene.end_scene ~= nil then
+		current_scene.end_scene(current_scene)
+	end
+end
+
 function scene_progress()
 	-- 30 is because speed is applied to curios in _update at 30fps
 	return (t() - t_started_scene) * speed * 30
@@ -97,6 +107,7 @@ end
 function maybe_move_to_screen(new_screen)
 	if (new_screen == nil) return
 	if new_screen ~= current_screen then
+		if (current_screen.cleanup ~= nil) current_screen.cleanup()
 		current_screen = new_screen
 		t_started_scren = t()
 		assert(current_screen.init ~= nil)
@@ -170,12 +181,14 @@ function update_gameplay_screen()
 			loop.health = loop.health - 1
 			printh("hit (health is now "..loop.health..")")
 			if loop.health == 0 then
-				die()
+				printh("dead!!!!")
+				-- TODO #finish: move to `dead` screen
+				return screens.dead
 			end
 		end
 	end
 
-	-- update_cam()
+	return screens.gameplay
 end
 
 function _update()
@@ -184,12 +197,6 @@ function _update()
 	assert(current_screen ~= nil)
 	assert(current_screen.update ~= nil)
 	maybe_move_to_screen(current_screen.update())
-end
-
-function die()
-	printh("dead!!!!")
-	-- TODO #finish: move to `dead` screen
-	-- maybe_move_to_screen(screens.dead)
 end
 
 function proportion(t_start, t_end, t)
@@ -825,6 +832,7 @@ sprite_index = {
 
 
 -- more constants (that depend on includes)...
+-- all fields except `cleanup` are mandatory
 screens = {
 	title = {
 		name = "title",
@@ -837,6 +845,7 @@ screens = {
 		init = init_gameplay_screen,
 		update = update_gameplay_screen,
 		draw = draw_gameplay_screen,
+		cleanup = cleanup_gameplay_screen,
 	},
 	dead = {
 		name = "dead",
