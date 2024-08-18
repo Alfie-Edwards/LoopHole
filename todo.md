@@ -20,8 +20,8 @@
 		* [x] spawn curios
 		* [x] bg colour
 		* [x] goto next stage
-* [ ] start screen
-* [ ] end screen
+* [x] start screen
+* [x] end screen
 * [ ] increase speed each loop
 
 polish

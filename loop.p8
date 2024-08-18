@@ -35,8 +35,6 @@ guides = {
 speed = 0.08
 
 
--- include stuff
-#include timeline.lua
 
 
 -- main behaviour
@@ -54,13 +52,41 @@ function _init()
 	}
 	loop.r = loop_max_r
 	loop.health = loop_max_health
-	cam = {}
-	update_cam()
+	cam = {
+		x = 0,
+		y = 0,
+		zoom = 1,
+	}
+	-- update_cam()
 
 	curios = {}
 
 	timeline_idx = 1
 	t_started_scene = 0
+
+	-- TODO #finish: make this `title`
+	current_screen = screens.gameplay
+	t_started_screen = 0
+end
+
+function init_gameplay_screen()
+	update_cam()
+
+	loop = {
+		x = 0,
+		y = 0,
+		z = 1,
+		r = 0,
+		w = 10,
+		health = 0,
+	}
+	loop.r = loop_max_r
+	loop.health = loop_max_health
+
+	curios = {}
+
+	timeline_idx = 1
+	t_started_scene = t()
 end
 
 function scene_progress()
@@ -68,8 +94,34 @@ function scene_progress()
 	return (t() - t_started_scene) * speed * 30
 end
 
-function _update()
-	update_mouse()
+function maybe_move_to_screen(new_screen)
+	if (new_screen == nil) return
+	if new_screen ~= current_screen then
+		current_screen = new_screen
+		t_started_scren = t()
+		assert(current_screen.init ~= nil)
+		current_screen.init()
+	end
+end
+
+function any_input()
+	return btn(4) or btn(5) or mouse.pressed
+end
+
+function lnpx(text) -- length of text in pixels
+	return print(text, 0, 999999)
+end
+
+function print_centred(text, y, offset)
+	print(text, (128 - lnpx(text)) / 2 + (offset or 0), y)
+end
+
+function strobe(period, offset)
+	return (t() - (offset or 0) + period) % (period * 2) < period
+end
+
+function update_gameplay_screen()
+	update_cam()
 
 	if scene_should_end(timeline_idx, scene_progress()) then
 		timeline_idx = go_to_next_scene(timeline_idx)
@@ -123,12 +175,21 @@ function _update()
 		end
 	end
 
-	update_cam()
+	-- update_cam()
+end
+
+function _update()
+	update_mouse()
+
+	assert(current_screen ~= nil)
+	assert(current_screen.update ~= nil)
+	maybe_move_to_screen(current_screen.update())
 end
 
 function die()
-	-- TODO #finish
 	printh("dead!!!!")
+	-- TODO #finish: move to `dead` screen
+	-- maybe_move_to_screen(screens.dead)
 end
 
 function proportion(t_start, t_end, t)
@@ -293,7 +354,7 @@ function draw_health(x_offset, y_offset)
 	print(health_str, (10 - 64) + cam.x + x_offset, (10 - 64) + cam.y + y_offset, 8)
 end
 
-function _draw()
+function draw_gameplay_screen()
 	draw_background(timeline_idx, scene_progress())
 
 	-- Curios ahead of the loop
@@ -362,6 +423,12 @@ function _draw()
 	pset(mouse.x + cam.x, mouse.y + cam.y + 1, 7)
 end
 
+function _draw()
+	assert(current_screen ~= nil)
+	assert(current_screen.draw ~= nil)
+	current_screen.draw()
+end
+
 function true_loop_width()
 	return (cam.zoom * loop.w-1) * loop.r/64
 end
@@ -424,7 +491,6 @@ function curio_collides(curio)
 	end
 	return false
 end
-
 
 function linefill(ax,ay,bx,by,r,c)
 	ax += 64
@@ -752,6 +818,33 @@ sprite_index = {
 	},
 }
 
+-- include stuff
+#include timeline.lua
+#include title.lua
+#include dead.lua
+
+
+-- more constants (that depend on includes)...
+screens = {
+	title = {
+		name = "title",
+		init = init_title_screen,
+		update = update_title_screen,
+		draw = draw_title_screen,
+	},
+	gameplay = {
+		name = "gameplay",
+		init = init_gameplay_screen,
+		update = update_gameplay_screen,
+		draw = draw_gameplay_screen,
+	},
+	dead = {
+		name = "dead",
+		init = init_dead_screen,
+		update = update_dead_screen,
+		draw = draw_dead_screen,
+	},
+}
 
 __gfx__
 0000000065000000ff7777ff00888800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
