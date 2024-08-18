@@ -2,6 +2,10 @@
 * [x] checking collision
 * [x] drawing bar
 * [ ] sound
+    * [x] music
+    * [x] woosh
+    * [x] crash
+    * [ ] splash
 * [x] curio management/loading
 * [ ] background management/loading
 * [x] controls
