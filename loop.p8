@@ -32,6 +32,14 @@ function reset_pal()
 	pal(14, -1, 1)
 	palt(0, false)
 	palt(9, true)
+
+	-- TODO: UGLYYYYYYY
+	if current_screen == screens.gameplay then
+		o_col = get_current_scene().other
+		if o_col ~= nil then
+			pal(bg_col, o_col, 1)
+		end
+	end
 end
 
 

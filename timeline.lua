@@ -155,9 +155,17 @@ function _make_wipe_scene(bg_col, duration)
 			return progress >= duration
 		end,
 		draw_background=function(this, progress, next_bg_col)
-			cls(this.background_colour)
-			circfill(0, 0, 192 / ((191 * (duration - progress) / duration) + 1), next_bg_col)
+			reset_pal()
+
+			palt(9, false)
+			cls(9)
+
+			circfill(0, 0, 192 / ((191 * (duration - progress) / duration) + 1), this.background_colour)
+
+			-- TODO: UGLYYYYYYY
+			this.other = next_bg_col
 		end,
+		other = nil,
 	}
 end
 
