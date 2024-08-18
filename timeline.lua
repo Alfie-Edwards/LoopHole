@@ -203,7 +203,7 @@ function stick_and_ball_curio(config)
 		end
 	end
 	max_d += (2 * config.ball_r)
-	local scale = (config.r * 2) / max_d
+	local scale = config.scale * (config.r * 2) / max_d
 
 	for _, ball in ipairs(config.balls) do
 		add(curios,
@@ -636,7 +636,7 @@ timeline = {
 
 					local r = 16 -- half the width of the sprite in the world (not on the sprite sheet)
 
-					local sx, sy = world_to_screen(-1, -1, z)
+					local sx, sy = world_to_screen(-0.5, -0.5, z)
 					local sr = cam.zoom * (r / z)
 					local spr = sprite_index.virus4
 					sspr(spr.x, spr.y,          -- sprite_x, sprite_y
@@ -651,11 +651,71 @@ timeline = {
 			{
 				progress = 0,
 				curios = stick_and_ball_curio({
-					x = 0, y = 0, r = 12, scale = 1,
+					x = 0, y = 0, r = 12, scale = 0.16,
+					ball_r = 8, stick_r = 2,
+					stick_color = 6,
+					balls = ball_ring(4, 12),
+					sticks = {{1, 2}, {2, 4}, {3, 4}},
+				})
+			},
+			{
+				progress = 5,
+				curios = stick_and_ball_curio({
+					x = 0, y = 0, r = 12, scale = 0.2,
 					ball_r = 4, stick_r = 2,
 					stick_color = 6,
-					balls = ball_ring(6, 12),
-					sticks = sticks_closed_loop(6),
+					balls = ball_ring(3, 12),
+					sticks = sticks_open_loop(3),
+				})
+			},
+			{
+				progress = 10,
+				curios = stick_and_ball_curio({
+					x = -16, y = 0, r = 12, scale = 0.24,
+					ball_r = 4, stick_r = 2,
+					stick_color = 6,
+					balls = ball_ring(2, 12),
+					sticks = sticks_open_loop(2),
+				})
+			},
+			{
+				progress = 15,
+				curios = stick_and_ball_curio({
+					x = 12, y = -12, r = 12, scale = 0.28,
+					ball_r = 4, stick_r = 2,
+					stick_color = 6,
+					balls = ball_ring(3, 12),
+					sticks = sticks_open_loop(3),
+				})
+			},
+			{
+				progress = 20,
+				curios = stick_and_ball_curio({
+					x = 0, y = 0, r = 12, scale = 0.32,
+					ball_r = 4, stick_r = 2,
+					stick_color = 6,
+					balls = ball_ring(3, 12),
+					sticks = sticks_closed_loop(3),
+				})
+			},
+			{
+				progress = 25,
+				curios = stick_and_ball_curio({
+					x = -12, y = 12, r = 12, scale = 0.36,
+					ball_r = 4, stick_r = 2,
+					stick_color = 6,
+					balls = ball_ring(4, 12),
+					sticks = {{1, 2}, {2, 4}, {3, 4}, {1, 3}},
+				})
+			},
+			{
+				progress = 30,
+				curios = stick_and_ball_curio({
+					x = 0, y = 0, r = 12, scale = 0.5,
+					ball_r = 4, stick_r = 2,
+					stick_color = 6,
+					balls = ball_ring(5, 12),
+					sticks = sticks_open_loop(5),
 				})
 			},
 		}, _make_dust_spawner(6)),

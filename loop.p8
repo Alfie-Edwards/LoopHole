@@ -112,7 +112,7 @@ function init_gameplay_screen(t_started)
 
 	curios = {}
 
-	timeline_idx = 7
+	timeline_idx = 8
 	t_started_scene = t()
 
 	seen_obstacle_scenes = 0
