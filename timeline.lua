@@ -1,3 +1,19 @@
+function deepcopy(orig)
+	-- from lua users wiki
+	local orig_type = type(orig)
+	local copy
+	if orig_type == 'table' then
+		copy = {}
+		for orig_key, orig_value in next, orig, nil do
+			copy[deepcopy(orig_key)] = deepcopy(orig_value)
+		end
+		setmetatable(copy, deepcopy(getmetatable(orig)))
+	else -- number, string, boolean, etc
+		copy = orig
+	end
+	return copy
+end
+
 function _make_dust_spawner(colour, spawn_period, z_start_max, xy_range)
 	if (colour == nil) colour = 5
 	if (spawn_period == nil) spawn_period = 0.05
@@ -61,8 +77,8 @@ function _make_curio_spawner_scene(bg_col, plan, dust_spawner)
 				return false
 			end
 
-			for _, c in ipairs(this.state.submitted) do
-				if c.z >= 0 then
+			for i, c in ipairs(this.state.submitted) do
+				if c.z >= speed then
 					return false
 				end
 			end
@@ -86,21 +102,17 @@ function _make_curio_spawner_scene(bg_col, plan, dust_spawner)
 			if #this.state.submitted < this.state.plan_idx and progress > candidate.progress then
 				this.state.plan_idx += 1
 
-				-- set some initial/default values
-				candidate.curio.z = z_start
-				candidate.curio.has_hit_player = false
-				if candidate.type == "sprite" then
-					if (candidate.flip_x == nil) candidate.flip_x = false
-					if (candidate.flip_y == nil) candidate.flip_y = false
-				end
+				-- deepcopy the curio to make it easy to reset the scene and
+				-- have it still work next time around
+				local instance = deepcopy(candidate.curio)
 
-				add(this.state.submitted, candidate.curio)
-				return {candidate.curio}
+				add(this.state.submitted, instance)
+				return {instance}
 			end
 
 			return {}
 		end,
-		draw_background=function(this, progress)
+		draw_background=function(this, progress, next_bg_col)
 			cls(this.background_colour)
 
 			if (this.state.dust_spawner ~= nil) this.state.dust_spawner.draw(this.state.dust_spawner)

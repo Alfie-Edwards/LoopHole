@@ -2,6 +2,29 @@ pico-8 cartridge // http://www.pico-8.com
 version 42
 __lua__
 
+-- set some constants
+z_start = 10
+
+loop_max_r = 48
+loop_min_r = 4
+loop_nudge_amount = 0.5
+
+loop_max_health = 3
+loop_resize_rate = 2.5
+
+paralax_amount = 0.1
+zoom_amount = 0.3
+
+clip_plane = 0.01
+
+guides = {
+	spans = {{-2, 2}},
+	depths = {1, 1.05, 1.1},
+	color = 1,
+}
+
+speed = 0.08
+
 #include timeline.lua
 
 poke(0x5F2D, 1) -- Mouse
@@ -18,31 +41,12 @@ function _init()
 		w = 10,
 		health = 0,
 	}
-	loop_max_r = 48
-	loop_min_r = 4
-	loop_nudge_amount = 0.5
 	loop.r = loop_max_r
-	loop_max_health = 3
 	loop.health = loop_max_health
-	loop_resize_rate = 2.5
-
-	z_start = 10
-	paralax_amount = 0.1
-	zoom_amount = 0.3
-
-	clip_plane = 0.01
-
 	cam = {}
 	update_cam()
 
-	guides = {
-		spans = {{-2, 2}},
-		depths = {1, 1.05, 1.1},
-		color = 1,
-	}
-
 	curios = {}
-	speed = 0.08
 
 	timeline_idx = 1
 	t_started_scene = 0
