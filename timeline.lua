@@ -133,6 +133,19 @@ function _make_curio_spawner_scene(bg_col, plan, dust_spawner)
 	}
 end
 
+function _make_wipe_scene(bg_col, duration)
+	return {
+		background_colour = bg_col,
+		has_finished=function(this, progress)
+			return progress >= duration
+		end,
+		draw_background=function(this, progress, next_bg_col)
+			cls(this.background_colour)
+			circfill(0, 0, 192 / ((191 * (duration - progress) / duration) + 1), next_bg_col)
+		end,
+	}
+end
+
 function sprite_curio(curio)
 	curio.type = "sprite"
 	curio.has_hit_player = false
@@ -224,18 +237,7 @@ timeline = {
 				}),
 			}
 		}, _make_dust_spawner()),
-	{  -- red wipe
-		background_colour= 0,
-		end_col = 8,
-		duration = 10,
-		has_finished=function(this, progress)
-			return progress >= 10
-		end,
-		draw_background=function(this, progress, next_bg_col)
-			cls(this.background_colour)
-			circfill(0, 0, 192 / ((191 * (this.duration - this.progress) / this.duration) + 1), this.end_col)
-		end,
-	},
+	_make_wipe_scene(0, 6), -- red wipe
 	_make_curio_spawner_scene(2,
 		{
 			{
