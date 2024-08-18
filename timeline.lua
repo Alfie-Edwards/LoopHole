@@ -121,6 +121,41 @@ function _make_curio_spawner_scene(bg_col, plan, dust_spawner)
 	}
 end
 
+function sprite_curio(curio)
+	curio.type = "sprite"
+	curio.has_hit_player = false
+	if curio.flip_x == nil then
+		curio.flip_x = rnd(1) < 0.5
+	end
+	if curio.flip_y == nil then
+		curio.flip_y = rnd(1) < 0.5
+	end
+	if curio.z == nil then
+		curio.z = z_start
+	end
+	return curio
+end
+
+function line_curio(curio)
+	curio.type = "line"
+	curio.has_hit_player = false
+	if curio.z == nil then
+		curio.z = z_start
+	end
+	return curio
+end
+
+function inf_line_curio(curio)
+	local sa, ca = sin(curio.a), cos(curio.a)
+	curio.x1 = -100 * ca + curio.dist * sa
+	curio.y1 = -100 * sa + curio.dist * ca
+	curio.x2 = 100 * ca + curio.dist * sa
+	curio.y2 = 100 * sa + curio.dist * ca
+	curio.dist = nil
+	curio.a = nil
+	return line_curio(curio)
+end
+
 timeline = {
 	-- mandatory fields:
 	--
@@ -164,73 +199,55 @@ timeline = {
 		{
 			{
 				progress = 0,
-				curio = {
-					type = "sprite",
-					sprite_name = "asteroid",
+				curio = sprite_curio({
 					x = 0, y = 0,
-					r = 16,
-					flip_x = rnd(1) < 0.5,
-					flip_y = rnd(1) < 0.5,
-				},
+					r = 16, id = "asteroid",
+				}),
 			},
 			{
 				progress = 20,
-				curio = {
-					type = "sprite",
-					sprite_name = "asteroid",
+				curio = sprite_curio({
 					x = 12, y = 12,
-					r = 12,
-					flip_x = rnd(1) < 0.5,
-					flip_y = rnd(1) < 0.5,
-				},
+					r = 12, id = "asteroid",
+				}),
 			}
 		}, _make_dust_spawner()),
 	_make_curio_spawner_scene(2,
 		{
 			{
 				progress = 0,
-				curio = {
-					type = "sprite",
-					sprite_name = "blood_cell",
+				curio = sprite_curio({
 					x = -16, y = -16,
-					r = 8,
-				},
+					r = 8, id = "blood_cell",
+				}),
 			},
 			{
 				progress = 2.5,
-				curio = {
-					type = "sprite",
-					sprite_name = "blood_cell",
+				curio = sprite_curio({
 					x = -8, y = -8,
-					r = 8,
-				},
+					r = 8, id = "blood_cell",
+				}),
 			},
 			{
 				progress = 5,
-				curio = {
-					type = "sprite",
-					sprite_name = "blood_cell",
+				curio = sprite_curio({
 					x = 0, y = 0,
-					r = 8,
-				},
+					r = 8, id = "blood_cell",
+				}),
 			},
 			{
 				progress = 7.5,
-				curio = {
-					type = "sprite",
-					sprite_name = "blood_cell",
+				curio = sprite_curio({
 					x = 8, y = 8,
-					r = 8,
-				},
+					r = 8, id = "blood_cell",
+				}),
 			},
 			{
 				progress = 10,
-				curio = {
-					type = "sprite",
-					sprite_name = "blood_cell",
+				curio = sprite_curio({
 					x = 16, y = 16,
-					r = 8,
-				},
+					r = 8, id = "blood_cell",
+				}),
 			},
 		}, _make_dust_spawner(14)),
 }

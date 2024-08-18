@@ -30,7 +30,7 @@ function _init()
 	paralax_amount = 0.1
 	zoom_amount = 0.3
 
-	clip_plane = 0.001
+	clip_plane = 0.01
 
 	cam = {}
 	update_cam()
@@ -95,20 +95,6 @@ function _update()
 			curios[i].z = curios[i].z - speed
 			i = i + 1
 		end
-	end
-
-	-- add new curios
-	if (t() % 2) == 0 then
-		local r = rnd(0.7 * (loop_max_r - loop.w) - 16) + 16
-		add_curio(rnd(16) - 8, rnd(16) - 8, r, "asteroid")
-	end
-	-- add new line curios
-	if (t() % 5) == 0 then
-		local r = rnd(0.7 * (loop_max_r - loop.w) - 16) + 16
-		local a = rnd(1)
-		local offset = rnd(128) - 64
-		local sa, ca = sin(a), cos(a)
-		add_curio_line(-ca + offset * sa, -sa + offset * ca, ca + offset * sa, sa + offset * ca, 2, 10, rnd(1) < 1)
 	end
 
 	for _, curio in ipairs(curios) do
@@ -181,6 +167,8 @@ function set_curio_fill_pattern(z)
 				0b0111110101111101.110,
 				0b1111011111011111.110,
 				0b1111111111111111.110,
+				0b1111111111111111.110,
+				0b1111111111111111.110,
 			}))
 	end
 end
@@ -199,16 +187,16 @@ function draw_curio(c)
 		local sx, sy = world_to_screen(c.x, c.y, c.z)
 		local sr = cam.zoom * (c.r / c.z)
 
-		assert(c.sprite_name ~= nil)
+		assert(c.id ~= nil)
 		-- TODO #temp: use real sprite index once data's in
-		local sprite_info = temp_sprite_index[c.sprite_name]
-		assert(sprite_info ~= nil)
+		local spr = temp_sprite_index[c.id]
+		assert(spr ~= nil)
 
-		sspr(sprite_info.x, sprite_info.y,
-		     sprite_info.w, sprite_info.h,
-		     sx - sr, sy - sr,
-		     2 * sr, 2 * sr,
-		     c.flip_x, c.flip_y)
+		local sx, sy = world_to_screen(c.x, c.y, c.z)
+		local sr = cam.zoom * (c.r / c.z)
+		local scale = (2 * sr) / sqrt((spr.w * spr.w) + (spr.h * spr.h))
+		local sw, sh = spr.w * scale, spr.h * scale
+		sspr(spr.x, spr.y, spr.x + spr.w - 1, spr.y + spr.h - 1, sx - sw/2, sy - sh/2, sw, sh, c.flip_x, c.flip_y)
 	elseif c.type == "line" then
 		local sx1, sy1 = world_to_screen(c.x1, c.y1, c.z)
 		local sx2, sy2 = world_to_screen(c.x2, c.y2, c.z)
@@ -365,43 +353,6 @@ function clamp(x, min_x, max_x)
 	return x
 end
 
-function add_curio(x, y, r, name)
-	add(curios, {
-		type = "sprite",
-		sprite_name = name,
-		x = x,
-		y = y,
-		z = z_start,
-		r = r,
-		flip_x = rnd(1) < 0.5,
-		flip_y = rnd(1) < 0.5,
-		has_hit_player = false,
-	}, 1)
-end
-
-function add_curio_line(x1, y1, x2, y2, color, r, infinite)
-	if infinite then
-		local dx = x2 - x1
-		local dy = y2 - y1
-		x1 -= (dx * 100)
-		x2 += (dx * 100)
-		y1 -= (dy * 100)
-		y2 += (dy * 100)
-	end
-
-	add(curios, {
-		type = "line",
-		x1 = x1,
-		y1 = y1,
-		x2 = x2,
-		y2 = y2,
-		z = z_start,
-		r = r,
-		color = color,
-		has_hit_player = false,
-	}, 1)
-end
-
 function rnd_range(min, max)
 	return rnd(max - min) + min
 end
@@ -431,24 +382,19 @@ function curio_collides(curio)
 	end
 
 	if curio.type == "sprite" then
-		-- local sx = (curio.id % 8) * 16 + 8
-		-- local sy = (curio.id \ 8) * 16 + 8
-		-- for y = -8, 7 do
-		-- 	for x = -8, 7 do
-		assert(curio.sprite_name ~= nil)
+		assert(curio.id ~= nil)
 		-- TODO #temp: use real sprite index once data's in
-		local sprite_info = temp_sprite_index[curio.sprite_name]
-		assert(sprite_info ~= nil)
-		local sx = sprite_info.x
-		local sy = sprite_info.y
-		for y = 0, sprite_info.h do
-			for x = 0, sprite_info.w do
-				if sget(sx + x, sy + y) ~= 0 then
-					local dx = (loop.x - curio.x - x)
-					local dy = (loop.y - curio.y - y)
-					local sqd = dx * dx + dy * dy
-					local inner_radius = loop.r - true_loop_width()
-					if sqd < loop.r * loop.r and (sqd > inner_radius * inner_radius) then
+		local spr = temp_sprite_index[curio.id]
+		assert(spr ~= nil)
+		local scale = (2 * curio.r) / sqrt((spr.w * spr.w) + (spr.h * spr.h))
+		local w, h = spr.w * scale, spr.h * scale
+		for y = 0, spr.h-1 do
+			for x = 0, spr.w-1 do
+				if sget(spr.x + x, spr.y + y) ~= 0 then
+					local px = curio.x + ((x / (spr.w-1)) - 0.5) * w
+					local py = curio.y + ((y / (spr.h-1)) - 0.5) * h
+					if point_circle_intersection(px, py, loop.r, loop.x, loop.y) and not
+							point_circle_intersection(px, py, loop.r - true_loop_width(), loop.x, loop.y) then
 						return true
 					end
 				end
@@ -544,11 +490,17 @@ temp_sprite_index = {
 
 sprite_index = {
 	eye = {
+		x = 0 * 16,
+		y = 0 * 16,
+		w = 16,
+		h = 16,
+	},
+	eye2 = {
 		x = 1 * 16,
 		y = 0 * 16,
 		w = 16,
 		h = 16,
-		corner = true
+		corner = true,
 	},
 	bloodcell = {
 		x = 2 * 16,
