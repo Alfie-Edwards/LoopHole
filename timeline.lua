@@ -224,6 +224,18 @@ timeline = {
 				}),
 			}
 		}, _make_dust_spawner()),
+	{  -- red wipe
+		background_colour= 0,
+		end_col = 8,
+		duration = 10,
+		has_finished=function(this, progress)
+			return progress >= 10
+		end,
+		draw_background=function(this, progress, next_bg_col)
+			cls(this.background_colour)
+			circfill(0, 0, 192 / ((191 * (this.duration - this.progress) / this.duration) + 1), this.end_col)
+		end,
+	},
 	_make_curio_spawner_scene(2,
 		{
 			{
