@@ -105,10 +105,15 @@ function init_gameplay_screen(t_started)
 	t_started_scene = t()
 end
 
-function cleanup_gameplay_screen(t_started)
+function get_current_scene()
 	assert(timeline_idx ~= nil)
-	local current_scene = scene(timeline_idx)
-	assert(current_scene ~= nil)
+	local res = scene(timeline_idx)
+	assert(res ~= nil)
+	return res
+end
+
+function cleanup_gameplay_screen(t_started)
+	local current_scene = get_current_scene()
 
 	if current_scene.end_scene ~= nil then
 		current_scene.end_scene(current_scene)
@@ -256,7 +261,7 @@ function lerp_from_list(t_start, t_end, t, list)
 	return list[flr(proportion(t_start, t_end, t) * #list) + 1]
 end
 
-function set_curio_fill_pattern(z)
+function set_curio_fill_pattern(z, fog_col)
 	reset_pal()
 	if z >= loop.z then
 		-- map the secondary palette so that everything will go to lilac (13).
@@ -276,13 +281,8 @@ function set_curio_fill_pattern(z)
 		-- we actually want this:
 		--
 		-- pal({[0]=0xd0, [1]=0xd1, [2]=0xd2, ...}, 2)
-		for i=0,15 do pal(i, i+(13*16), 2) end
-		fillp(lerp_from_list(z_start, 1, z, {
-				0b1111111111111111.010,
-				0b1111111111111111.010,
-				0b1111111111111111.010,
-				0b1111111111111111.010,
-				0b1111111111111111.010,
+		for i=0,15 do pal(i, i+(fog_col*16), 2) end
+		fillp(lerp_from_list(z_start, z_start * 0.8, z, {
 				0b0111110101111101.010,
 				0b1010010110100101.010,
 				0b1000001010000010.010,
@@ -300,12 +300,12 @@ function set_curio_fill_pattern(z)
 	end
 end
 
-function draw_curio(c)
+function draw_curio(c, fog_col)
 	if c.z <= clip_plane then
 		return
 	end
 
-	set_curio_fill_pattern(c.z)
+	set_curio_fill_pattern(c.z, fog_col)
 	if c.type == "sprite" then
 		local sx, sy = world_to_screen(c.x, c.y, c.z)
 		local sr = cam.zoom * (c.r / c.z)
@@ -327,7 +327,7 @@ function draw_curio(c)
 		local sx1, sy1 = world_to_screen(c.x1, c.y1, c.z)
 		local sx2, sy2 = world_to_screen(c.x2, c.y2, c.z)
 
-		linefill(sx1, sy1, sx2, sy2, cam.zoom * (c.r / c.z), c.color)
+		linefill(sx1, sy1, sx2, sy2, cam.zoom * (c.r / c.z), c.color, fog_col)
 	end
 	fillp()
 	reset_pal()
@@ -403,10 +403,13 @@ end
 function draw_gameplay_screen(t_started)
 	draw_background(timeline_idx, scene_progress())
 
+	local fog_col = get_current_scene().background_colour
+	assert(fog_col ~= nil)
+
 	-- Curios ahead of the loop
 	for _, curio in ipairs(curios) do
 		if curio.z > loop.z then
-			draw_curio(curio)
+			draw_curio(curio, fog_col)
 		end
 	end
 
@@ -452,7 +455,7 @@ function draw_gameplay_screen(t_started)
 	-- Curios at/behind the loop
 	for _, curio in ipairs(curios) do
 		if curio.z <= loop.z then
-			draw_curio(curio)
+			draw_curio(curio, fog_col)
 		end
 	end
 
@@ -537,7 +540,7 @@ function curio_collides(curio)
 	return false
 end
 
-function linefill(ax,ay,bx,by,r,c)
+function linefill(ax,ay,bx,by,r,c, fog_col)
 	ax += 64
 	ay += 64
 	bx += 64
@@ -571,7 +574,7 @@ function linefill(ax,ay,bx,by,r,c)
 			-- open span?
 			local span=spans[y]
 			if span then
-			rectfill(x0 - 64,y - 64,span - 64,y - 64, c + 13 * 16)
+			rectfill(x0 - 64,y - 64,span - 64,y - 64, c + fog_col * 16)
 			else
 			spans[y]=x0
 			end
