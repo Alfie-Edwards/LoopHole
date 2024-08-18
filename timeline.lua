@@ -219,10 +219,10 @@ function stick_and_ball_curio(config)
 		add(curios,
 			line_curio({
 				x1 = config.balls[stick[1]].x * scale + config.x,
-				y1 = config.balls[stick[2]].y * scale + config.y,
-				x2 = config.balls[stick[1]].x * scale + config.x,
+				y1 = config.balls[stick[1]].y * scale + config.y,
+				x2 = config.balls[stick[2]].x * scale + config.x,
 				y2 = config.balls[stick[2]].y * scale + config.y,
-				r = config.stick_r * scale,
+				r = config.stick_r * scale / 2,
 				color = config.stick_color,
 			}))
 	end
@@ -326,7 +326,7 @@ timeline = {
 			local sr = cam.zoom * (r / z)
 			local spr = sprite_index.eye
 			sspr(spr.x, spr.y,          -- sprite_x, sprite_y
-			     spr.x + spr.w - 1, spr.y + spr.h - 1,              -- sprite_w, sprite_h
+			     spr.w, spr.h,              -- sprite_w, sprite_h
 			     sx - sr, sy - sr,  -- x, y
 			     2 * sr, 2 * sr,    -- w, h
 			     false, false)      -- flip_x, flip_y
@@ -488,7 +488,165 @@ timeline = {
 				})
 			},
 		}, _make_dust_spawner(8)),
-	_make_curio_spawner_scene(7,
+	_make_wipe_scene(14, 8),
+	_make_curio_spawner_scene(15,
+		{
+			{
+				progress = 0,
+				curios = sprite_curio({
+					x = 2, y = 2,
+					r = 6, id = "bacteria2",
+				}),
+			},
+			{
+				progress = 10,
+				curios = sprite_curio({
+					x = -3, y = 4,
+					r = 11, id = "bacteria",
+				}),
+			},
+			{
+				progress = 14,
+				curios = sprite_curio({
+					x = -4, y = -3,
+					r = 13, id = "bacteria3",
+				}),
+			},
+			{
+				progress = 20,
+				curios = sprite_curio({
+					x = 6, y = -4,
+					r = 16, id = "bacteria3",
+				}),
+			},
+			{
+				progress = 36,
+				curios = sprite_curio({
+					x = 0, y = 1,
+					r = 24, id = "bacteria",
+				}),
+			},
+			{
+				progress = 48,
+				curios = sprite_curio({
+					x = -45, y = -30,
+					r = 30, id = "bacteria2",
+				}),
+			},
+			{
+				progress = 54,
+				curios = sprite_curio({
+					x = 40, y = -17,
+					r = 33, id = "bacteria3",
+				}),
+			},
+			{
+				progress = 58,
+				curios = sprite_curio({
+					x = 4, y = -2,
+					r = 35, id = "bacteria",
+				}),
+			},
+			{
+				progress = 64,
+				curios = sprite_curio({
+					x = 2, y = -48,
+					r = 38, id = "bacteria",
+				}),
+			},
+			{
+				progress = 70,
+				curios = sprite_curio({
+					x = 2, y = 2,
+					r = 6, id = "virus2",
+				}),
+			},
+			{
+				progress = 80,
+				curios = sprite_curio({
+					x = -3, y = 4,
+					r = 11, id = "virus",
+				}),
+			},
+			{
+				progress = 84,
+				curios = sprite_curio({
+					x = -4, y = -3,
+					r = 13, id = "virus3",
+				}),
+			},
+			{
+				progress = 90,
+				curios = sprite_curio({
+					x = 6, y = -4,
+					r = 16, id = "virus4",
+				}),
+			},
+			{
+				progress = 106,
+				curios = sprite_curio({
+					x = 0, y = 1,
+					r = 24, id = "virus",
+				}),
+			},
+			{
+				progress = 118,
+				curios = sprite_curio({
+					x = -45, y = -30,
+					r = 30, id = "virus5",
+				}),
+			},
+			{
+				progress = 124,
+				curios = sprite_curio({
+					x = 40, y = -17,
+					r = 33, id = "virus3",
+				}),
+			},
+			{
+				progress = 128,
+				curios = sprite_curio({
+					x = 4, y = -2,
+					r = 35, id = "virus6",
+				}),
+			},
+			{
+				progress = 134,
+				curios = sprite_curio({
+					x = 2, y = -48,
+					r = 38, id = "virus7",
+				}),
+			},
+		}, _make_dust_spawner(14)),
+		{  -- eye
+				background_colour=15,
+				has_finished=function(this, progress)
+					return progress >= 15
+				end,
+				draw_background=function(this, progress, next_bg_col)
+					cls(this.background_colour)
+
+					palt(0, false)
+					palt(15, true)
+
+					local z = 15 - progress
+					if z == 0 then
+						z = 0.01
+					end
+
+					local r = 16 -- half the width of the sprite in the world (not on the sprite sheet)
+
+					local sx, sy = world_to_screen(-1, -1, z)
+					local sr = cam.zoom * (r / z)
+					local spr = sprite_index.virus4
+					sspr(spr.x, spr.y,          -- sprite_x, sprite_y
+					     spr.w, spr.h,              -- sprite_w, sprite_h
+					     sx - sr, sy - sr,  -- x, y
+					     2 * sr, 2 * sr,    -- w, h
+					     false, false)      -- flip_x, flip_y
+				end,
+		},
+		_make_curio_spawner_scene(7,
 		{
 			{
 				progress = 0,

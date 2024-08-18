@@ -112,7 +112,7 @@ function init_gameplay_screen(t_started)
 
 	curios = {}
 
-	timeline_idx = 4
+	timeline_idx = 7
 	t_started_scene = t()
 
 	seen_obstacle_scenes = 0
@@ -676,19 +676,19 @@ sprite_index = {
 		w = 16,
 		h = 9,
 	},
-	bateria = {
+	bacteria = {
 		x = 4 * 16,
 		y = 0 * 16,
 		w = 16,
 		h = 16,
 	},
-	bateria2 = {
+	bacteria2 = {
 		x = 5 * 16,
 		y = 0 * 16,
 		w = 16,
 		h = 7,
 	},
-	bateria3 = {
+	bacteria3 = {
 		x = 5 * 16,
 		y = 0 * 16 + 7,
 		w = 16,
