@@ -300,14 +300,14 @@ timeline = {
 				progress = 0,
 				curios = sprite_curio({
 					x = 0, y = 0,
-					r = 16, id = "asteroid",
+					r = 16, id = "meteor",
 				}),
 			},
 			{
 				progress = 20,
 				curios = sprite_curio({
 					x = 12, y = 12,
-					r = 12, id = "asteroid",
+					r = 12, id = "meteor2",
 				}),
 			}
 		}, _make_dust_spawner()),
@@ -318,35 +318,35 @@ timeline = {
 				progress = 0,
 				curios = sprite_curio({
 					x = -16, y = -16,
-					r = 8, id = "blood_cell",
+					r = 8, id = "bloodcell",
 				}),
 			},
 			{
 				progress = 2.5,
 				curios = sprite_curio({
 					x = -8, y = -8,
-					r = 8, id = "blood_cell",
+					r = 8, id = "bloodcell2",
 				}),
 			},
 			{
 				progress = 5,
 				curios = sprite_curio({
 					x = 0, y = 0,
-					r = 8, id = "blood_cell",
+					r = 8, id = "bloodcell",
 				}),
 			},
 			{
 				progress = 7.5,
 				curios = sprite_curio({
 					x = 8, y = 8,
-					r = 8, id = "blood_cell",
+					r = 8, id = "bloodcell3",
 				}),
 			},
 			{
 				progress = 10,
 				curios = sprite_curio({
 					x = 16, y = 16,
-					r = 8, id = "blood_cell",
+					r = 8, id = "bloodcell2",
 				}),
 			},
 		}, _make_dust_spawner(14)),

@@ -2,22 +2,27 @@ pico-8 cartridge // http://www.pico-8.com
 version 42
 __lua__
 
-pal(0, 0, 0)
-pal(2, -13, 0)
-pal(3, -5, 0)
-pal(4, -7, 0)
-pal(8, -2, 0)
-pal(11, -6, 0)
-pal(10, -9, 0)
-pal(13, -10, 0)
-pal(14, -1, 0)
-
 -- Enable mouse
 poke(0x5F2D, 1)
 
 function approx_dist(dx, dy)
  local x,y=abs(dx),abs(dy)
  return max(x, y) * 0.9609 + min(x, y) * 0.3984
+end
+
+function reset_pal()
+	pal()
+	pal(0, 0, 0)
+	pal(2, -13, 1)
+	pal(3, -5, 1)
+	pal(4, -7, 1)
+	pal(8, -2, 1)
+	pal(11, -6, 1)
+	pal(10, -9, 1)
+	pal(13, -10, 1)
+	pal(14, -1, 1)
+	palt(0, false)
+	palt(9, true)
 end
 
 
@@ -51,6 +56,7 @@ speed = 0.08
 function _init()
 	mouse = {}
 	update_mouse()
+	reset_pal()
 
 	loop = {
 		x = 0,
@@ -223,7 +229,7 @@ function lerp_from_list(t_start, t_end, t, list)
 end
 
 function set_curio_fill_pattern(z)
-	pal()
+	reset_pal()
 	if z >= loop.z then
 		-- map the secondary palette so that everything will go to lilac (13).
 		-- giving `.010` to `fillp` means that for sprites, the colours for the fill pattern
@@ -282,7 +288,7 @@ function draw_curio(c)
 
 		assert(c.id ~= nil)
 		-- TODO #temp: use real sprite index once data's in
-		local spr = temp_sprite_index[c.id]
+		local spr = sprite_index[c.id]
 		assert(spr ~= nil)
 
 		local sx, sy = world_to_screen(c.x, c.y, c.z)
@@ -301,7 +307,7 @@ function draw_curio(c)
 		linefill(sx1, sy1, sx2, sy2, cam.zoom * (c.r / c.z), c.color)
 	end
 	fillp()
-	pal()
+	reset_pal()
 end
 
 function draw_with_outline(outline_col, fn)
@@ -314,7 +320,7 @@ function draw_with_outline(outline_col, fn)
 		end
 	end
 
-	pal()
+	reset_pal()
 	fn(0, 0)
 end
 
@@ -347,7 +353,7 @@ function draw_ruler(x_offset, y_offset)
 		end
 	end
 
-	pal()
+	reset_pal()
 end
 
 function get_beat_state()
@@ -409,7 +415,7 @@ function draw_gameplay_screen()
 	end
 
 	-- Loop
-	local loop_col = 10
+	local loop_col = 9
 	local beat_state = get_beat_state()
 	if beat_state == "good" then
 		loop_col = 11
@@ -487,7 +493,7 @@ function curio_collides(curio)
 	if curio.type == "sprite" then
 		assert(curio.id ~= nil)
 		-- TODO #temp: use real sprite index once data's in
-		local spr = temp_sprite_index[curio.id]
+		local spr = sprite_index[curio.id]
 		assert(spr ~= nil)
 		local scale = (2 * curio.r) / sqrt((spr.w * spr.w) + (spr.h * spr.h))
 		local w, h = spr.w * scale, spr.h * scale
@@ -569,27 +575,6 @@ end
 function point_circle_intersection(x, y, r, cx, cy)
 	return approx_dist(cx - x, cy - y) < r
 end
-
-temp_sprite_index = {
-	asteroid = {
-		x = 0,
-		y = 0,
-		w = 16,
-		h = 16,
-	},
-	blood_cell = {
-		x = 3 * 8,
-		y = 0,
-		w = 8,
-		h = 8,
-	},
-	atom = {
-		x = 3 * 8,
-		y = 0,
-		w = 8,
-		h = 8,
-	},
-}
 
 sprite_index = {
 	eye = {
