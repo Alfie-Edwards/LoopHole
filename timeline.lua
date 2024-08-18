@@ -164,7 +164,7 @@ end
 function vein_curio(config)
 	local curios = {}
 
-	local spacing = (config.line_r * config.scale) * 2
+	local spacing = (config.line_r * config.scale) * 3
 	local dists = {
 		config.dist - config.r * config.scale - spacing,
 		config.dist,
@@ -443,7 +443,7 @@ timeline = {
 				progress = 14,
 				curios = vein_curio({
 					a = rnd(1),
-					dist = 48,
+					dist = 64,
 					r = 10,
 					line_r = 1,
 					scale = 1.5,
@@ -484,7 +484,7 @@ timeline = {
 					dist = 0,
 					r = 10,
 					line_r = 1,
-					scale = 3.5,
+					scale = 4,
 				})
 			},
 		}, _make_dust_spawner(8)),
@@ -719,6 +719,103 @@ timeline = {
 				})
 			},
 		}, _make_dust_spawner(6)),
+		{  -- eye
+				background_colour=7,
+				has_finished=function(this, progress)
+					return progress >= 10
+				end,
+				draw_background=function(this, progress, next_bg_col)
+					cls(this.background_colour)
+
+					palt(0, false)
+					palt(7, true)
+
+					local z = 10 - progress
+					if z == 0 then
+						z = 0.01
+					end
+
+					local r = 16 -- half the width of the sprite in the world (not on the sprite sheet)
+
+					local sx, sy = world_to_screen(-0.5, -0.5, z)
+					local sr = cam.zoom * (r / z)
+					local spr = sprite_index.atom
+					sspr(spr.x, spr.y,          -- sprite_x, sprite_y
+					     spr.w, spr.h,              -- sprite_w, sprite_h
+					     sx - sr, sy - sr,  -- x, y
+					     2 * sr, 2 * sr,    -- w, h
+					     false, false)      -- flip_x, flip_y
+				end,
+		},
+		_make_wipe_scene(12, 8),
+
+	_make_curio_spawner_scene(0,
+	{
+		{
+			progress = 0,
+			curios = sprite_curio({
+				x = 2, y = 2,
+				r = 6, id = "nebula2",
+			}),
+		},
+		{
+			progress = 10,
+			curios = sprite_curio({
+				x = -3, y = 4,
+				r = 11, id = "nebula",
+			}),
+		},
+		{
+			progress = 14,
+			curios = sprite_curio({
+				x = -4, y = -3,
+				r = 13, id = "nebula2",
+			}),
+		},
+		{
+			progress = 20,
+			curios = sprite_curio({
+				x = 6, y = -4,
+				r = 16, id = "nebula2",
+			}),
+		},
+		{
+			progress = 36,
+			curios = sprite_curio({
+				x = 0, y = 1,
+				r = 24, id = "nebula",
+			}),
+		},
+		{
+			progress = 48,
+			curios = sprite_curio({
+				x = -45, y = -30,
+				r = 30, id = "nebula",
+			}),
+		},
+		{
+			progress = 54,
+			curios = sprite_curio({
+				x = 40, y = -17,
+				r = 33, id = "nebula2",
+			}),
+		},
+		{
+			progress = 58,
+			curios = sprite_curio({
+				x = 4, y = -2,
+				r = 35, id = "nebula",
+			}),
+		},
+		{
+			progress = 64,
+			curios = sprite_curio({
+				x = 2, y = -48,
+				r = 38, id = "nebula",
+			}),
+		},
+	}, _make_dust_spawner(1)),
+
 }
 
 function scene(idx)

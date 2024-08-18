@@ -112,7 +112,7 @@ function init_gameplay_screen(t_started)
 
 	curios = {}
 
-	timeline_idx = 8
+	timeline_idx = 1
 	t_started_scene = t()
 
 	seen_obstacle_scenes = 0
@@ -520,7 +520,6 @@ function rnd_range(min, max)
 end
 
 function world_to_screen(x, y, z)
-	z *= 0.5
 	return cam.zoom * ((x / z) - cam.x + (cam.x / z)), cam.zoom * ((y / z) - cam.y + (cam.y / z))
 end
 
