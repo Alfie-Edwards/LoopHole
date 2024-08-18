@@ -99,15 +99,25 @@ function _make_curio_spawner_scene(bg_col, plan, dust_spawner)
 			-- potentially spawn new curios
 			local candidate = this.plan[this.state.plan_idx]
 
-			if #this.state.submitted < this.state.plan_idx and progress > candidate.progress then
+			if not this.state.completed_indices[this.state.plan_idx] and progress > candidate.progress then
+				this.state.completed_indices[this.state.plan_idx] = true
 				this.state.plan_idx += 1
 
 				-- deepcopy the curio to make it easy to reset the scene and
 				-- have it still work next time around
-				local instance = deepcopy(candidate.curio)
+				local curios = deepcopy(candidate.curios)
 
-				add(this.state.submitted, instance)
-				return {instance}
+				if curios[1] == nil then
+					curios = {curios}
+				end
+
+				local result = {}
+				for _, curio in ipairs(curios) do
+					add(this.state.submitted, curio)
+					add(result, curio)
+				end
+
+				return result
 			end
 
 			return {}
@@ -120,12 +130,14 @@ function _make_curio_spawner_scene(bg_col, plan, dust_spawner)
 		end_scene=function(this)
 			this.state.plan_idx = 1
 			this.state.submitted = {}
+			this.state.completed_indices = {}
 
 			if (this.state.dust_spawner ~= nil) this.state.dust_spawner.reset(this.state.dust_spawner)
 		end,
 		state = {
 			plan_idx = 1,
 			submitted = {},
+			completed_indices = {},
 
 			dust_spawner = dust_spawner, -- NOTE: may be nil
 		},
@@ -144,6 +156,48 @@ function _make_wipe_scene(bg_col, duration)
 			circfill(0, 0, 192 / ((191 * (duration - progress) / duration) + 1), next_bg_col)
 		end,
 	}
+end
+
+function stick_and_ball_curio(config)
+	local result = {}
+	local max_d = 0
+	for i, ball in ipairs(config.balls) do
+		for j=i+1,#config.balls do
+			local d = approx_dist(ball, config.balls[j])
+			if d > max_d then
+				max_d = d
+			end
+		end
+	end
+	max_d += (2 * config.ball_r)
+	local scale = (config.r * 2)
+
+	for _, ball in ipairs(config.balls) do
+		add(result, {
+			progress = config.progress,
+			sprite_curio({
+				x = ball.x * scale + config.x,
+				y = ball.y * scale + config.y,
+				r = config.ball_r * scale,
+				id = "atom",
+			})
+		})
+	end
+
+	for _, stick in ipairs(config.sticks) do
+		add(result, {
+			progress = config.progress,
+			line_curio({
+				x1 = config.balls[stick[1]].x * scale + config.x,
+				y1 = config.balls[stick[2]].y * scale + config.y,
+				x2 = config.balls[stick[1]].x * scale + config.x,
+				y2 = config.balls[stick[2]].y * scale + config.y,
+				r = config.stick_r * scale,
+				color = config.stick_color,
+			})
+		})
+	end
+	return result
 end
 
 function sprite_curio(curio)
@@ -168,6 +222,30 @@ function line_curio(curio)
 		curio.z = z_start
 	end
 	return curio
+end
+
+function ball_ring(n, r)
+	local balls = {}
+	for a = 1/n,1,1/n do
+		add(balls, {x = cos(a) * r, y = sin(a) * r})
+	end
+	return balls
+end
+
+function sticks_open_loop(n)
+	local sticks = {}
+	for i = 1, n - 1 do
+		add(sticks, {i, i + 1})
+	end
+	return sticks
+end
+
+function sticks_closed_loop(n)
+	local sticks = {{n, 1}}
+	for i = 1, n - 1 do
+		add(sticks, {i, i + 1})
+	end
+	return sticks
 end
 
 function inf_line_curio(curio)
@@ -224,58 +302,71 @@ timeline = {
 		{
 			{
 				progress = 0,
-				curio = sprite_curio({
+				curios = sprite_curio({
 					x = 0, y = 0,
 					r = 16, id = "asteroid",
 				}),
 			},
 			{
 				progress = 20,
-				curio = sprite_curio({
+				curios = sprite_curio({
 					x = 12, y = 12,
 					r = 12, id = "asteroid",
 				}),
 			}
 		}, _make_dust_spawner()),
 	_make_wipe_scene(0, 6), -- red wipe
-	_make_curio_spawner_scene(2,
+	_make_curio_spawner_scene(6,
 		{
 			{
 				progress = 0,
-				curio = sprite_curio({
+				curios = sprite_curio({
 					x = -16, y = -16,
 					r = 8, id = "blood_cell",
 				}),
 			},
 			{
 				progress = 2.5,
-				curio = sprite_curio({
+				curios = sprite_curio({
 					x = -8, y = -8,
 					r = 8, id = "blood_cell",
 				}),
 			},
 			{
 				progress = 5,
-				curio = sprite_curio({
+				curios = sprite_curio({
 					x = 0, y = 0,
 					r = 8, id = "blood_cell",
 				}),
 			},
 			{
 				progress = 7.5,
-				curio = sprite_curio({
+				curios = sprite_curio({
 					x = 8, y = 8,
 					r = 8, id = "blood_cell",
 				}),
 			},
 			{
 				progress = 10,
-				curio = sprite_curio({
+				curios = sprite_curio({
 					x = 16, y = 16,
 					r = 8, id = "blood_cell",
 				}),
 			},
 		}, _make_dust_spawner(14)),
+	_make_curio_spawner_scene(7,
+		{
+			{
+				progress = 0,
+				curios = stick_and_ball_curio({
+					x = 0, y = 0, r = 12, scale = 1,
+					ball_r = 4, stick_r = 2,
+					stick_color = 6, 
+					balls = ball_ring(6, 12),
+					sticks = sticks_closed_loop(6),
+				})
+			},
+		}, _make_dust_spawner(6)),
 }
 
 function scene(idx)

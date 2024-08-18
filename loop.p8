@@ -5,6 +5,11 @@ __lua__
 -- Enable mouse
 poke(0x5F2D, 1)
 
+function approx_dist(dx, dy)
+ local x,y=abs(dx),abs(dy)
+ return max(x, y) * 0.9609 + min(x, y) * 0.3984
+end
+
 
 -- set some constants
 z_start = 10
@@ -480,11 +485,6 @@ end
 
 function point_circle_intersection(x, y, r, cx, cy)
 	return approx_dist(cx - x, cy - y) < r
-end
-
-function approx_dist(dx, dy)
- local x,y=abs(dx),abs(dy)
- return max(x, y) * 0.9609 + min(x, y) * 0.3984
 end
 
 temp_sprite_index = {
