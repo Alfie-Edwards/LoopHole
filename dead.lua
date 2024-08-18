@@ -52,6 +52,9 @@ function update_dead_screen(t_started)
 	return screens.dead
 end
 
+function print_score()
+end
+
 function draw_dead_screen(t_started)
 	cls(0)
 
@@ -59,6 +62,8 @@ function draw_dead_screen(t_started)
 	print_centred("ur dead!!!", 61)
 	color(8)
 	print_centred("ur dead!!!", 60)
+
+	print_score()
 
 	color(1)
 	print_centred("PRESS ANY BUTTON TO RESTART...", 101)

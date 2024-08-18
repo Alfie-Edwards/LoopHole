@@ -8,6 +8,7 @@
 	* [ ] splash
 * [x] curio management/loading
 * [x] background management/loading
+	* [x] palette-swapping orange
 * [x] controls
 * [x] lines
 * [ ] curio index
@@ -27,6 +28,7 @@
 * [x] start screen
 * [x] end screen
 * [ ] increase speed each loop
+k [ ] score
 
 polish
 

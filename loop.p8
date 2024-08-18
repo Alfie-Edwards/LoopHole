@@ -11,7 +11,16 @@ function approx_dist(dx, dy)
 end
 
 function reset_pal()
+	local bg_col = nil
+	if current_screen == screens.gameplay then
+		bg_col = get_current_scene().background_colour
+		assert(bg_col ~= nil)
+	end
+
 	pal()
+
+	pal(9, bg_col, 1)
+
 	pal(0, 0, 0)
 	pal(2, -13, 1)
 	pal(3, -5, 1)
@@ -261,7 +270,7 @@ function lerp_from_list(t_start, t_end, t, list)
 	return list[flr(proportion(t_start, t_end, t) * #list) + 1]
 end
 
-function set_curio_fill_pattern(z, fog_col)
+function set_curio_fill_pattern(z)
 	reset_pal()
 	if z >= loop.z then
 		-- map the secondary palette so that everything will go to lilac (13).
@@ -281,7 +290,7 @@ function set_curio_fill_pattern(z, fog_col)
 		-- we actually want this:
 		--
 		-- pal({[0]=0xd0, [1]=0xd1, [2]=0xd2, ...}, 2)
-		for i=0,15 do pal(i, i+(fog_col*16), 2) end
+		for i=0,15 do pal(i, i+(9*16), 2) end
 		fillp(lerp_from_list(z_start, z_start * 0.8, z, {
 				0b0111110101111101.010,
 				0b1010010110100101.010,
@@ -300,12 +309,12 @@ function set_curio_fill_pattern(z, fog_col)
 	end
 end
 
-function draw_curio(c, fog_col)
+function draw_curio(c)
 	if c.z <= clip_plane then
 		return
 	end
 
-	set_curio_fill_pattern(c.z, fog_col)
+	set_curio_fill_pattern(c.z)
 	if c.type == "sprite" then
 		local sx, sy = world_to_screen(c.x, c.y, c.z)
 		local sr = cam.zoom * (c.r / c.z)
@@ -327,7 +336,7 @@ function draw_curio(c, fog_col)
 		local sx1, sy1 = world_to_screen(c.x1, c.y1, c.z)
 		local sx2, sy2 = world_to_screen(c.x2, c.y2, c.z)
 
-		linefill(sx1, sy1, sx2, sy2, cam.zoom * (c.r / c.z), c.color, fog_col)
+		linefill(sx1, sy1, sx2, sy2, cam.zoom * (c.r / c.z), c.color, 9)
 	end
 	fillp()
 	reset_pal()
@@ -409,7 +418,7 @@ function draw_gameplay_screen(t_started)
 	-- Curios ahead of the loop
 	for _, curio in ipairs(curios) do
 		if curio.z > loop.z then
-			draw_curio(curio, fog_col)
+			draw_curio(curio)
 		end
 	end
 
@@ -441,7 +450,7 @@ function draw_gameplay_screen(t_started)
 	end
 
 	-- Loop
-	local loop_col = 9
+	local loop_col = 7
 	local beat_state = get_beat_state()
 	if beat_state == "good" then
 		loop_col = 11
@@ -455,7 +464,7 @@ function draw_gameplay_screen(t_started)
 	-- Curios at/behind the loop
 	for _, curio in ipairs(curios) do
 		if curio.z <= loop.z then
-			draw_curio(curio, fog_col)
+			draw_curio(curio)
 		end
 	end
 
@@ -493,6 +502,7 @@ function rnd_range(min, max)
 end
 
 function world_to_screen(x, y, z)
+	z *= 0.5
 	return cam.zoom * ((x / z) - cam.x + (cam.x / z)), cam.zoom * ((y / z) - cam.y + (cam.y / z))
 end
 

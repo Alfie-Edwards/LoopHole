@@ -123,8 +123,11 @@ function _make_curio_spawner_scene(bg_col, plan, dust_spawner)
 			return {}
 		end,
 		draw_background=function(this, progress, next_bg_col)
-			cls(this.background_colour)
+			reset_pal()
+			palt(9, false)
+			cls(9)
 
+			reset_pal()
 			if (this.state.dust_spawner ~= nil) this.state.dust_spawner.draw(this.state.dust_spawner)
 		end,
 		end_scene=function(this)
@@ -396,7 +399,7 @@ timeline = {
 			},
 		}, _make_dust_spawner(1)),
 	_make_wipe_scene(0, 10), -- red wipe
-	_make_curio_spawner_scene(14,
+	_make_curio_spawner_scene(2,
 		{
 			{
 				progress = 0,
