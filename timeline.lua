@@ -158,6 +158,36 @@ function _make_wipe_scene(bg_col, duration)
 	}
 end
 
+function vein_curio(config)
+	local curios = {}
+
+	local spacing = (config.line_r * config.scale) * 2
+	local dists = {
+		config.dist - config.r * config.scale - spacing,
+		config.dist,
+		config.dist + config.r * config.scale + spacing,
+	}
+
+	add(curios, inf_line_curio({a = config.a, dist = dists[1], r = config.line_r * config.scale, color = 8}))
+	add(curios, inf_line_curio({a = config.a, dist = dists[3], r = config.line_r * config.scale, color = 8}))
+
+	local sprite_r = (dists[3] - dists[1] - 4 * spacing) / 2
+	local sa, ca = sin(config.a), cos(config.a)
+
+	printh(""..dists[1].." "..dists[2].." "..dists[3].." "..sprite_r)
+
+	for i=-3,3 do
+		local dist = i * (spacing + sprite_r * 2)
+		add(curios, sprite_curio({
+			x = dist * ca + dists[2] * sa,
+			y = dist * sa + dists[2] * ca,
+			r = sprite_r,
+			id = "bloodcell",
+		}))
+	end
+	return curios
+end
+
 function stick_and_ball_curio(config)
 	local curios = {}
 	local max_d = 0
@@ -245,11 +275,15 @@ function sticks_closed_loop(n)
 end
 
 function inf_line_curio(curio)
+	if curio.dist < 0 then
+		curio.a = (curio.a + 0.5) % 1
+		curio.dist *= -1
+	end
 	local sa, ca = sin(curio.a), cos(curio.a)
-	curio.x1 = -100 * ca + curio.dist * sa
-	curio.y1 = -100 * sa + curio.dist * ca
-	curio.x2 = 100 * ca + curio.dist * sa
-	curio.y2 = 100 * sa + curio.dist * ca
+	curio.x1 = -2000 * ca + curio.dist * sa
+	curio.y1 = -2000 * sa + curio.dist * ca
+	curio.x2 = 2000 * ca + curio.dist * sa
+	curio.y2 = 2000 * sa + curio.dist * ca
 	curio.dist = nil
 	curio.a = nil
 	return line_curio(curio)
@@ -287,8 +321,9 @@ timeline = {
 
 			local sx, sy = world_to_screen(0, 0, z)
 			local sr = cam.zoom * (r / z)
-			sspr(2 * 8, 0,          -- sprite_x, sprite_y
-			     8, 8,              -- sprite_w, sprite_h
+			local spr = sprite_index.eye
+			sspr(spr.x, spr.y,          -- sprite_x, sprite_y
+			     spr.x + spr.w - 1, spr.y + spr.h - 1,              -- sprite_w, sprite_h
 			     sx - sr, sy - sr,  -- x, y
 			     2 * sr, 2 * sr,    -- w, h
 			     false, false)      -- flip_x, flip_y
@@ -299,20 +334,69 @@ timeline = {
 			{
 				progress = 0,
 				curios = sprite_curio({
-					x = 0, y = 0,
-					r = 16, id = "meteor",
+					x = 2, y = 2,
+					r = 6, id = "cell2",
+				}),
+			},
+			{
+				progress = 10,
+				curios = sprite_curio({
+					x = -3, y = 4,
+					r = 11, id = "cell",
+				}),
+			},
+			{
+				progress = 14,
+				curios = sprite_curio({
+					x = -4, y = -3,
+					r = 13, id = "cell3",
 				}),
 			},
 			{
 				progress = 20,
 				curios = sprite_curio({
-					x = 12, y = 12,
-					r = 12, id = "meteor2",
+					x = 6, y = -4,
+					r = 16, id = "cell3",
 				}),
-			}
-		}, _make_dust_spawner()),
-	_make_wipe_scene(0, 6), -- red wipe
-	_make_curio_spawner_scene(6,
+			},
+			{
+				progress = 36,
+				curios = sprite_curio({
+					x = 0, y = 1,
+					r = 24, id = "cell",
+				}),
+			},
+			{
+				progress = 48,
+				curios = sprite_curio({
+					x = -45, y = -30,
+					r = 30, id = "cell2",
+				}),
+			},
+			{
+				progress = 54,
+				curios = sprite_curio({
+					x = 40, y = -17,
+					r = 33, id = "cell3",
+				}),
+			},
+			{
+				progress = 58,
+				curios = sprite_curio({
+					x = 4, y = -2,
+					r = 35, id = "cell",
+				}),
+			},
+			{
+				progress = 64,
+				curios = sprite_curio({
+					x = 2, y = -48,
+					r = 38, id = "cell",
+				}),
+			},
+		}, _make_dust_spawner(1)),
+	_make_wipe_scene(0, 10), -- red wipe
+	_make_curio_spawner_scene(14,
 		{
 			{
 				progress = 0,
@@ -322,34 +406,85 @@ timeline = {
 				}),
 			},
 			{
-				progress = 2.5,
+				progress = 4,
 				curios = sprite_curio({
 					x = -8, y = -8,
-					r = 8, id = "bloodcell2",
+					r = 10, id = "bloodcell2",
 				}),
 			},
 			{
-				progress = 5,
+				progress = 6,
 				curios = sprite_curio({
 					x = 0, y = 0,
-					r = 8, id = "bloodcell",
+					r = 11, id = "bloodcell",
 				}),
 			},
 			{
-				progress = 7.5,
-				curios = sprite_curio({
-					x = 8, y = 8,
-					r = 8, id = "bloodcell3",
-				}),
+				progress = 8,
+				curios = vein_curio({
+					a = rnd(1),
+					dist = 64,
+					r = 10,
+					line_r = 1,
+					scale = 1,
+				})
 			},
 			{
 				progress = 10,
 				curios = sprite_curio({
-					x = 16, y = 16,
-					r = 8, id = "bloodcell2",
+					x = 8, y = 8,
+					r = 13, id = "bloodcell3",
 				}),
 			},
-		}, _make_dust_spawner(14)),
+			{
+				progress = 14,
+				curios = vein_curio({
+					a = rnd(1),
+					dist = 48,
+					r = 10,
+					line_r = 1,
+					scale = 1.5,
+				})
+			},
+			{
+				progress = 18,
+				curios = sprite_curio({
+					x = 16, y = 16,
+					r = 17, id = "bloodcell2",
+				}),
+			},
+			{
+				progress = 22,
+				curios = sprite_curio({
+					x = -53, y = 16,
+					r = 19, id = "bloodcell2",
+				}),
+			},
+			{
+				progress = 28,
+				curios = sprite_curio({
+					x = -53, y = -4,
+					r = 20, id = "bloodcell",
+				}),
+			},
+			{
+				progress = 32,
+				curios = sprite_curio({
+					x = -4, y = 3,
+					r = 22, id = "bloodcell3",
+				}),
+			},
+			{
+				progress = 36,
+				curios = vein_curio({
+					a = rnd(1),
+					dist = 0,
+					r = 10,
+					line_r = 1,
+					scale = 3.5,
+				})
+			},
+		}, _make_dust_spawner(8)),
 	_make_curio_spawner_scene(7,
 		{
 			{

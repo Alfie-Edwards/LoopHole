@@ -27,10 +27,10 @@ end
 
 
 -- set some constants
-z_start = 10
+z_start = 30
 
 loop_max_r = 48
-loop_min_r = 4
+loop_min_r = 6
 loop_nudge_amount = 0.5
 
 loop_max_health = 3
@@ -101,7 +101,7 @@ function init_gameplay_screen(t_started)
 
 	curios = {}
 
-	timeline_idx = 1
+	timeline_idx = 4
 	t_started_scene = t()
 end
 
