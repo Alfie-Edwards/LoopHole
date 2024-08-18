@@ -100,7 +100,7 @@ function _update()
 	-- add new curios
 	if (t() % 2) == 0 then
 		local r = rnd(0.7 * (loop_max_r - loop.w) - 16) + 16
-		add_curio(rnd(16) - 8, rnd(16) - 8, r, 0)
+		add_curio(rnd(16) - 8, rnd(16) - 8, r, "asteroid")
 	end
 	-- add new line curios
 	if (t() % 5) == 0 then
