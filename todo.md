@@ -7,19 +7,19 @@
 * [x] controls
 * [x] lines
 * [ ] curio index
-    * [ ] spite sheet loc
-    * [ ] size
+	* [ ] spite sheet loc
+	* [ ] size
 * [ ] timeline
-    * [ ] cutscenes
-        * [ ] sprite
-        * [ ] after colour
-        * [ ] corner sprite drawing (mirrored into 4 corners)
-    * [ ] circle wipe
-        * [ ] before / after color
-    * [ ] stages
-        * [ ] spawn curios
-        * [ ] bg colour
-        * [ ] goto next stage
+	* [x] cutscenes
+		* [~] sprite
+		* [~] after colour
+		* [ ] corner sprite drawing (mirrored into 4 corners)
+	* [ ] circle wipe
+		* [ ] before / after color
+	* [x] stages
+		* [x] spawn curios
+		* [x] bg colour
+		* [x] goto next stage
 * [ ] start screen
 * [ ] end screen
 * [ ] increase speed each loop
@@ -28,5 +28,5 @@ polish
 
 * [x] extra visual stuff (eg. star field)
 * [x] distance drawing
-    * [x] dithering
-    * [x] palette swapping
+	* [x] dithering
+	* [x] palette swapping
