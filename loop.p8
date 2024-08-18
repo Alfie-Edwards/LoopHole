@@ -255,6 +255,7 @@ function update_gameplay_screen(t_started)
 			else
 				sfx(flr(rnd_range(3, 5)))
 			end
+			break
 		end
 	end
 
