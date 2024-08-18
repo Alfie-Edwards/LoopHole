@@ -53,6 +53,20 @@ function update_dead_screen(t_started)
 end
 
 function print_score()
+	assert(seen_obstacle_scenes ~= nil)
+	local score = seen_obstacle_scenes - 1
+
+	color(3)
+	local scale_word = "scale"
+	if (score > 1) scale_word = scales
+	print_centred("you went through "..score.." "..scale_word, 80)
+
+	local cycles = flr(timeline_idx / #timeline)
+
+	if cycles > 0 then
+		color(10)
+		print_centred("and cycled "..cycles.." times", 90)
+	end
 end
 
 function draw_dead_screen(t_started)

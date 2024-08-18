@@ -83,6 +83,8 @@ function _init()
 
 	curios = {}
 
+	seen_obstacle_scenes = 0
+
 	t_started_scene = 0
 
 	-- TODO #finish: make this `title`
@@ -112,6 +114,9 @@ function init_gameplay_screen(t_started)
 
 	timeline_idx = 4
 	t_started_scene = t()
+
+	seen_obstacle_scenes = 0
+	seen_obstacle_this_scene = false
 end
 
 function get_current_scene()
@@ -169,12 +174,19 @@ function update_gameplay_screen(t_started)
 	update_cam()
 
 	if scene_should_end(timeline_idx, scene_progress()) then
+		seen_obstacle_this_scene = false
 		timeline_idx = go_to_next_scene(timeline_idx)
 		t_started_scene = t()
 	else
 		local new_obstacles = update_scene(timeline_idx, scene_progress())
 		for _, obstacle in ipairs(new_obstacles) do
 			add(curios, obstacle, 1)
+		end
+
+		-- for calculating score
+		if #new_obstacles > 0 and not seen_obstacle_this_scene then
+			seen_obstacle_scenes += 1
+			seen_obstacle_this_scene = true
 		end
 	end
 
