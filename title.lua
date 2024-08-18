@@ -51,13 +51,13 @@ function draw_title_screen(t_started)
 
 	-- prompt
 	color(1)
-	print_centred("PRESS ANY BUTTON...", 101)
+	print_centred("🅾️/❎ TO START...", 101)
 	if strobe(0.66) then
 		color(7)
 	else
 		color(6)
 	end
-	print_centred("PRESS ANY BUTTON...", 100)
+	print_centred("🅾️/❎ TO START...", 100)
 end
 
 function cleanup_title_screen(t_started)

@@ -58,14 +58,14 @@ function print_score()
 
 	color(3)
 	local scale_word = "scale"
-	if (score > 1) scale_word = scales
-	print_centred("you went through "..score.." "..scale_word, 80)
+	if (score ~= 1) scale_word = "scales"
+	print_centred("you travelled through "..score.." "..scale_word, 60)
 
 	local cycles = flr(timeline_idx / #timeline)
 
 	if cycles > 0 then
 		color(10)
-		print_centred("and cycled "..cycles.." times", 90)
+		print_centred("and cycled "..cycles.." times", 70)
 	end
 end
 
@@ -73,20 +73,20 @@ function draw_dead_screen(t_started)
 	cls(0)
 
 	color(2)
-	print_centred("ur dead!!!", 61)
+	print_centred("ur dead!!!", 41)
 	color(8)
-	print_centred("ur dead!!!", 60)
+	print_centred("ur dead!!!", 40)
 
 	print_score()
 
 	color(1)
-	print_centred("PRESS ANY BUTTON TO RESTART...", 101)
+	print_centred("🅾️/❎ TO RESTART...", 101)
 	if strobe(0.66) then
 		color(7)
 	else
 		color(6)
 	end
-	print_centred("PRESS ANY BUTTON TO RESTART...", 100)
+	print_centred("🅾️/❎ TO RESTART...", 100)
 end
 
 function cleanup_dead_screen(t_started)
