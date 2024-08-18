@@ -183,7 +183,7 @@ function update_gameplay_screen()
 			if loop.health == 0 then
 				printh("dead!!!!")
 				-- TODO #finish: move to `dead` screen
-				return screens.dead
+				-- return screens.dead
 			end
 		end
 	end
