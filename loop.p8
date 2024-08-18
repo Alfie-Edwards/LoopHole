@@ -81,11 +81,15 @@ function _init()
 	t_started_scene = 0
 
 	-- TODO #finish: make this `title`
-	current_screen = screens.gameplay
+	current_screen = screens.title
 	t_started_screen = 0
+	assert(current_screen.init ~= nil)
+	current_screen.init(t_started_screen)
 end
 
-function init_gameplay_screen()
+function init_gameplay_screen(t_started)
+	music(2)
+
 	update_cam()
 
 	loop = {
@@ -105,7 +109,7 @@ function init_gameplay_screen()
 	t_started_scene = t()
 end
 
-function cleanup_gameplay_screen()
+function cleanup_gameplay_screen(t_started)
 	assert(timeline_idx ~= nil)
 	local current_scene = scene(timeline_idx)
 	assert(current_scene ~= nil)
@@ -123,11 +127,11 @@ end
 function maybe_move_to_screen(new_screen)
 	if (new_screen == nil) return
 	if new_screen ~= current_screen then
-		if (current_screen.cleanup ~= nil) current_screen.cleanup()
+		if (current_screen.cleanup ~= nil) current_screen.cleanup(t_started_screen)
 		current_screen = new_screen
-		t_started_scren = t()
+		t_started_screen = t()
 		assert(current_screen.init ~= nil)
-		current_screen.init()
+		current_screen.init(t_started_screen)
 	end
 end
 
@@ -147,7 +151,7 @@ function strobe(period, offset)
 	return (t() - (offset or 0) + period) % (period * 2) < period
 end
 
-function update_gameplay_screen()
+function update_gameplay_screen(t_started)
 	update_cam()
 
 	if scene_should_end(timeline_idx, scene_progress()) then
@@ -199,7 +203,7 @@ function update_gameplay_screen()
 			if loop.health == 0 then
 				printh("dead!!!!")
 				-- TODO #finish: move to `dead` screen
-				-- return screens.dead
+				return screens.dead
 			end
 		end
 	end
@@ -212,7 +216,7 @@ function _update()
 
 	assert(current_screen ~= nil)
 	assert(current_screen.update ~= nil)
-	maybe_move_to_screen(current_screen.update())
+	maybe_move_to_screen(current_screen.update(t_started_screen))
 end
 
 function proportion(t_start, t_end, t)
@@ -279,15 +283,10 @@ function draw_curio(c)
 
 	set_curio_fill_pattern(c.z)
 	if c.type == "sprite" then
-		-- local sx, sy = world_to_screen(c.x, c.y, c.z)
-		-- local sr = cam.zoom * (c.r / c.z)
-		-- sspr(0, 0, 16, 16, sx - sr, sy - sr, 2 * sr, 2 * sr, c.flip_x, c.flip_y)
-
 		local sx, sy = world_to_screen(c.x, c.y, c.z)
 		local sr = cam.zoom * (c.r / c.z)
 
 		assert(c.id ~= nil)
-		-- TODO #temp: use real sprite index once data's in
 		local spr = sprite_index[c.id]
 		assert(spr ~= nil)
 
@@ -377,7 +376,7 @@ function draw_health(x_offset, y_offset)
 	print(health_str, (10 - 64) + cam.x + x_offset, (10 - 64) + cam.y + y_offset, 8)
 end
 
-function draw_gameplay_screen()
+function draw_gameplay_screen(t_started)
 	draw_background(timeline_idx, scene_progress())
 
 	-- Curios ahead of the loop
@@ -449,7 +448,7 @@ end
 function _draw()
 	assert(current_screen ~= nil)
 	assert(current_screen.draw ~= nil)
-	current_screen.draw()
+	current_screen.draw(t_started_screen)
 end
 
 function true_loop_width()
@@ -492,7 +491,6 @@ function curio_collides(curio)
 
 	if curio.type == "sprite" then
 		assert(curio.id ~= nil)
-		-- TODO #temp: use real sprite index once data's in
 		local spr = sprite_index[curio.id]
 		assert(spr ~= nil)
 		local scale = (2 * curio.r) / sqrt((spr.w * spr.w) + (spr.h * spr.h))
@@ -864,6 +862,7 @@ screens = {
 		init = init_title_screen,
 		update = update_title_screen,
 		draw = draw_title_screen,
+		cleanup = cleanup_title_scren,
 	},
 	gameplay = {
 		name = "gameplay",
@@ -877,6 +876,7 @@ screens = {
 		init = init_dead_screen,
 		update = update_dead_screen,
 		draw = draw_dead_screen,
+		cleanup = cleanup_dead_scren,
 	},
 }
 
@@ -1028,9 +1028,9 @@ __sfx__
 1f1000000417000100001000317000100001000117000100001000017600100001000010000100001000010000100001000010000100001000010000100001000010000100001000010000100001000010000100
 __music__
 00 02424344
-00 06070849
-01 0a0b0c4e
-00 0d0e0f44
+03 06070849
+03 0a0b0c4e
+04 0d0e0f44
 00 41424344
 00 05424344
 00 41424344

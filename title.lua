@@ -1,8 +1,9 @@
-function init_title_screen()
+function init_title_screen(t_started)
 	camera()
+	music(1)
 end
 
-function update_title_screen()
+function update_title_screen(t_started)
 	if any_input() then
 		return screens.gameplay
 	end
@@ -10,7 +11,7 @@ function update_title_screen()
 	return screens.title
 end
 
-function draw_title_screen()
+function draw_title_screen(t_started)
 	cls(0)
 
 	color(9)
@@ -26,4 +27,8 @@ function draw_title_screen()
 		color(6)
 	end
 	print_centred("PRESS ANY BUTTON...", 100)
+end
+
+function cleanup_title_screen(t_started)
+	music(-1)
 end

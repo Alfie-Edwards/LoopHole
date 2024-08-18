@@ -357,7 +357,7 @@ timeline = {
 				curios = stick_and_ball_curio({
 					x = 0, y = 0, r = 12, scale = 1,
 					ball_r = 4, stick_r = 2,
-					stick_color = 6, 
+					stick_color = 6,
 					balls = ball_ring(6, 12),
 					sticks = sticks_closed_loop(6),
 				})
