@@ -42,7 +42,7 @@ loop_max_r = 48
 loop_min_r = 6
 loop_nudge_amount = 0.5
 
-loop_max_health = 3
+loop_max_health = 6
 loop_resize_rate = 2.5
 
 paralax_amount = 0.1
@@ -112,7 +112,7 @@ function init_gameplay_screen(t_started)
 
 	curios = {}
 
-	timeline_idx = 1
+	timeline_idx = 4
 	t_started_scene = t()
 
 	seen_obstacle_scenes = 0
@@ -419,7 +419,7 @@ function draw_health(x_offset, y_offset)
 	for i = 0, loop.health - 1 do
 		health_str = health_str.."♥\n"
 	end
-	print(health_str, (10 - 64) + cam.x + x_offset, (10 - 64) + cam.y + y_offset, 8)
+	print(health_str, (4 - 64) + cam.x + x_offset, (4 - 64) + cam.y + y_offset, 8)
 end
 
 function draw_gameplay_screen(t_started)
