@@ -2,6 +2,10 @@ pico-8 cartridge // http://www.pico-8.com
 version 42
 __lua__
 
+-- Enable mouse
+poke(0x5F2D, 1)
+
+
 -- set some constants
 z_start = 10
 
@@ -25,10 +29,12 @@ guides = {
 
 speed = 0.08
 
+
+-- include stuff
 #include timeline.lua
 
-poke(0x5F2D, 1) -- Mouse
 
+-- main behaviour
 function _init()
 	mouse = {}
 	update_mouse()
@@ -200,7 +206,11 @@ function draw_curio(c)
 		local sr = cam.zoom * (c.r / c.z)
 		local scale = (2 * sr) / sqrt((spr.w * spr.w) + (spr.h * spr.h))
 		local sw, sh = spr.w * scale, spr.h * scale
-		sspr(spr.x, spr.y, spr.x + spr.w - 1, spr.y + spr.h - 1, sx - sw/2, sy - sh/2, sw, sh, c.flip_x, c.flip_y)
+		sspr(spr.x, spr.y,
+		     spr.w, spr.h,
+		     sx - sw/2, sy - sh/2,
+		     sw, sh,
+		     c.flip_x, c.flip_y)
 	elseif c.type == "line" then
 		local sx1, sy1 = world_to_screen(c.x1, c.y1, c.z)
 		local sx2, sy2 = world_to_screen(c.x2, c.y2, c.z)
