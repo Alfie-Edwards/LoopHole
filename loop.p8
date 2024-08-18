@@ -425,9 +425,6 @@ end
 function draw_gameplay_screen(t_started)
 	draw_background(timeline_idx, scene_progress())
 
-	local fog_col = get_current_scene().background_colour
-	assert(fog_col ~= nil)
-
 	-- Curios ahead of the loop
 	for _, curio in ipairs(curios) do
 		if curio.z > loop.z then
@@ -463,7 +460,15 @@ function draw_gameplay_screen(t_started)
 	end
 
 	-- Loop
+	local bg_col = get_current_scene().background_colour
+	assert(bg_col ~= nil)
+
 	local loop_col = 7
+
+	if bg_col == loop_col then
+		loop_col = 4
+	end
+
 	local beat_state = get_beat_state()
 	if beat_state == "good" then
 		loop_col = 11
