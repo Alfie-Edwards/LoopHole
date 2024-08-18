@@ -159,7 +159,7 @@ function _make_wipe_scene(bg_col, duration)
 end
 
 function stick_and_ball_curio(config)
-	local result = {}
+	local curios = {}
 	local max_d = 0
 	for i, ball in ipairs(config.balls) do
 		for j=i+1,#config.balls do
@@ -170,23 +170,20 @@ function stick_and_ball_curio(config)
 		end
 	end
 	max_d += (2 * config.ball_r)
-	local scale = (config.r * 2)
+	local scale = (config.r * 2) / max_d
 
 	for _, ball in ipairs(config.balls) do
-		add(result, {
-			progress = config.progress,
+		add(curios,
 			sprite_curio({
 				x = ball.x * scale + config.x,
 				y = ball.y * scale + config.y,
 				r = config.ball_r * scale,
 				id = "atom",
-			})
-		})
+			}))
 	end
 
 	for _, stick in ipairs(config.sticks) do
-		add(result, {
-			progress = config.progress,
+		add(curios,
 			line_curio({
 				x1 = config.balls[stick[1]].x * scale + config.x,
 				y1 = config.balls[stick[2]].y * scale + config.y,
@@ -194,10 +191,9 @@ function stick_and_ball_curio(config)
 				y2 = config.balls[stick[2]].y * scale + config.y,
 				r = config.stick_r * scale,
 				color = config.stick_color,
-			})
-		})
+			}))
 	end
-	return result
+	return curios
 end
 
 function sprite_curio(curio)

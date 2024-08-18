@@ -500,6 +500,12 @@ temp_sprite_index = {
 		w = 8,
 		h = 8,
 	},
+	atom = {
+		x = 3 * 8,
+		y = 0,
+		w = 8,
+		h = 8,
+	},
 }
 
 sprite_index = {
