@@ -405,9 +405,9 @@ timeline = {
 					r = 38, id = "cell",
 				}),
 			},
-		}, _make_dust_spawner(1)),
+		}, _make_dust_spawner(6)),
 	_make_wipe_scene(0, 10), -- red wipe
-	_make_curio_spawner_scene(2,
+	_make_curio_spawner_scene(8,
 		{
 			{
 				progress = 0,
@@ -496,8 +496,7 @@ timeline = {
 				})
 			},
 		}, _make_dust_spawner(8)),
-	_make_wipe_scene(14, 8),
-	_make_curio_spawner_scene(15,
+	_make_curio_spawner_scene(8,
 		{
 			{
 				progress = 0,
@@ -562,72 +561,75 @@ timeline = {
 					r = 38, id = "bacteria",
 				}),
 			},
+		}, _make_dust_spawner(8)),
+	_make_curio_spawner_scene(8,
+		{
 			{
-				progress = 70,
+				progress = 0,
 				curios = sprite_curio({
 					x = 2, y = 2,
 					r = 6, id = "virus2",
 				}),
 			},
 			{
-				progress = 80,
+				progress = 10,
 				curios = sprite_curio({
 					x = -3, y = 4,
 					r = 11, id = "virus",
 				}),
 			},
 			{
-				progress = 84,
+				progress = 14,
 				curios = sprite_curio({
 					x = -4, y = -3,
 					r = 13, id = "virus3",
 				}),
 			},
 			{
-				progress = 90,
+				progress = 20,
 				curios = sprite_curio({
 					x = 6, y = -4,
 					r = 16, id = "virus4",
 				}),
 			},
 			{
-				progress = 106,
+				progress = 36,
 				curios = sprite_curio({
 					x = 0, y = 1,
 					r = 24, id = "virus",
 				}),
 			},
 			{
-				progress = 118,
+				progress = 48,
 				curios = sprite_curio({
 					x = -45, y = -30,
 					r = 30, id = "virus5",
 				}),
 			},
 			{
-				progress = 124,
+				progress = 54,
 				curios = sprite_curio({
 					x = 40, y = -17,
 					r = 33, id = "virus3",
 				}),
 			},
 			{
-				progress = 128,
+				progress = 58,
 				curios = sprite_curio({
 					x = 4, y = -2,
 					r = 35, id = "virus6",
 				}),
 			},
 			{
-				progress = 134,
+				progress = 64,
 				curios = sprite_curio({
 					x = 2, y = -48,
 					r = 38, id = "virus7",
 				}),
 			},
-		}, _make_dust_spawner(14)),
+		}, _make_dust_spawner(8)),
 		{  -- eye
-				background_colour=15,
+				background_colour=8,
 				has_finished=function(this, progress)
 					return progress >= 15
 				end,
@@ -755,8 +757,6 @@ timeline = {
 					     false, false)      -- flip_x, flip_y
 				end,
 		},
-		_make_wipe_scene(12, 8),
-
 	_make_curio_spawner_scene(0,
 	{
 		{

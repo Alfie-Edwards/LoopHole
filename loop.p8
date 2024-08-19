@@ -44,13 +44,14 @@ end
 
 
 -- set some constants
-z_start = 30
+z_start = 10
+ruler_z_start = 5
 
 loop_max_r = 48
 loop_min_r = 6
 loop_nudge_amount = 0.5
 
-loop_max_health = 6
+loop_max_health = 12
 loop_resize_rate = 2.5
 
 paralax_amount = 0.1
@@ -120,7 +121,7 @@ function init_gameplay_screen(t_started)
 
 	curios = {}
 
-	timeline_idx = 4
+	timeline_idx = 1
 	t_started_scene = t()
 
 	seen_obstacle_scenes = 0
@@ -312,7 +313,7 @@ function set_curio_fill_pattern(z)
 		--
 		-- pal({[0]=0xd0, [1]=0xd1, [2]=0xd2, ...}, 2)
 		for i=0,15 do pal(i, i+(9*16), 2) end
-		fillp(lerp_from_list(z_start, z_start * 0.8, z, {
+		fillp(lerp_from_list(z_start, z_start*0.8, z, {
 				0b0111110101111101.010,
 				0b1010010110100101.010,
 				0b1000001010000010.010,
@@ -397,8 +398,6 @@ function draw_ruler(x_offset, y_offset)
 		 x, y_end,
 		 12)
 
-	local ruler_z_start = z_start / 6
-
 	for _, curio in ipairs(curios) do
 		if curio.z >= loop.z and curio.z < ruler_z_start then
 			local y = lerp(y_start, y_end - 1, proportion(ruler_z_start, loop.z, curio.z))
@@ -410,16 +409,17 @@ function draw_ruler(x_offset, y_offset)
 end
 
 function get_beat_state()
+	local state = "none"
 	for _, curio in ipairs(curios) do
 		if curio.z <= loop.z and (loop.z - curio.z) < 0.5 then
 				if curio.has_hit_player then
 					return "bad"
 				else
-					return "good"
+					state = "good"
 				end
 		end
 	end
-	return "none"
+	return state
 end
 
 function draw_health(x_offset, y_offset)
