@@ -52,24 +52,61 @@ function update_dead_screen(t_started)
 	return screens.dead
 end
 
+function print_centred_chunks(chunks, y)
+	-- chunks is a list of 1-to-3-tuples:
+	-- { { fst_text },                         <-- draw in white
+	--   { snd_text, col }, ... }              <-- draw in col
+	--   { snd_text, col, shadow_col }, ... }  <-- draw in col, with a shadow_col shadow
+
+	local cam_x = peek2(0x5f28)
+	local cam_y = peek2(0x5f2a)
+
+	local full_length = 0
+	for _, chunk in ipairs(chunks) do full_length += lnpx(chunk[1]) end
+	local length_acc = 0
+
+	for _, chunk in ipairs(chunks) do
+		local col = 7
+		if (#chunk > 1) col = chunk[2]
+
+		if #chunk > 2 then
+			color(chunk[3])
+			print(chunk[1], (128 - full_length) / 2 + cam_x + length_acc, y + cam_y + 1)
+		end
+
+		color(col)
+		print(chunk[1], (128 - full_length) / 2 + cam_x + length_acc, y + cam_y)
+		length_acc += lnpx(chunk[1])
+	end
+end
+
 function print_score()
 	assert(seen_obstacle_scenes ~= nil)
-	local score = seen_obstacle_scenes - 1
+	local score = max(seen_obstacle_scenes - 1, 0)
 
-	color(3)
 	local scale_word = "scale"
 	if (score ~= 1) scale_word = "scales"
-	print_centred("you travelled through "..score.." "..scale_word, 60)
+	print_centred_chunks({{"you travelled through "},
+	                      {score, 11, 3},
+	                      {" "..scale_word}},
+	                     60)
 
 	local cycles = flr(timeline_idx / #timeline)
 
 	if cycles > 0 then
-		color(10)
-		print_centred("and cycled "..cycles.." times", 70)
+		local time_word = "time"
+		if (cycles ~= 1) time_word = "times"
+		print_centred_chunks({{"...and cycled ", 7, 1},
+		                      {cycles, 10, 9},
+		                      {" "..time_word.."!", 7, 1}},
+		                     70)
 	end
 end
 
 function draw_dead_screen(t_started)
+	pal()
+	pal(3, -13, 1)
+	pal(9, -7, 1)
 	cls(0)
 
 	color(2)

@@ -23,8 +23,13 @@ function update_title_screen(t_started)
 end
 
 function draw_title_screen(t_started)
+	-- use the game's normal palette...
+	reset_pal()
+	-- ...but colour the orange of the loop as orange
+	pal(9, 9, 1)
+	palt(9, false)
+
 	-- background colour
-	palt(9, false)  -- colour the orange of the loop as orange
 	cls(0)
 
 	-- dust
@@ -46,7 +51,6 @@ function draw_title_screen(t_started)
 	logo_x += cam_x
 	logo_y += cam_y
 
-	pal(9, 9, 1)
 	spr(logo_idx, logo_x, logo_y, logo_sw, logo_sh)
 
 	-- prompt

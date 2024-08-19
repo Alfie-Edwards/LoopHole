@@ -14,7 +14,7 @@
 * [x] curio index
 	* [x] spite sheet loc
 	* [x] size
-* [ ] timeline
+* [x] timeline
 	* [x] cutscenes
 		* [x] sprite
 		* [x] after colour
@@ -29,7 +29,8 @@
 * [x] end screen
 * [ ] increase speed each loop
 * [x] score
-* [ ] slightly nicer end screen
+* [x] slightly nicer end screen
+* [ ] fill out the timeline
 
 polish
 
