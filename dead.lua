@@ -52,34 +52,6 @@ function update_dead_screen(t_started)
 	return screens.dead
 end
 
-function print_centred_chunks(chunks, y)
-	-- chunks is a list of 1-to-3-tuples:
-	-- { { fst_text },                         <-- draw in white
-	--   { snd_text, col }, ... }              <-- draw in col
-	--   { snd_text, col, shadow_col }, ... }  <-- draw in col, with a shadow_col shadow
-
-	local cam_x = peek2(0x5f28)
-	local cam_y = peek2(0x5f2a)
-
-	local full_length = 0
-	for _, chunk in ipairs(chunks) do full_length += lnpx(chunk[1]) end
-	local length_acc = 0
-
-	for _, chunk in ipairs(chunks) do
-		local col = 7
-		if (#chunk > 1) col = chunk[2]
-
-		if #chunk > 2 then
-			color(chunk[3])
-			print(chunk[1], (128 - full_length) / 2 + cam_x + length_acc, y + cam_y + 1)
-		end
-
-		color(col)
-		print(chunk[1], (128 - full_length) / 2 + cam_x + length_acc, y + cam_y)
-		length_acc += lnpx(chunk[1])
-	end
-end
-
 function print_score()
 	assert(seen_obstacle_scenes ~= nil)
 	local score = max(seen_obstacle_scenes - 1, 0)
