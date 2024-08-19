@@ -162,7 +162,7 @@ function _make_wipe_scene(bg_col, duration)
 
 			circfill(0, 0, 192 / ((191 * (duration - progress) / duration) + 1), this.background_colour)
 
-			-- TODO: UGLYYYYYYY
+			-- TODO: UGLY
 			this.other = next_bg_col
 		end,
 		other = nil,
@@ -184,8 +184,6 @@ function vein_curio(config)
 
 	local sprite_r = (dists[3] - dists[1] - 4 * spacing) / 2
 	local sa, ca = sin(config.a), cos(config.a)
-
-	printh(""..dists[1].." "..dists[2].." "..dists[3].." "..sprite_r)
 
 	for i=-3,3 do
 		local dist = i * (spacing + sprite_r * 2)

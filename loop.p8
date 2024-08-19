@@ -33,7 +33,7 @@ function reset_pal()
 	palt(0, false)
 	palt(9, true)
 
-	-- TODO: UGLYYYYYYY
+	-- TODO: UGLY
 	if current_screen == screens.gameplay then
 		o_col = get_current_scene().other
 		if o_col ~= nil then
@@ -96,7 +96,6 @@ function _init()
 
 	t_started_scene = 0
 
-	-- TODO #finish: make this `title`
 	current_screen = screens.title
 	t_started_screen = 0
 	assert(current_screen.init ~= nil)
@@ -236,7 +235,8 @@ function update_gameplay_screen(t_started)
 		if curio.sprite == sprite_index.plastic or
 		   curio.sprite == sprite_index.plastic2 or
 		   curio.sprite == sprite_index.plastic3 or
-		   curio.sprite == sprite_index.plasticbag then
+		   curio.sprite == sprite_index.plasticbag or
+		   curio.sprite == sprite_index.can then
 			woosh = wooshes.glug
 		elseif curio.r > 20 then
 			woosh = wooshes.big
@@ -254,17 +254,23 @@ function update_gameplay_screen(t_started)
 	end
 
 	-- check for collision
+	local player_hit = false
 	for _, curio in ipairs(curios) do
+		-- check every curio, so that if multiple curios hit the player at the
+		-- same time they're both marked as such
 		if (not curio.has_hit_player) and curio_collides(curio) then
 			curio.has_hit_player = true
-			loop.health = loop.health - 1
-			if loop.health == 0 then
-				-- TODO #finish: move to `dead` screen
-				return screens.dead
-			else
-				sfx(flr(rnd_range(3, 5)))
-			end
-			break
+			player_hit = true
+		end
+	end
+
+	if player_hit then
+		-- apply damage just once
+		loop.health = loop.health - 1
+		if loop.health == 0 then
+			return screens.dead
+		else
+			sfx(flr(rnd_range(3, 5)))
 		end
 	end
 
