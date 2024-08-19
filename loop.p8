@@ -295,6 +295,7 @@ end
 
 function lerp_from_list(t_start, t_end, t, list)
 	-- lerp `t` between `t_start` and `t_end`, and use that to index `list`
+	-- NOTE: returns `nil` if `t` out of range
 	return list[flr(proportion(t_start, t_end, t) * #list) + 1]
 end
 
@@ -319,21 +320,23 @@ function set_curio_fill_pattern(z)
 		--
 		-- pal({[0]=0xd0, [1]=0xd1, [2]=0xd2, ...}, 2)
 		for i=0,15 do pal(i, i+(9*16), 2) end
-		fillp(lerp_from_list(z_start, z_start*0.8, z, {
+		local fp = lerp_from_list(z_start, z_start*0.8, z, {
 				0b0111110101111101.010,
 				0b1010010110100101.010,
 				0b1000001010000010.010,
 				0b0000000000000000.010,
-			}))
+			})
+		if (fp ~= nil) fillp(fp)
 	else
-		fillp(lerp_from_list(loop.z, clip_plane, z, {
+		local fp = lerp_from_list(loop.z, clip_plane, z, {
 				0b0101101001011010.110,
 				0b0111110101111101.110,
 				0b1111011111011111.110,
 				0b1111111111111111.110,
 				0b1111111111111111.110,
 				0b1111111111111111.110,
-			}))
+			})
+		if (fp ~= nil) fillp(fp)
 	end
 end
 
