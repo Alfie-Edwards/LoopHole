@@ -169,6 +169,72 @@ function _make_wipe_scene(bg_col, duration)
 	}
 end
 
+-- size = the width of the sprite in the world (not on the sprite sheet)
+--        for 'corner' sprites, this is the width of *one* of the corners.
+function _make_sprite_zoom_scene(bg_col, sprite, spr_z_start, size, x, y, flip_x, flip_y)
+	if (x == nil) x = 0
+	if (y == nil) y = 0
+	if (flip_x == nil) flip_x = false
+	if (flip_y == nil) flip_y = false
+
+	return {
+		background_colour=bg_col,
+		has_finished=function(this, progress)
+			return progress >= spr_z_start
+		end,
+		draw_background=function(this, progress, next_bg_col)
+			reset_pal()
+			palt(9, false)
+			cls(9)
+			reset_pal()
+
+			local z = spr_z_start - progress
+			if z == 0 then
+				z = 0.01
+			end
+
+			local sx, sy = world_to_screen(x, y, z)
+			local ssize = cam.zoom * (size / z)
+
+			if sprite.corner then
+				-- NOTE: smush the quarters together by a pixel cause otherwise
+				--       you get thin gaps when far away
+				-- top-left
+				sspr(sprite.x, sprite.y,
+				     sprite.w, sprite.h,
+				     (sx - ssize) + 1, (sy - ssize) + 1,
+				     ssize, ssize,
+				     true, false)
+				-- top-right
+				sspr(sprite.x, sprite.y,
+				     sprite.w, sprite.h,
+				     sx, (sy - ssize) + 1,
+				     ssize, ssize,
+				     false, false)
+				-- bottom-left
+				sspr(sprite.x, sprite.y,
+				     sprite.w, sprite.h,
+				     (sx - ssize) + 1, sy,
+				     ssize, ssize,
+				     true, true)
+				-- bottom-right
+				sspr(sprite.x, sprite.y,
+				     sprite.w, sprite.h,
+				     sx, sy,
+				     ssize, ssize,
+				     false, true)
+			else
+				local srad = ssize / 2
+				sspr(sprite.x, sprite.y,    -- sprite_x, sprite_y
+				     sprite.w, sprite.h,    -- sprite_w, sprite_h
+				     sx - srad, sy - srad,  -- x, y
+				     ssize, ssize,          -- w, h
+				     false, false)          -- flip_x, flip_y
+			 end
+		end,
+	}
+end
+
 function vein_curio(config)
 	local curios = {}
 
@@ -289,55 +355,29 @@ function inf_line_curio(curio)
 		curio.dist *= -1
 	end
 	local sa, ca = sin(curio.a), cos(curio.a)
-	curio.x1 = -2000 * ca + curio.dist * sa
-	curio.y1 = -2000 * sa + curio.dist * ca
-	curio.x2 = 2000 * ca + curio.dist * sa
-	curio.y2 = 2000 * sa + curio.dist * ca
+	local very_far = 2000
+	curio.x1 = -very_far * ca + curio.dist * sa
+	curio.y1 = -very_far * sa + curio.dist * ca
+	curio.x2 = very_far * ca + curio.dist * sa
+	curio.y2 = very_far * sa + curio.dist * ca
 	curio.dist = nil
 	curio.a = nil
 	return line_curio(curio)
 end
 
+
 timeline = {
 	-- mandatory fields:
 	--
-	-- * background_colour (int)
-	-- * has_finished=function(this, progress)
+	-- * background_colour = int
+	-- * has_finished = function(this, progress)
 	--
 	-- optional (but called with fallbacks externally):
 	--
-	-- * draw_background=function(this, progress, next_bg_col)
-	-- * update=function(this, progress)  (should return any new curios to handle)
-	-- * end_scene=function(this)
-
-	{  -- eye
-		background_colour=15,
-		has_finished=function(this, progress)
-			return progress >= z_start
-		end,
-		draw_background=function(this, progress, next_bg_col)
-			cls(this.background_colour)
-
-			palt(0, false)
-			palt(15, true)
-
-			local z = z_start - progress
-			if z == 0 then
-				z = 0.01
-			end
-
-			local r = 16 -- half the width of the sprite in the world (not on the sprite sheet)
-
-			local sx, sy = world_to_screen(0, 0, z)
-			local sr = cam.zoom * (r / z)
-			local spr = sprite_index.eye
-			sspr(spr.x, spr.y,          -- sprite_x, sprite_y
-			     spr.w, spr.h,              -- sprite_w, sprite_h
-			     sx - sr, sy - sr,  -- x, y
-			     2 * sr, 2 * sr,    -- w, h
-			     false, false)      -- flip_x, flip_y
-		end,
-	},
+	-- * draw_background = function(this, progress, next_bg_col)
+	-- * update = function(this, progress)  (should return any new curios to handle)
+	-- * end_scene = function(this)
+	_make_sprite_zoom_scene(15, sprite_index.eye2, z_start, 32),
 	_make_curio_spawner_scene(0,
 		{
 			{
@@ -626,135 +666,81 @@ timeline = {
 				}),
 			},
 		}, _make_dust_spawner(8)),
-		{  -- eye
-				background_colour=8,
-				has_finished=function(this, progress)
-					return progress >= 15
-				end,
-				draw_background=function(this, progress, next_bg_col)
-					cls(this.background_colour)
-
-					palt(0, false)
-					palt(15, true)
-
-					local z = 15 - progress
-					if z == 0 then
-						z = 0.01
-					end
-
-					local r = 16 -- half the width of the sprite in the world (not on the sprite sheet)
-
-					local sx, sy = world_to_screen(-0.5, -0.5, z)
-					local sr = cam.zoom * (r / z)
-					local spr = sprite_index.virus4
-					sspr(spr.x, spr.y,          -- sprite_x, sprite_y
-					     spr.w, spr.h,              -- sprite_w, sprite_h
-					     sx - sr, sy - sr,  -- x, y
-					     2 * sr, 2 * sr,    -- w, h
-					     false, false)      -- flip_x, flip_y
-				end,
-		},
-		_make_curio_spawner_scene(7,
+	_make_sprite_zoom_scene(8, sprite_index.virus4, 15, 32, -0.5, -0.5),
+	_make_curio_spawner_scene(7,
+	{
 		{
-			{
-				progress = 0,
-				curios = stick_and_ball_curio({
-					x = 0, y = 0, r = 12, scale = 0.16,
-					ball_r = 8, stick_r = 2,
-					stick_color = 6,
-					balls = ball_ring(4, 12),
-					sticks = {{1, 2}, {2, 4}, {3, 4}},
-				})
-			},
-			{
-				progress = 5,
-				curios = stick_and_ball_curio({
-					x = 0, y = 0, r = 12, scale = 0.2,
-					ball_r = 4, stick_r = 2,
-					stick_color = 6,
-					balls = ball_ring(3, 12),
-					sticks = sticks_open_loop(3),
-				})
-			},
-			{
-				progress = 10,
-				curios = stick_and_ball_curio({
-					x = -16, y = 0, r = 12, scale = 0.24,
-					ball_r = 4, stick_r = 2,
-					stick_color = 6,
-					balls = ball_ring(2, 12),
-					sticks = sticks_open_loop(2),
-				})
-			},
-			{
-				progress = 15,
-				curios = stick_and_ball_curio({
-					x = 12, y = -12, r = 12, scale = 0.28,
-					ball_r = 4, stick_r = 2,
-					stick_color = 6,
-					balls = ball_ring(3, 12),
-					sticks = sticks_open_loop(3),
-				})
-			},
-			{
-				progress = 20,
-				curios = stick_and_ball_curio({
-					x = 0, y = 0, r = 12, scale = 0.32,
-					ball_r = 4, stick_r = 2,
-					stick_color = 6,
-					balls = ball_ring(3, 12),
-					sticks = sticks_closed_loop(3),
-				})
-			},
-			{
-				progress = 25,
-				curios = stick_and_ball_curio({
-					x = -12, y = 12, r = 12, scale = 0.36,
-					ball_r = 4, stick_r = 2,
-					stick_color = 6,
-					balls = ball_ring(4, 12),
-					sticks = {{1, 2}, {2, 4}, {3, 4}, {1, 3}},
-				})
-			},
-			{
-				progress = 30,
-				curios = stick_and_ball_curio({
-					x = 0, y = 0, r = 12, scale = 0.5,
-					ball_r = 4, stick_r = 2,
-					stick_color = 6,
-					balls = ball_ring(5, 12),
-					sticks = sticks_open_loop(5),
-				})
-			},
-		}, _make_dust_spawner(6)),
-		{  -- eye
-				background_colour=7,
-				has_finished=function(this, progress)
-					return progress >= 10
-				end,
-				draw_background=function(this, progress, next_bg_col)
-					cls(this.background_colour)
-
-					palt(0, false)
-					palt(7, true)
-
-					local z = 10 - progress
-					if z == 0 then
-						z = 0.01
-					end
-
-					local r = 16 -- half the width of the sprite in the world (not on the sprite sheet)
-
-					local sx, sy = world_to_screen(-0.5, -0.5, z)
-					local sr = cam.zoom * (r / z)
-					local spr = sprite_index.atom
-					sspr(spr.x, spr.y,          -- sprite_x, sprite_y
-					     spr.w, spr.h,              -- sprite_w, sprite_h
-					     sx - sr, sy - sr,  -- x, y
-					     2 * sr, 2 * sr,    -- w, h
-					     false, false)      -- flip_x, flip_y
-				end,
+			progress = 0,
+			curios = stick_and_ball_curio({
+				x = 0, y = 0, r = 12, scale = 0.16,
+				ball_r = 8, stick_r = 2,
+				stick_color = 6,
+				balls = ball_ring(4, 12),
+				sticks = {{1, 2}, {2, 4}, {3, 4}},
+			})
 		},
+		{
+			progress = 5,
+			curios = stick_and_ball_curio({
+				x = 0, y = 0, r = 12, scale = 0.2,
+				ball_r = 4, stick_r = 2,
+				stick_color = 6,
+				balls = ball_ring(3, 12),
+				sticks = sticks_open_loop(3),
+			})
+		},
+		{
+			progress = 10,
+			curios = stick_and_ball_curio({
+				x = -16, y = 0, r = 12, scale = 0.24,
+				ball_r = 4, stick_r = 2,
+				stick_color = 6,
+				balls = ball_ring(2, 12),
+				sticks = sticks_open_loop(2),
+			})
+		},
+		{
+			progress = 15,
+			curios = stick_and_ball_curio({
+				x = 12, y = -12, r = 12, scale = 0.28,
+				ball_r = 4, stick_r = 2,
+				stick_color = 6,
+				balls = ball_ring(3, 12),
+				sticks = sticks_open_loop(3),
+			})
+		},
+		{
+			progress = 20,
+			curios = stick_and_ball_curio({
+				x = 0, y = 0, r = 12, scale = 0.32,
+				ball_r = 4, stick_r = 2,
+				stick_color = 6,
+				balls = ball_ring(3, 12),
+				sticks = sticks_closed_loop(3),
+			})
+		},
+		{
+			progress = 25,
+			curios = stick_and_ball_curio({
+				x = -12, y = 12, r = 12, scale = 0.36,
+				ball_r = 4, stick_r = 2,
+				stick_color = 6,
+				balls = ball_ring(4, 12),
+				sticks = {{1, 2}, {2, 4}, {3, 4}, {1, 3}},
+			})
+		},
+		{
+			progress = 30,
+			curios = stick_and_ball_curio({
+				x = 0, y = 0, r = 12, scale = 0.5,
+				ball_r = 4, stick_r = 2,
+				stick_color = 6,
+				balls = ball_ring(5, 12),
+				sticks = sticks_open_loop(5),
+			})
+		},
+	}, _make_dust_spawner(6)),
+	_make_sprite_zoom_scene(7, sprite_index.atom, 10, 32, -0.5, -0.5),
 	_make_curio_spawner_scene(0,
 	{
 		{
@@ -821,7 +807,6 @@ timeline = {
 			}),
 		},
 	}, _make_dust_spawner(1)),
-
 }
 
 function scene(idx)

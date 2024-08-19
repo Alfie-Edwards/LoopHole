@@ -11,16 +11,16 @@
 	* [x] palette-swapping orange
 * [x] controls
 * [x] lines
-* [ ] curio index
-	* [ ] spite sheet loc
-	* [ ] size
+* [x] curio index
+	* [x] spite sheet loc
+	* [x] size
 * [ ] timeline
 	* [x] cutscenes
-		* [~] sprite
-		* [~] after colour
-		* [ ] corner sprite drawing (mirrored into 4 corners)
-	* [ ] circle wipe
-		* [ ] before / after color
+		* [x] sprite
+		* [x] after colour
+		* [x] corner sprite drawing (mirrored into 4 corners)
+	* [x] circle wipe
+		* [x] before / after color
 	* [x] stages
 		* [x] spawn curios
 		* [x] bg colour
@@ -28,7 +28,8 @@
 * [x] start screen
 * [x] end screen
 * [ ] increase speed each loop
-k [ ] score
+* [x] score
+* [ ] slightly nicer end screen
 
 polish
 
@@ -36,3 +37,7 @@ polish
 * [x] distance drawing
 	* [x] dithering
 	* [x] palette swapping
+
+maybe
+
+* [ ] spawning curio sprites out of range, for atmosphere
