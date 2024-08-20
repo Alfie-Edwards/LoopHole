@@ -671,7 +671,7 @@ timeline = {
 					}
 				end
 			),
-		}, _make_dust_spawner(6)),
+		}, _make_dust_spawner(8)),
 	_make_curio_spawner_scene(8,
 		{
 			for_progress(0, 30, 2,
@@ -698,7 +698,7 @@ timeline = {
 					}
 				end
 			),
-		}, _make_dust_spawner(6)),
+		}, _make_dust_spawner(8)),
 	_make_sprite_zoom_scene(8, sprite_index.virus4, 32, 15, -0.5, -0.5),
 	_make_curio_spawner_scene(7,
 	{
@@ -1060,7 +1060,7 @@ timeline = {
 			function(i, progress)
 				return sprite_curio{
 					a = rnd(1),
-					dist = progress * 2,
+					dist = 2 + progress * 2,
 					r = progress * 2,
 					id = sprite_groups.cloud[1 + (i % 2)],
 				}
@@ -1070,7 +1070,7 @@ timeline = {
 			function(i, progress)
 				return sprite_curio{
 					a = rnd(1),
-					dist = progress * 2,
+					dist = 2 + progress * 2,
 					r = progress * 2,
 					id = sprite_groups.cloud[1 + (i % 2)],
 				}
