@@ -443,7 +443,7 @@ timeline = {
 	-- * draw_background = function(this, progress, next_bg_col)
 	-- * update = function(this, progress)  (should return any new curios to handle)
 	-- * end_scene = function(this)
-	_make_sprite_zoom_scene(6, sprite_index.eye2, 32, z_start),
+	_make_sprite_zoom_scene(1, sprite_index.eye2, 32, z_start),
 	_make_curio_spawner_scene(0,
 		{
 			{
@@ -863,6 +863,30 @@ timeline = {
 			progress = 0,
 			curios = sprite_curio{
 				x = 0, y = 1,
+				r = 24, id = "star",
+			},
+		},
+		{
+			progress = 10,
+			curios = sprite_curio{
+				x = -45, y = -30,
+				r = 30, id = "star2",
+			},
+		},
+		{
+			progress = 18,
+			curios = sprite_curio{
+				x = 40, y = -17,
+				r = 33, id = "star3",
+			},
+		},
+	}, _make_dust_spawner(6)),
+	_make_curio_spawner_scene(0,
+	{
+		{
+			progress = 0,
+			curios = sprite_curio{
+				x = 0, y = 1,
 				r = 24, id = "ringplanet",
 			},
 		},
@@ -888,11 +912,18 @@ timeline = {
 			},
 		},
 		{
-			progress = 32,
+			progress = 34,
 			curios = sprite_curio{
-				x = -30, y = 18,
-				r = 100, id = "ringplanet2",
+				x = -70, y = 50,
+				r = 100, id = "planet",
 				flip_x = false, flip_y = false,
+			},
+		},
+		{
+			progress = 48,
+			curios = sprite_curio{
+				x = 0.5, y = -2.5,
+				r = 240, id = "ringplanet2",
 			},
 		},
 	}, _make_dust_spawner(6)),
