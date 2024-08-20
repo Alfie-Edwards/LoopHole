@@ -115,13 +115,15 @@ function _make_curio_spawner_scene(bg_col, plan, dust_spawner)
 			local results = {}
 			local current_idx = this.state.plan_idx
 
+			local did_make = false  -- TODO #cleanup
 			while current_idx <= #this.plan do
 				if not this.state.completed_indices[current_idx] then
 					local candidate = this.plan[current_idx]
 					if progress <= candidate.progress then
-						break
+						break  -- assuming curios are sorted by progress, we've hit the limit
 					end
 
+					did_make = true
 					this.state.completed_indices[current_idx] = true
 
 					-- deepcopy the curio to make it easy to reset the scene and
@@ -143,7 +145,9 @@ function _make_curio_spawner_scene(bg_col, plan, dust_spawner)
 				current_idx += 1
 			end
 
-			this.state.plan_idx = (current_idx - 1)
+			local adj = current_idx
+			if (did_make) adj -= 1
+			this.state.plan_idx = adj
 			-- merge all the individual results lists into one
 			local res = {}
 			for _, ls in ipairs(results) do
@@ -886,8 +890,9 @@ timeline = {
 		{
 			progress = 32,
 			curios = sprite_curio{
-				x = 2, y = -48,
-				r = 38, id = "ringplanet2",
+				x = -30, y = 18,
+				r = 100, id = "ringplanet2",
+				flip_x = false, flip_y = false,
 			},
 		},
 	}, _make_dust_spawner(6)),

@@ -1,5 +1,5 @@
 dead_screen = {
-	input_cooldown = 0.25, -- seconds before accepting new input to restart the game
+	input_cooldown = 1, -- seconds before accepting new input to restart the game
 
 	state_was_holding_btn_4 = false,
 	state_was_holding_btn_5 = false,
