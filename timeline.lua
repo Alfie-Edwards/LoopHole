@@ -501,7 +501,7 @@ timeline = {
 					r = 38, id = "cell",
 				}),
 			},
-		}, _make_dust_spawner(6)),
+		}, _make_dust_spawner(1)),
 	_make_wipe_scene(0, 10),
 	_make_curio_spawner_scene(8,
 		{
