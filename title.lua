@@ -66,14 +66,15 @@ function draw_title_screen(t_started)
 	column("mouse", "MOVE", column_separation, 96)
 
 	-- prompt
+	local prompt = "🅾️/❎ TO START..."
 	color(1)
-	print_centred("🅾️/❎ TO START...", 111)
+	print_centred(prompt, 111)
 	if strobe(0.66) then
 		color(7)
 	else
 		color(6)
 	end
-	print_centred("🅾️/❎ TO START...", 110)
+	print_centred(prompt, 110)
 end
 
 function cleanup_title_screen(t_started)

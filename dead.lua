@@ -70,6 +70,9 @@ function print_score()
 		                      {cycles, 10, 9},
 		                      {" "..time_word.."!", 7, 1}},
 		                     70)
+	else
+		color(6)
+		print_centred("...BUT IS THERE MORE TO SEE?", 80)
 	end
 end
 
@@ -85,23 +88,25 @@ function draw_dead_screen(t_started)
 	dead_screen.state.dust_spawner.draw(dead_screen.state.dust_spawner)
 
 	-- message
+	local dead_txt = "ur dead!!!"
 	color(2)
-	print_centred("ur dead!!!", 41)
+	print_centred(dead_txt, 41)
 	color(8)
-	print_centred("ur dead!!!", 40)
+	print_centred(dead_txt, 40)
 
 	-- score
 	print_score()
 
 	-- restart prompt
+	local prompt = "🅾️/❎ TO TRY AGAIN..."
 	color(1)
-	print_centred("🅾️/❎ TO TRY AGAIN...", 101)
+	print_centred(prompt, 101)
 	if strobe(0.66) then
 		color(7)
 	else
 		color(6)
 	end
-	print_centred("🅾️/❎ TO TRY AGAIN...", 100)
+	print_centred(prompt, 100)
 end
 
 function cleanup_dead_screen(t_started)
