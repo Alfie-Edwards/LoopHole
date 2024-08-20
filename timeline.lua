@@ -160,7 +160,8 @@ function _make_wipe_scene(bg_col, duration)
 			palt(9, false)
 			cls(9)
 
-			circfill(0, 0, 192 / ((191 * (duration - progress) / duration) + 1), this.background_colour)
+			-- circfill(0, 0, 192 / ((191 * (duration - progress) / duration) + 1), this.background_colour)
+			circfill(0, 0, 192 / ((191 * (duration - progress) / duration) + 1), 3)
 
 			-- TODO: UGLY
 			this.other = next_bg_col
@@ -444,7 +445,7 @@ timeline = {
 				}),
 			},
 		}, _make_dust_spawner(6)),
-	_make_wipe_scene(0, 10), -- red wipe
+	_make_wipe_scene(0, 10),
 	_make_curio_spawner_scene(8,
 		{
 			{
@@ -534,7 +535,8 @@ timeline = {
 				})
 			},
 		}, _make_dust_spawner(8)),
-	_make_curio_spawner_scene(8,
+	_make_wipe_scene(8, 10),
+	_make_curio_spawner_scene(2,
 		{
 			{
 				progress = 0,
@@ -599,8 +601,8 @@ timeline = {
 					r = 38, id = "bacteria",
 				}),
 			},
-		}, _make_dust_spawner(8)),
-	_make_curio_spawner_scene(8,
+		}, _make_dust_spawner(4)),
+	_make_curio_spawner_scene(2,
 		{
 			{
 				progress = 0,
@@ -665,8 +667,8 @@ timeline = {
 					r = 38, id = "virus7",
 				}),
 			},
-		}, _make_dust_spawner(8)),
-	_make_sprite_zoom_scene(8, sprite_index.virus4, 15, 32, -0.5, -0.5),
+		}, _make_dust_spawner(4)),
+	_make_sprite_zoom_scene(2, sprite_index.virus4, 15, 32, -0.5, -0.5),
 	_make_curio_spawner_scene(7,
 	{
 		{
@@ -806,7 +808,7 @@ timeline = {
 				r = 38, id = "nebula",
 			}),
 		},
-	}, _make_dust_spawner(1)),
+	}, _make_dust_spawner(6)),
 }
 
 function scene(idx)

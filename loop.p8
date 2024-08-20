@@ -37,7 +37,8 @@ function reset_pal()
 	if current_screen == screens.gameplay then
 		o_col = get_current_scene().other
 		if o_col ~= nil then
-			pal(bg_col, o_col, 1)
+			-- pal(bg_col, o_col, 1)
+			pal(3, o_col, 1)
 		end
 	end
 end
