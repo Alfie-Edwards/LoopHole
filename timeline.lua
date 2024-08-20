@@ -261,6 +261,38 @@ function vein_curio(config)
 	add(curios, inf_line_curio({a = config.a, dist = dists[1], r = config.line_r * config.scale, color = 8}))
 	add(curios, inf_line_curio({a = config.a, dist = dists[3], r = config.line_r * config.scale, color = 8}))
 
+	-- look at sprite_r & dist:
+	--     if dist == 0, then sprite_r has to be < loop_max_r
+	--     if dist <= sprite_r, then it's a partial offset
+	--         loop *probably* can't dodge to the side, so prob can just make
+	--         sure loop can surround: dist + sprite_r < loop_max_r
+	--     if dist > sprite_r, then it's a full offset
+	--         make sure either:
+	--             can surround: dist + sprite_r < loop_max_r
+	--             can dodge to the side: dist - sprite_r > loop_min_r
+	--                 ...and lines are spaced far enough to accommodate too.
+	--                 note that this would imply dodging directly between one
+	--                 cell and the wall, but could dodge in the midpoint of
+	--                 two cells and the wall and have a bit more space. just
+	--                 deal with the one cell + wall case though, since it's
+	--                 only level 2 and ensuring the one cell case allows the
+	--                 other anyway
+	--
+	-- probably also need to consider spacing; an easy thing would just be to
+	-- make it such that the non-centre cells never actually matter
+	--
+	-- also need to consider the lack of mobility at smaller sizes (prob just
+	-- in the 'full offset' case
+	--
+	-- to adjust, rearrange:
+	--
+	-- if dist <= sprite_r, then sprite_r < loop_max_r - dist
+	--     so sprite_r = max(sprite_r, loop_max_r - config.dist)
+	-- if dist > sprite_r, then there's the two cases
+	--     so go with whatever's the smaller change from sprite_r doing:
+	--         sprite_r = max(sprite_r, loop_max_r - config.dist)
+	--         sprite_r = min(sprite_r, dist - loop_min_r)
+
 	local sprite_r = (dists[3] - dists[1] - 4 * spacing) / 2
 	local sa, ca = sin(config.a), cos(config.a)
 
