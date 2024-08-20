@@ -892,6 +892,25 @@ timeline = {
 		},
 	}, _make_dust_spawner(7)),
 	_make_wipe_scene(12, 10),
+	{  -- play splash sound
+		background_colour=-4,
+		has_finished=function(this, progress)
+			return this.state.played
+		end,
+		update=function(this, progress)
+			if not this.state.played then
+				sfx(17)
+				this.state.played = true
+			end
+			return {}
+		end,
+		end_scene=function(this)
+			this.state.played = false
+		end,
+		state = {
+			played = false,
+		},
+	},
 	_make_curio_spawner_scene(-4, {
 		{
 			progress = 0,
@@ -945,7 +964,9 @@ function draw_background(idx, progress)
 	if current.draw_background == nil then
 		-- no background drawer, just draw a colour
 		assert(current.background_colour ~= nil)
-		cls(current.background_colour)
+		reset_pal()
+		palt(9, false)
+		cls(9)
 	else
 		-- have a background drawer, call it
 		local next_bg_col = scene(idx + 1).background_colour
