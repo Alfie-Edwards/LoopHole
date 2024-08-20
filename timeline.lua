@@ -767,6 +767,14 @@ timeline = {
 			}
 		},
 		{
+			progress = 12,
+			curios = stick_and_ball_curio{
+				x = 9, y = 6, r = 12, scale = 0.26,
+				balls = ball_ring(2, 12),
+				sticks = sticks_open_loop(2),
+			}
+		},
+		{
 			progress = 15,
 			curios = stick_and_ball_curio{
 				x = 12, y = -12, r = 12, scale = 0.28,
@@ -791,11 +799,43 @@ timeline = {
 			}
 		},
 		{
+			progress = 27,
+			curios = stick_and_ball_curio{
+				x = 4, y = -4, r = 12, scale = 0.38,
+				balls = ball_ring(6, 12),
+				sticks = sticks_closed_loop(6),
+			}
+		},
+		{
 			progress = 30,
 			curios = stick_and_ball_curio{
 				x = 0, y = 0, r = 12, scale = 0.5,
 				balls = ball_ring(5, 12),
 				sticks = sticks_open_loop(5),
+			}
+		},
+		{
+			progress = 32,
+			curios = stick_and_ball_curio{
+				x = -12, y = -5, r = 12, scale = 0.6,
+				balls = ball_ring(7, 12),
+				sticks = sticks_closed_loop(7),
+			}
+		},
+		{
+			progress = 35,
+			curios = stick_and_ball_curio{
+				x = 0, y = -14, r = 12, scale = 0.7,
+				balls = ball_ring(8, 12),
+				sticks = sticks_closed_loop(8),
+			}
+		},
+		{
+			progress = 37,
+			curios = stick_and_ball_curio{
+				x = 0, y = 0, r = 12, scale = 0.8,
+				balls = ball_ring(3, 12),
+				sticks = sticks_closed_loop(3),
 			}
 		},
 	}, _make_dust_spawner(6)),
