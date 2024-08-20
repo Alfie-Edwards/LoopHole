@@ -485,6 +485,13 @@ function draw_health(x_offset, y_offset)
 		health_str = health_str.."♥\n"
 	end
 	print(health_str, (4 - 64) + cam.x + x_offset, (4 - 64) + cam.y + y_offset, 8)
+
+	local missing_health_y = (#health_str / 2) * 6
+	local missing_health_str = ""
+	for i = loop.health, loop_max_health - 1 do
+		missing_health_str = missing_health_str.."♥\n"
+	end
+	print(missing_health_str, (4 - 64) + cam.x + x_offset, (4 - 64) + missing_health_y + cam.y + y_offset, 2)
 end
 
 function draw_gameplay_screen(t_started)
