@@ -1,13 +1,11 @@
 title_screen = {
-	state = {
-		dust_spawner = nil,
-	}
+	state_dust_spawner = nil,
 }
 
 function init_title_screen(t_started)
 	camera(-64, -64) -- offset needed for dust spawner
 	music(1)
-	title_screen.state.dust_spawner = _make_dust_spawner(7)
+	title_screen.state_dust_spawner = _make_dust_spawner(7)
 end
 
 function update_title_screen(t_started)
@@ -15,9 +13,9 @@ function update_title_screen(t_started)
 		return screens.gameplay
 	end
 
-	-- assert(title_screen.state.dust_spawner ~= nil)
-	title_screen.state.dust_spawner.update(title_screen.state.dust_spawner)
-	title_screen.state.dust_spawner.maybe_spawn(title_screen.state.dust_spawner)
+	-- assert(title_screen.state_dust_spawner ~= nil)
+	title_screen.state_dust_spawner.update(title_screen.state_dust_spawner)
+	title_screen.state_dust_spawner.maybe_spawn(title_screen.state_dust_spawner)
 
 	return screens.title
 end
@@ -33,8 +31,8 @@ function draw_title_screen(t_started)
 	cls(0)
 
 	-- dust
-	-- assert(title_screen.state.dust_spawner ~= nil)
-	title_screen.state.dust_spawner.draw(title_screen.state.dust_spawner)
+	-- assert(title_screen.state_dust_spawner ~= nil)
+	title_screen.state_dust_spawner.draw(title_screen.state_dust_spawner)
 
 	-- logo
 	local logo_idx = 200
@@ -80,5 +78,5 @@ end
 function cleanup_title_screen(t_started)
 	music(-1)
 
-	title_screen.state.dust_spawner = nil
+	title_screen.state_dust_spawner = nil
 end
