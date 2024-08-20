@@ -444,66 +444,66 @@ timeline = {
 		{
 			{
 				progress = 0,
-				curios = sprite_curio({
+				curios = sprite_curio{
 					x = 2, y = 2,
 					r = 6, id = "cell2",
-				}),
+				},
 			},
 			{
 				progress = 10,
-				curios = sprite_curio({
+				curios = sprite_curio{
 					x = -3, y = 4,
 					r = 11, id = "cell",
-				}),
+				},
 			},
 			{
 				progress = 14,
-				curios = sprite_curio({
+				curios = sprite_curio{
 					x = -4, y = -3,
 					r = 13, id = "cell3",
-				}),
+				},
 			},
 			{
 				progress = 20,
-				curios = sprite_curio({
+				curios = sprite_curio{
 					x = 6, y = -4,
 					r = 16, id = "cell3",
-				}),
+				},
 			},
 			{
 				progress = 36,
-				curios = sprite_curio({
+				curios = sprite_curio{
 					x = 0, y = 1,
 					r = 24, id = "cell",
-				}),
+				},
 			},
 			{
 				progress = 48,
-				curios = sprite_curio({
+				curios = sprite_curio{
 					x = -45, y = -30,
 					r = 30, id = "cell2",
-				}),
+				},
 			},
 			{
 				progress = 54,
-				curios = sprite_curio({
+				curios = sprite_curio{
 					x = 40, y = -17,
 					r = 33, id = "cell3",
-				}),
+				},
 			},
 			{
 				progress = 58,
-				curios = sprite_curio({
+				curios = sprite_curio{
 					x = 4, y = -2,
 					r = 35, id = "cell",
-				}),
+				},
 			},
 			{
 				progress = 64,
-				curios = sprite_curio({
+				curios = sprite_curio{
 					x = 2, y = -48,
 					r = 38, id = "cell",
-				}),
+				},
 			},
 		}, _make_dust_spawner(1)),
 	_make_wipe_scene(0, 10),
@@ -511,86 +511,86 @@ timeline = {
 		{
 			{
 				progress = 0,
-				curios = sprite_curio({
+				curios = sprite_curio{
 					x = -16, y = -16,
 					r = 8, id = "bloodcell",
-				}),
+				},
 			},
 			{
 				progress = 4,
-				curios = sprite_curio({
+				curios = sprite_curio{
 					x = -8, y = -8,
 					r = 10, id = "bloodcell2",
-				}),
+				},
 			},
 			{
 				progress = 6,
-				curios = sprite_curio({
+				curios = sprite_curio{
 					x = 0, y = 0,
 					r = 11, id = "bloodcell",
-				}),
+				},
 			},
 			{
 				progress = 8,
-				curios = vein_curio({
+				curios = vein_curio{
 					dist = 64,
 					r = 10,
 					line_r = 1,
 					scale = 1,
-				})
+				}
 			},
 			{
 				progress = 10,
-				curios = sprite_curio({
+				curios = sprite_curio{
 					x = 8, y = 8,
 					r = 13, id = "bloodcell3",
-				}),
+				},
 			},
 			{
 				progress = 14,
-				curios = vein_curio({
+				curios = vein_curio{
 					dist = 64,
 					r = 10,
 					line_r = 1,
 					scale = 1.5,
-				})
+				}
 			},
 			{
 				progress = 18,
-				curios = sprite_curio({
+				curios = sprite_curio{
 					x = 16, y = 16,
 					r = 17, id = "bloodcell2",
-				}),
+				},
 			},
 			{
 				progress = 22,
-				curios = sprite_curio({
+				curios = sprite_curio{
 					x = -53, y = 16,
 					r = 19, id = "bloodcell2",
-				}),
+				},
 			},
 			{
 				progress = 28,
-				curios = sprite_curio({
+				curios = sprite_curio{
 					x = -53, y = -4,
 					r = 20, id = "bloodcell",
-				}),
+				},
 			},
 			{
 				progress = 32,
-				curios = sprite_curio({
+				curios = sprite_curio{
 					x = -4, y = 3,
 					r = 22, id = "bloodcell3",
-				}),
+				},
 			},
 			{
 				progress = 36,
-				curios = vein_curio({
+				curios = vein_curio{
 					dist = 0,
 					r = 10,
 					line_r = 1,
 					scale = 4.85,
-				})
+				}
 			},
 		}, _make_dust_spawner(8)),
 	_make_wipe_scene(8, 10),
@@ -598,73 +598,73 @@ timeline = {
 		{
 			for_progress(0, 8, 0.3,
 				function(i, progress)
-					return sprite_curio({
+					return sprite_curio{
 						a = rnd(1),
 						dist = 6 + progress,
 						r = 6 + progress,
 						id = sprite_groups.bacteria[1 + (i % 3)],
-					})
+					}
 				end
 			),
 			for_progress(13, 15, 0.2,
 				function(i, progress)
-					return sprite_curio({
+					return sprite_curio{
 						a = rnd(1),
 						dist = 6 + progress * 1.5,
 						r = 6 + progress,
 						id = sprite_groups.bacteria[1 + (i % 3)],
-					})
+					}
 				end
 			),
 			{
 				progress = 18,
-				curios = sprite_curio({
+				curios = sprite_curio{
 					x = 0, y = 0,
 					r = 16, id = "bacteria",
-				}),
+				},
 			},
 			for_progress(22, 25, 0.2,
 				function(i, progress)
-					return sprite_curio({
+					return sprite_curio{
 						a = rnd(1),
 						dist = 6 + progress * 1.5,
 						r = 6 + progress,
 						id = sprite_groups.bacteria[1 + (i % 3)],
-					})
+					}
 				end
 			),
 			{
 				progress = 28,
-				curios = sprite_curio({
+				curios = sprite_curio{
 					x = 0, y = 0,
 					r = 34, id = "bacteria",
-				}),
+				},
 			},
 			for_progress(31, 33, 0.2,
 				function(i, progress)
-					return sprite_curio({
+					return sprite_curio{
 						a = rnd(1),
 						dist = 6 + progress * 1.3,
 						r = 6 + progress,
 						id = sprite_groups.bacteria[1 + (i % 3)],
-					})
+					}
 				end
 			),
 			{
 				progress = 36,
-				curios = sprite_curio({
+				curios = sprite_curio{
 					x = 0, y = 0,
 					r = 36, id = "bacteria",
-				}),
+				},
 			},
 			for_progress(40, 55, 0.7,
 				function(i, progress)
-					return sprite_curio({
+					return sprite_curio{
 						a = rnd(1),
 						dist = 16 + progress * 1.5,
 						r = 6 + progress * 1.5,
 						id = sprite_groups.bacteria[1 + (i % 3)],
-					})
+					}
 				end
 			),
 		}, _make_dust_spawner(6)),
@@ -676,22 +676,22 @@ timeline = {
 					if i % 3 == 0 then
 						dist = 0
 					end
-					return sprite_curio({
+					return sprite_curio{
 						a = rnd(1),
 						dist = dist,
 						r = 6 + progress * 0.9,
 						id = sprite_groups.virus[1 + (i % 7)],
-					})
+					}
 				end
 			),
 			for_progress(40, 55, 1.5,
 				function(i, progress)
-					return sprite_curio({
+					return sprite_curio{
 						a = rnd(1),
 						dist = 16 + progress * 1.5,
 						r = 6 + progress * 1.5,
 						id = sprite_groups.virus[1 + (i % 7)],
-					})
+					}
 				end
 			),
 		}, _make_dust_spawner(6)),
@@ -701,36 +701,36 @@ timeline = {
 		for_progress(0, 10, 0.5,
 			function(i, progress)
 				return {
-					sprite_curio({
+					sprite_curio{
 						a = progress * 0.2 + 0.25,
 						dist = 6 + progress * 1.3,
 						r = 6 + progress,
 						id = sprite_groups.atom[1+rnd(4)\1],
-					}),
-					sprite_curio({
+					},
+					sprite_curio{
 						a = progress * 0.2 + 0.75,
 						dist = 6 + progress * 1.3,
 						r = 6 + progress,
 						id = sprite_groups.atom[1+rnd(4)\1],
-					})
+					}
 				}
 			end
 		),
 		for_progress(15, 25, 0.5,
 			function(i, progress)
 				return {
-					sprite_curio({
+					sprite_curio{
 						a = progress * 0.2 + 0.25,
 						dist = 6 + progress * 1.5,
 						r = 6 + progress,
 						id = sprite_groups.atom[1+rnd(4)\1],
-					}),
-					sprite_curio({
+					},
+					sprite_curio{
 						a = progress * 0.2 + 0.75,
 						dist = 6 + progress * 1.5,
 						r = 6 + progress,
 						id = sprite_groups.atom[1+rnd(4)\1],
-					})
+					}
 				}
 			end
 		),
@@ -739,60 +739,60 @@ timeline = {
 	{
 		{
 			progress = 0,
-			curios = stick_and_ball_curio({
+			curios = stick_and_ball_curio{
 				x = 0, y = 0, r = 12, scale = 0.16,
 				ball_r = 8,
 				balls = ball_ring(4, 12),
 				sticks = {{1, 2}, {2, 4}, {3, 4}},
-			})
+			}
 		},
 		{
 			progress = 5,
-			curios = stick_and_ball_curio({
+			curios = stick_and_ball_curio{
 				x = 0, y = 0, r = 12, scale = 0.2,
 				balls = ball_ring(3, 12),
 				sticks = sticks_open_loop(3),
-			})
+			}
 		},
 		{
 			progress = 10,
-			curios = stick_and_ball_curio({
+			curios = stick_and_ball_curio{
 				x = -16, y = 0, r = 12, scale = 0.24,
 				balls = ball_ring(2, 12),
 				sticks = sticks_open_loop(2),
-			})
+			}
 		},
 		{
 			progress = 15,
-			curios = stick_and_ball_curio({
+			curios = stick_and_ball_curio{
 				x = 12, y = -12, r = 12, scale = 0.28,
 				balls = ball_ring(3, 12),
 				sticks = sticks_open_loop(3),
-			})
+			}
 		},
 		{
 			progress = 20,
-			curios = stick_and_ball_curio({
+			curios = stick_and_ball_curio{
 				x = 0, y = 0, r = 12, scale = 0.32,
 				balls = ball_ring(3, 12),
 				sticks = sticks_closed_loop(3),
-			})
+			}
 		},
 		{
 			progress = 25,
-			curios = stick_and_ball_curio({
+			curios = stick_and_ball_curio{
 				x = -12, y = 12, r = 12, scale = 0.36,
 				balls = ball_ring(4, 12),
 				sticks = {{1, 2}, {2, 4}, {3, 4}, {1, 3}},
-			})
+			}
 		},
 		{
 			progress = 30,
-			curios = stick_and_ball_curio({
+			curios = stick_and_ball_curio{
 				x = 0, y = 0, r = 12, scale = 0.5,
 				balls = ball_ring(5, 12),
 				sticks = sticks_open_loop(5),
-			})
+			}
 		},
 	}, _make_dust_spawner(6)),
 	_make_sprite_zoom_scene(7, sprite_index.atom2, 32, 10, -0.5, -0.5),
@@ -800,83 +800,83 @@ timeline = {
 	{
 		{
 			progress = 0,
-			curios = sprite_curio({
+			curios = sprite_curio{
 				x = 2, y = 2,
 				r = 6, id = "nebula",
-			}),
+			},
 		},
 		{
 			progress = 10,
-			curios = sprite_curio({
+			curios = sprite_curio{
 				x = -3, y = 4,
 				r = 11, id = "nebula2",
-			}),
+			},
 		},
 		{
 			progress = 14,
-			curios = sprite_curio({
+			curios = sprite_curio{
 				x = -4, y = -3,
 				r = 13, id = "galaxy",
-			}),
+			},
 		},
 		{
 			progress = 20,
-			curios = sprite_curio({
+			curios = sprite_curio{
 				x = 6, y = -4,
 				r = 16, id = "galaxy2",
-			}),
+			},
 		},
 		{
 			progress = 36,
-			curios = sprite_curio({
+			curios = sprite_curio{
 				x = 0, y = 1,
 				r = 24, id = "ringplanet",
-			}),
+			},
 		},
 		{
 			progress = 48,
-			curios = sprite_curio({
+			curios = sprite_curio{
 				x = -45, y = -30,
 				r = 30, id = "planet",
-			}),
+			},
 		},
 		{
 			progress = 54,
-			curios = sprite_curio({
+			curios = sprite_curio{
 				x = 40, y = -17,
 				r = 33, id = "planet2",
-			}),
+			},
 		},
 		{
 			progress = 58,
-			curios = sprite_curio({
+			curios = sprite_curio{
 				x = 4, y = -2,
 				r = 35, id = "planet3",
-			}),
+			},
 		},
 		{
 			progress = 64,
-			curios = sprite_curio({
+			curios = sprite_curio{
 				x = 2, y = -48,
 				r = 38, id = "ringplanet2",
-			}),
+			},
 		},
 	}, _make_dust_spawner(6)),
 	_make_sprite_zoom_scene(0, sprite_index.earth, 32),
 	_make_curio_spawner_scene(12, {
 		{
 			progress = 0,
-			curios = sprite_curio({
+			curios = sprite_curio{
 				x = 12, y = 12,
 				r = 16, id = "cloud",
-			})
+			}
 		},
 		{
 			progress = 5,
-			curios = sprite_curio({
+			curios = sprite_curio{
 				x = 0, y = 0,
 				r = 16, id = "cloud2",
-			})
+			}
 		},
 	}, _make_dust_spawner(7)),
 	_make_wipe_scene(12, 10),
@@ -904,40 +904,40 @@ timeline = {
 	_make_curio_spawner_scene(-4, {
 		{
 			progress = 0,
-			curios = sprite_curio({
+			curios = sprite_curio{
 				x = 26, y = 12,
 				r = 24, id = "plasticbag",
-			})
+			}
 		},
 		{
 			progress = 2,
-			curios = sprite_curio({
+			curios = sprite_curio{
 				x = -30, y = -30,
 				r = 12, id = "plastic",
-			})
+			}
 		},
 		{
 			progress = 7,
-			curios = sprite_curio({
+			curios = sprite_curio{
 				x = 5, y = 5,
 				r = 12, id = "cd",
-			})
+			}
 		},
 		{
 			progress = 9,
-			curios = sprite_curio({
+			curios = sprite_curio{
 				x = -5, y = -5,
 				r = 12, id = "can_spilled",
 				flip_y = false,
-			})
+			}
 		},
 
 		{
 			progress = 24,
-			curios = sprite_curio({
+			curios = sprite_curio{
 				x = 0, y = 0,
 				r = 32, id = "plastic2",
-			})
+			}
 		},
 	}, _make_dust_spawner(12)),
 	_make_sprite_zoom_scene(-4, sprite_index.fish, 32, z_start, -13),
