@@ -5,12 +5,13 @@ dead_screen = {
 			btn_4 = false,
 			btn_5 = false,
 			mouse = false,
-		}
+		},
+		dust_spawner = nil,
 	}
 }
 
 function init_dead_screen(t_started)
-	camera()
+	camera(-64, -64) -- offset needed for dust spawner
 	music(3)
 
 	dead_screen.state.was_holding = {
@@ -18,6 +19,7 @@ function init_dead_screen(t_started)
 		btn_5 = btn(5),
 		mouse = mouse.pressed,
 	}
+	dead_screen.state.dust_spawner = _make_dust_spawner(1)
 end
 
 function started_new_input(t_started)
@@ -49,6 +51,10 @@ function update_dead_screen(t_started)
 		return screens.gameplay
 	end
 
+	assert(dead_screen.state.dust_spawner ~= nil)
+	dead_screen.state.dust_spawner.update(dead_screen.state.dust_spawner)
+	dead_screen.state.dust_spawner.maybe_spawn(dead_screen.state.dust_spawner)
+
 	return screens.dead
 end
 
@@ -76,26 +82,34 @@ function print_score()
 end
 
 function draw_dead_screen(t_started)
+	-- palette
 	pal()
 	pal(3, -13, 1)
 	pal(9, -7, 1)
 	cls(0)
 
+	-- dust
+	assert(dead_screen.state.dust_spawner ~= nil)
+	dead_screen.state.dust_spawner.draw(dead_screen.state.dust_spawner)
+
+	-- message
 	color(2)
 	print_centred("ur dead!!!", 41)
 	color(8)
 	print_centred("ur dead!!!", 40)
 
+	-- score
 	print_score()
 
+	-- restart prompt
 	color(1)
-	print_centred("🅾️/❎ TO RESTART...", 101)
+	print_centred("🅾️/❎ TO TRY AGAIN...", 101)
 	if strobe(0.66) then
 		color(7)
 	else
 		color(6)
 	end
-	print_centred("🅾️/❎ TO RESTART...", 100)
+	print_centred("🅾️/❎ TO TRY AGAIN...", 100)
 end
 
 function cleanup_dead_screen(t_started)
@@ -106,4 +120,5 @@ function cleanup_dead_screen(t_started)
 		btn_5 = false,
 		mouse = false,
 	}
+	dead_screen.state.dust_spawner = nil
 end
