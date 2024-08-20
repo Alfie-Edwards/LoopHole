@@ -802,65 +802,111 @@ timeline = {
 			progress = 0,
 			curios = sprite_curio{
 				x = 2, y = 2,
-				r = 6, id = "nebula",
+				r = 25, id = "nebula",
 			},
 		},
+		for_progress(3, 8, 1,
+			function(i, progress)
+				return sprite_curio({
+					a = rnd(1),
+					dist = 30 + progress,
+					r = 25 + progress,
+					id = sprite_groups.nebula[1 + (i % 2)],
+				})
+			end
+		),
 		{
-			progress = 10,
+			progress = 11,
 			curios = sprite_curio{
-				x = -3, y = 4,
-				r = 11, id = "nebula2",
+				x = 0, y = 0,
+				r = 30, id = "nebula2",
 			},
 		},
+		for_progress(14, 19, 1,
+			function(i, progress)
+				return sprite_curio({
+					a = rnd(1),
+					dist = 30 + progress,
+					r = 25 + progress,
+					id = sprite_groups.nebula[1 + (i % 2)],
+				})
+			end
+		),
 		{
-			progress = 14,
+			progress = 23,
 			curios = sprite_curio{
-				x = -4, y = -3,
-				r = 13, id = "galaxy",
+				x = 0, y = 0,
+				r = 120, id = "nebula2",
 			},
 		},
+	}, _make_dust_spawner(6)),
+	_make_curio_spawner_scene(0,
+	{
+		for_progress(0, 8, 1,
+			function(i, progress)
+				return sprite_curio({
+					a = rnd(1),
+					dist = 40 + progress * 3,
+					r = 25 + progress * 3,
+					id = sprite_groups.galaxy[1 + (i % 2)],
+				})
+			end
+		),
+	}, _make_dust_spawner(6)),
+	_make_curio_spawner_scene(0,
+	{
 		{
-			progress = 20,
-			curios = sprite_curio{
-				x = 6, y = -4,
-				r = 16, id = "galaxy2",
-			},
-		},
-		{
-			progress = 36,
+			progress = 0,
 			curios = sprite_curio{
 				x = 0, y = 1,
 				r = 24, id = "ringplanet",
 			},
 		},
 		{
-			progress = 48,
+			progress = 12,
 			curios = sprite_curio{
 				x = -45, y = -30,
 				r = 30, id = "planet",
 			},
 		},
 		{
-			progress = 54,
+			progress = 22,
 			curios = sprite_curio{
 				x = 40, y = -17,
 				r = 33, id = "planet2",
 			},
 		},
 		{
-			progress = 58,
+			progress = 26,
 			curios = sprite_curio{
 				x = 4, y = -2,
 				r = 35, id = "planet3",
 			},
 		},
 		{
-			progress = 64,
+			progress = 32,
 			curios = sprite_curio{
 				x = 2, y = -48,
 				r = 38, id = "ringplanet2",
 			},
 		},
+	}, _make_dust_spawner(6)),
+	_make_curio_spawner_scene(0,
+	{
+		for_progress(0, 12, 0.8,
+			function(i, progress)
+				local dist = 30 + progress * 3
+				if i % 5 == 0 then
+					dist = 0
+				end
+				return sprite_curio({
+					a = rnd(1),
+					dist = dist,
+					r = 10 + progress * 0.5,
+					id = sprite_groups.meteor[1 + (i % 2)],
+				})
+			end
+		),
 	}, _make_dust_spawner(6)),
 	_make_sprite_zoom_scene(0, sprite_index.earth, 32),
 	_make_curio_spawner_scene(12, {
