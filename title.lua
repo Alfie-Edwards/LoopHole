@@ -11,11 +11,11 @@ function init_title_screen(t_started)
 end
 
 function update_title_screen(t_started)
-	if any_input() then
+	if btn(4) or btn(5) then
 		return screens.gameplay
 	end
 
-	assert(title_screen.state.dust_spawner ~= nil)
+	-- assert(title_screen.state.dust_spawner ~= nil)
 	title_screen.state.dust_spawner.update(title_screen.state.dust_spawner)
 	title_screen.state.dust_spawner.maybe_spawn(title_screen.state.dust_spawner)
 
@@ -33,7 +33,7 @@ function draw_title_screen(t_started)
 	cls(0)
 
 	-- dust
-	assert(title_screen.state.dust_spawner ~= nil)
+	-- assert(title_screen.state.dust_spawner ~= nil)
 	title_screen.state.dust_spawner.draw(title_screen.state.dust_spawner)
 
 	-- logo
@@ -45,8 +45,7 @@ function draw_title_screen(t_started)
 
 	local logo_x = 64 - (logo_sw * 4)
 
-	local cam_x = peek2(0x5f28)
-	local cam_y = peek2(0x5f2a)
+	local cam_x, cam_y = get_true_cam()
 
 	logo_x += cam_x
 	logo_y += cam_y
@@ -55,8 +54,6 @@ function draw_title_screen(t_started)
 
 	-- controls
 	function column(text1, text2, separation, y)
-		local cam_x = peek2(0x5f28)
-		local cam_y = peek2(0x5f2a)
 		local x1 = 64 - (separation/2 + lnpx(text1))
 		print(text1, x1 + cam_x, y + cam_y)
 		local x2 = 64 + separation/2

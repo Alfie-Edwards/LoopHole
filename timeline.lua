@@ -275,6 +275,7 @@ end
 -- line_r: scaling factor on walls (which also affects size of cells)
 function vein_curio(config)
 	local curios = {}
+	if (config.a == nil) config.a = rnd(1)
 
 	-- spacing between cell & wall
 	local spacing = (config.line_r * config.scale)
@@ -304,6 +305,9 @@ function vein_curio(config)
 end
 
 function stick_and_ball_curio(config)
+	if (config.stick_color == nil) config.stick_color = 6
+	if (config.ball_r == nil) config.ball_r = 4
+	if (config.stick_r == nil) config.stick_r = 2
 	local curios = {}
 	local max_d = 0
 	for i, ball in ipairs(config.balls) do
@@ -529,7 +533,6 @@ timeline = {
 			{
 				progress = 8,
 				curios = vein_curio({
-					a = rnd(1),
 					dist = 64,
 					r = 10,
 					line_r = 1,
@@ -546,7 +549,6 @@ timeline = {
 			{
 				progress = 14,
 				curios = vein_curio({
-					a = rnd(1),
 					dist = 64,
 					r = 10,
 					line_r = 1,
@@ -584,7 +586,6 @@ timeline = {
 			{
 				progress = 36,
 				curios = vein_curio({
-					a = rnd(1),
 					dist = 0,
 					r = 10,
 					line_r = 1,
@@ -601,7 +602,7 @@ timeline = {
 						a = rnd(1),
 						dist = 6 + progress,
 						r = 6 + progress,
-						id = sprite_groups["bacteria"][1 + (i % 3)],
+						id = sprite_groups.bacteria[1 + (i % 3)],
 					})
 				end
 			),
@@ -611,7 +612,7 @@ timeline = {
 						a = rnd(1),
 						dist = 6 + progress * 1.5,
 						r = 6 + progress,
-						id = sprite_groups["bacteria"][1 + (i % 3)],
+						id = sprite_groups.bacteria[1 + (i % 3)],
 					})
 				end
 			),
@@ -628,7 +629,7 @@ timeline = {
 						a = rnd(1),
 						dist = 6 + progress * 1.5,
 						r = 6 + progress,
-						id = sprite_groups["bacteria"][1 + (i % 3)],
+						id = sprite_groups.bacteria[1 + (i % 3)],
 					})
 				end
 			),
@@ -645,7 +646,7 @@ timeline = {
 						a = rnd(1),
 						dist = 6 + progress * 1.3,
 						r = 6 + progress,
-						id = sprite_groups["bacteria"][1 + (i % 3)],
+						id = sprite_groups.bacteria[1 + (i % 3)],
 					})
 				end
 			),
@@ -662,7 +663,7 @@ timeline = {
 						a = rnd(1),
 						dist = 16 + progress * 1.5,
 						r = 6 + progress * 1.5,
-						id = sprite_groups["bacteria"][1 + (i % 3)],
+						id = sprite_groups.bacteria[1 + (i % 3)],
 					})
 				end
 			),
@@ -679,7 +680,7 @@ timeline = {
 						a = rnd(1),
 						dist = dist,
 						r = 6 + progress,
-						id = sprite_groups["virus"][1 + (i % 7)],
+						id = sprite_groups.virus[1 + (i % 7)],
 					})
 				end
 			),
@@ -689,7 +690,7 @@ timeline = {
 						a = rnd(1),
 						dist = 16 + progress * 1.5,
 						r = 6 + progress * 1.5,
-						id = sprite_groups["virus"][1 + (i % 7)],
+						id = sprite_groups.virus[1 + (i % 7)],
 					})
 				end
 			),
@@ -740,8 +741,7 @@ timeline = {
 			progress = 0,
 			curios = stick_and_ball_curio({
 				x = 0, y = 0, r = 12, scale = 0.16,
-				ball_r = 8, stick_r = 2,
-				stick_color = 6,
+				ball_r = 8,
 				balls = ball_ring(4, 12),
 				sticks = {{1, 2}, {2, 4}, {3, 4}},
 			})
@@ -750,8 +750,6 @@ timeline = {
 			progress = 5,
 			curios = stick_and_ball_curio({
 				x = 0, y = 0, r = 12, scale = 0.2,
-				ball_r = 4, stick_r = 2,
-				stick_color = 6,
 				balls = ball_ring(3, 12),
 				sticks = sticks_open_loop(3),
 			})
@@ -760,8 +758,6 @@ timeline = {
 			progress = 10,
 			curios = stick_and_ball_curio({
 				x = -16, y = 0, r = 12, scale = 0.24,
-				ball_r = 4, stick_r = 2,
-				stick_color = 6,
 				balls = ball_ring(2, 12),
 				sticks = sticks_open_loop(2),
 			})
@@ -770,8 +766,6 @@ timeline = {
 			progress = 15,
 			curios = stick_and_ball_curio({
 				x = 12, y = -12, r = 12, scale = 0.28,
-				ball_r = 4, stick_r = 2,
-				stick_color = 6,
 				balls = ball_ring(3, 12),
 				sticks = sticks_open_loop(3),
 			})
@@ -780,8 +774,6 @@ timeline = {
 			progress = 20,
 			curios = stick_and_ball_curio({
 				x = 0, y = 0, r = 12, scale = 0.32,
-				ball_r = 4, stick_r = 2,
-				stick_color = 6,
 				balls = ball_ring(3, 12),
 				sticks = sticks_closed_loop(3),
 			})
@@ -790,8 +782,6 @@ timeline = {
 			progress = 25,
 			curios = stick_and_ball_curio({
 				x = -12, y = 12, r = 12, scale = 0.36,
-				ball_r = 4, stick_r = 2,
-				stick_color = 6,
 				balls = ball_ring(4, 12),
 				sticks = {{1, 2}, {2, 4}, {3, 4}, {1, 3}},
 			})
@@ -800,8 +790,6 @@ timeline = {
 			progress = 30,
 			curios = stick_and_ball_curio({
 				x = 0, y = 0, r = 12, scale = 0.5,
-				ball_r = 4, stick_r = 2,
-				stick_color = 6,
 				balls = ball_ring(5, 12),
 				sticks = sticks_open_loop(5),
 			})
@@ -895,44 +883,55 @@ timeline = {
 	{  -- play splash sound
 		background_colour=-4,
 		has_finished=function(this, progress)
-			return this.state.played
+			sfx(17)
+			return true
+			-- return this.state.played
 		end,
-		update=function(this, progress)
-			if not this.state.played then
-				sfx(17)
-				this.state.played = true
-			end
-			return {}
-		end,
-		end_scene=function(this)
-			this.state.played = false
-		end,
-		state = {
-			played = false,
-		},
+		-- update=function(this, progress)
+		-- 	if not this.state.played then
+		-- 		sfx(17)
+		-- 		this.state.played = true
+		-- 	end
+		-- 	return {}
+		-- end,
+		-- end_scene=function(this)
+		-- 	this.state.played = false
+		-- end,
+		-- state = {
+		-- 	played = false,
+		-- },
 	},
 	_make_curio_spawner_scene(-4, {
 		{
 			progress = 0,
 			curios = sprite_curio({
-				x = 12, y = 12,
-				r = 16, id = "plasticbag",
+				x = 26, y = 12,
+				r = 24, id = "plasticbag",
 			})
 		},
 		{
-			progress = 8,
+			progress = 2,
 			curios = sprite_curio({
-				x = 0, y = 0,
-				r = 32, id = "plastic3",
+				x = -30, y = -30,
+				r = 12, id = "plastic",
 			})
 		},
 		{
-			progress = 16,
+			progress = 7,
 			curios = sprite_curio({
-				x = 0, y = 0,
-				r = 32, id = "plastic",
+				x = 5, y = 5,
+				r = 12, id = "cd",
 			})
 		},
+		{
+			progress = 9,
+			curios = sprite_curio({
+				x = -5, y = -5,
+				r = 12, id = "can_spilled",
+				flip_y = false,
+			})
+		},
+
 		{
 			progress = 24,
 			curios = sprite_curio({
@@ -963,14 +962,14 @@ function draw_background(idx, progress)
 
 	if current.draw_background == nil then
 		-- no background drawer, just draw a colour
-		assert(current.background_colour ~= nil)
+		-- assert(current.background_colour ~= nil)
 		reset_pal()
 		palt(9, false)
 		cls(9)
 	else
 		-- have a background drawer, call it
 		local next_bg_col = scene(idx + 1).background_colour
-		assert(next_bg_col ~= nil)
+		-- assert(next_bg_col ~= nil)
 		current.draw_background(current, progress, next_bg_col)
 	end
 end
@@ -987,7 +986,7 @@ end
 
 function scene_should_end(idx, progress)
 	local current = scene(idx)
-	assert(current.has_finished ~= nil)
+	-- assert(current.has_finished ~= nil)
 
 	return current.has_finished(current, progress)
 end

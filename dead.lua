@@ -4,7 +4,6 @@ dead_screen = {
 		was_holding = {
 			btn_4 = false,
 			btn_5 = false,
-			mouse = false,
 		},
 		dust_spawner = nil,
 	}
@@ -17,7 +16,6 @@ function init_dead_screen(t_started)
 	dead_screen.state.was_holding = {
 		btn_4 = btn(4),
 		btn_5 = btn(5),
-		mouse = mouse.pressed,
 	}
 	dead_screen.state.dust_spawner = _make_dust_spawner(1)
 end
@@ -37,12 +35,6 @@ function started_new_input(t_started)
 		dead_screen.state.was_holding.btn_5 = btn(5)
 	end
 
-	if (not dead_screen.state.was_holding.mouse) and mouse.pressed then
-		return past_cooldown
-	else
-		dead_screen.state.was_holding.btn_mouse = mouse.pressed
-	end
-
 	return false
 end
 
@@ -51,7 +43,7 @@ function update_dead_screen(t_started)
 		return screens.gameplay
 	end
 
-	assert(dead_screen.state.dust_spawner ~= nil)
+	-- assert(dead_screen.state.dust_spawner ~= nil)
 	dead_screen.state.dust_spawner.update(dead_screen.state.dust_spawner)
 	dead_screen.state.dust_spawner.maybe_spawn(dead_screen.state.dust_spawner)
 
@@ -59,7 +51,7 @@ function update_dead_screen(t_started)
 end
 
 function print_score()
-	assert(seen_obstacle_scenes ~= nil)
+	-- assert(seen_obstacle_scenes ~= nil)
 	local score = max(seen_obstacle_scenes - 1, 0)
 
 	local scale_word = "scale"
@@ -89,7 +81,7 @@ function draw_dead_screen(t_started)
 	cls(0)
 
 	-- dust
-	assert(dead_screen.state.dust_spawner ~= nil)
+	-- assert(dead_screen.state.dust_spawner ~= nil)
 	dead_screen.state.dust_spawner.draw(dead_screen.state.dust_spawner)
 
 	-- message
@@ -118,7 +110,6 @@ function cleanup_dead_screen(t_started)
 	dead_screen.state.was_holding = {
 		btn_4 = false,
 		btn_5 = false,
-		mouse = false,
 	}
 	dead_screen.state.dust_spawner = nil
 end

@@ -14,7 +14,7 @@ function reset_pal()
 	local bg_col = nil
 	if current_screen == screens.gameplay then
 		bg_col = get_current_scene().background_colour
-		assert(bg_col ~= nil)
+		-- assert(bg_col ~= nil)
 	end
 
 	pal()
@@ -105,7 +105,7 @@ function _init()
 
 	current_screen = screens.title
 	t_started_screen = 0
-	assert(current_screen.init ~= nil)
+	-- assert(current_screen.init ~= nil)
 	current_screen.init(t_started_screen)
 end
 
@@ -139,9 +139,9 @@ function init_gameplay_screen(t_started)
 end
 
 function get_current_scene()
-	assert(timeline_idx ~= nil)
+	-- assert(timeline_idx ~= nil)
 	local res = scene(timeline_idx)
-	assert(res ~= nil)
+	-- assert(res ~= nil)
 	return res
 end
 
@@ -164,13 +164,9 @@ function maybe_move_to_screen(new_screen)
 		if (current_screen.cleanup ~= nil) current_screen.cleanup(t_started_screen)
 		current_screen = new_screen
 		t_started_screen = t()
-		assert(current_screen.init ~= nil)
+		-- assert(current_screen.init ~= nil)
 		current_screen.init(t_started_screen)
 	end
-end
-
-function any_input()
-	return btn(4) or btn(5) or mouse.pressed
 end
 
 function lnpx(text) -- length of text in pixels
@@ -178,11 +174,14 @@ function lnpx(text) -- length of text in pixels
 end
 
 function print_centred(text, y, offset)
-	local cam_x = peek2(0x5f28)
-	local cam_y = peek2(0x5f2a)
+	local cam_x, cam_y = get_true_cam()
 	print(text,
 	      ((128 - lnpx(text)) / 2 + (offset or 0)) + cam_x,
 	      y + cam_y)
+end
+
+function get_true_cam()
+	return peek2(0x5f28), peek2(0x5f2a)
 end
 
 function print_centred_chunks(chunks, y)
@@ -192,8 +191,7 @@ function print_centred_chunks(chunks, y)
 	--   { snd_text, col }, ... }              <-- draw in col
 	--   { snd_text, col, shadow_col }, ... }  <-- draw in col, with a shadow_col shadow
 
-	local cam_x = peek2(0x5f28)
-	local cam_y = peek2(0x5f2a)
+	local cam_x, cam_y = get_true_cam()
 
 	local full_length = 0
 	for _, chunk in ipairs(chunks) do full_length += lnpx(chunk[1]) end
@@ -282,7 +280,8 @@ function update_gameplay_screen(t_started)
 		    curio.id == "plastic2" or
 		    curio.id == "plastic3" or
 		    curio.id == "plasticbag" or
-		    curio.id == "can" or
+		    curio.id == "can_spilled" or
+		    curio.id == "can_end" or
 		    curio.id == "cd") then
 			woosh = wooshes.glug
 		elseif curio.r > 20 then
@@ -291,7 +290,7 @@ function update_gameplay_screen(t_started)
 			woosh = wooshes.small
 		end
 
-		assert(woosh ~= nil)
+		-- assert(woosh ~= nil)
 
 		local time_left = (curio.z - loop.z) / (speed * 30)
 		if time_left + (1 / 30) > woosh.crossover_point and
@@ -328,8 +327,8 @@ end
 function _update()
 	update_mouse()
 
-	assert(current_screen ~= nil)
-	assert(current_screen.update ~= nil)
+	-- assert(current_screen ~= nil)
+	-- assert(current_screen.update ~= nil)
 	maybe_move_to_screen(current_screen.update(t_started_screen))
 end
 
@@ -398,9 +397,9 @@ function draw_curio(c)
 		local sx, sy = world_to_screen(c.x, c.y, c.z)
 		local sr = cam.zoom * (c.r / c.z)
 
-		assert(c.id ~= nil)
+		-- assert(c.id ~= nil)
 		local spr = sprite_index[c.id]
-		assert(spr ~= nil)
+		-- assert(spr ~= nil)
 
 		local sx, sy = world_to_screen(c.x, c.y, c.z)
 		local sr = cam.zoom * (c.r / c.z)
@@ -535,7 +534,7 @@ function draw_gameplay_screen(t_started)
 
 	-- Loop
 	local bg_col = get_current_scene().background_colour
-	assert(bg_col ~= nil)
+	-- assert(bg_col ~= nil)
 
 	local loop_col = 7
 
@@ -574,8 +573,8 @@ function draw_gameplay_screen(t_started)
 end
 
 function _draw()
-	assert(current_screen ~= nil)
-	assert(current_screen.draw ~= nil)
+	-- assert(current_screen ~= nil)
+	-- assert(current_screen.draw ~= nil)
 	current_screen.draw(t_started_screen)
 end
 
@@ -618,9 +617,9 @@ function curio_collides(curio)
 	end
 
 	if curio.type == "sprite" then
-		assert(curio.id ~= nil)
+		-- assert(curio.id ~= nil)
 		local spr = sprite_index[curio.id]
-		assert(spr ~= nil)
+		-- assert(spr ~= nil)
 		if not point_circle_intersection(curio.x, curio.y, curio.r + loop.r, loop.x, loop.y) then
 			return false
 		end
@@ -726,9 +725,9 @@ sprite_groups = {
 	bacteria = {"bacteria", "bacteria2", "bacteria3"},
 	cell = {"cell", "cell2", "cell3"},
 	virus = {"virus", "virus2", "virus3", "virus4", "virus5", "virus6", "virus7"},
-	star = {"star", "star2", "star3"},
+	-- star = {"star", "star2", "star3"},
 	cloud = {"cloud", "cloud2"},
-	meteor = {"meteor", "meteor2"},
+	-- meteor = {"meteor", "meteor2"},
 	nebula = {"nebula", "nebula2"},
 	galaxy = {"galaxy", "galaxy2"},
 	planet = {"planet", "planet2", "planet3"},
@@ -737,290 +736,68 @@ sprite_groups = {
 }
 
 sprite_index = {
-	eye = {
-		x = 0 * 16,
-		y = 0 * 16,
-		w = 16,
-		h = 16,
-	},
-	eye2 = {
-		x = 1 * 16,
-		y = 0 * 16,
-		w = 16,
-		h = 16,
-		corner = true,
-	},
-	bloodcell = {
-		x = 2 * 16,
-		y = 0 * 16,
-		w = 16,
-		h = 16,
-	},
-	bloodcell2 = {
-		x = 3 * 16,
-		y = 0 * 16,
-		w = 16,
-		h = 7,
-	},
-	bloodcell3 = {
-		x = 3 * 16,
-		y = 0 * 16 + 7,
-		w = 16,
-		h = 9,
-	},
-	bacteria = {
-		x = 4 * 16,
-		y = 0 * 16,
-		w = 16,
-		h = 16,
-	},
-	bacteria2 = {
-		x = 5 * 16,
-		y = 0 * 16,
-		w = 16,
-		h = 7,
-	},
-	bacteria3 = {
-		x = 5 * 16,
-		y = 0 * 16 + 7,
-		w = 16,
-		h = 9,
-	},
-	cell = {
-		x = 6 * 16,
-		y = 0 * 16,
-		w = 16,
-		h = 16,
-	},
-	cell2 = {
-		x = 7 * 16,
-		y = 0 * 16,
-		w = 16,
-		h = 7,
-	},
-	cell3 = {
-		x = 7 * 16,
-		y = 0 * 16 + 7,
-		w = 16,
-		h = 9,
-	},
-	virus = {
-		x = 0 * 16,
-		y = 1 * 16,
-		w = 16,
-		h = 16,
-	},
-	virus2 = {
-		x = 1 * 16,
-		y = 1 * 16,
-		w = 16,
-		h = 16,
-	},
-	virus3 = {
-		x = 2 * 16,
-		y = 1 * 16,
-		w = 16,
-		h = 16,
-	},
-	virus4 = {
-		x = 3 * 16,
-		y = 1 * 16,
-		w = 16,
-		h = 16,
-	},
-	virus5 = {
-		x = 4 * 16,
-		y = 1 * 16,
-		w = 16,
-		h = 5,
-	},
-	virus6 = {
-		x = 4 * 16,
-		y = 1 * 16 + 5,
-		w = 16,
-		h = 7,
-	},
-	virus7 = {
-		x = 4 * 16,
-		y = 1 * 16 + 13,
-		w = 16,
-		h = 3,
-	},
-	atom = {
-		x = 5 * 16,
-		y = 1 * 16,
-		w = 16,
-		h = 16,
-	},
-	atom2 = {
-		x = 0 * 16,
-		y = 2 * 16,
-		w = 16,
-		h = 16,
-	},
-	atom3 = {
-		x = 1 * 16,
-		y = 2 * 16,
-		w = 16,
-		h = 16,
-	},
-	atom4 = {
-		x = 2 * 16,
-		y = 2 * 16,
-		w = 16,
-		h = 16,
-	},
-	meteor = {
-		x = 3 * 16,
-		y = 2 * 16,
-		w = 32,
-		h = 32,
-	},
-	nebula = {
-		x = 5 * 16,
-		y = 2 * 16,
-		w = 16,
-		h = 16,
-	},
-	star = {
-		x = 6 * 16,
-		y = 2 * 16,
-		w = 16,
-		h = 16,
-	},
-	star2 = {
-		x = 6 * 16,
-		y = 2 * 16,
-		w = 16,
-		h = 16,
-	},
-	cloud = {
-		x = 0 * 16,
-		y = 3 * 16,
-		w = 16,
-		h = 16,
-	},
-	cloud2 = {
-		x = 1 * 16,
-		y = 3 * 16,
-		w = 16,
-		h = 16,
-	},
-	meteor2 = {
-		x = 2 * 16,
-		y = 3 * 16,
-		w = 16,
-		h = 16,
-	},
-	nebula2 = {
-		x = 5 * 16,
-		y = 3 * 16,
-		w = 16,
-		h = 16,
-	},
-	galaxy = {
-		x = 6 * 16,
-		y = 3 * 16,
-		w = 16,
-		h = 16,
-	},
-	galaxy2 = {
-		x = 7 * 16,
-		y = 3 * 16,
-		w = 16,
-		h = 16,
-	},
-	planet = {
-		x = 0 * 16,
-		y = 4 * 16,
-		w = 16,
-		h = 16,
-	},
-	planet2 = {
-		x = 1 * 16,
-		y = 4 * 16,
-		w = 16,
-		h = 16,
-	},
-	planet3 = {
-		x = 2 * 16,
-		y = 4 * 16,
-		w = 16,
-		h = 16,
-	},
-	earth = {
-		x = 3 * 16,
-		y = 4 * 16,
-		w = 16,
-		h = 16,
-	},
-	star3 = {
-		x = 4 * 16,
-		y = 4 * 16,
-		w = 16,
-		h = 16,
-	},
-	ringplanet = {
-		x = 5 * 16,
-		y = 4 * 16,
-		w = 16,
-		h = 16,
-	},
-	ringplanet2 = {
-		x = 6 * 16,
-		y = 4 * 16,
-		w = 32,
-		h = 32,
-	},
-	plastic = {
-		x = 0 * 16,
-		y = 5 * 16,
-		w = 16,
-		h = 16,
-	},
-	plastic2 = {
-		x = 1 * 16,
-		y = 5 * 16,
-		w = 16,
-		h = 16,
-	},
-	plastic3 = {
-		x = 2 * 16,
-		y = 5 * 16,
-		w = 16,
-		h = 16,
-	},
-	plasticbag = {
-		x = 3 * 16,
-		y = 5 * 16,
-		w = 16,
-		h = 16,
-	},
-	can = {
-		x = 4 * 16,
-		y = 5 * 16,
-		w = 16,
-		h = 16,
-	},
-	cd = {
-		x = 5 * 16,
-		y = 5 * 16,
-		w = 16,
-		h = 16,
-	},
-	fish = {
-		x = 0 * 16,
-		y = 6 * 16,
-		w = 16 * 4,
-		h = 16,
-	},
-	logo = {
-		x = 4 * 16,
-		y = 6 * 16,
-		w = 16 * 4,
-		h = 16 * 2,
-	},
+	-- eye = {0, 0},
+	eye2 = {16, 0, 16, 16, true},
+	bloodcell = {32, 0},
+	bloodcell2 = {48, 0, 16, 7},
+	bloodcell3 = {48, 7, 16, 9},
+	bacteria = {64, 0},
+	bacteria2 = {80, 0, 16, 7},
+	bacteria3 = {80, 7, 16, 9},
+	cell =  {96, 0},
+	cell2 = {112, 0, 16, 7},
+	cell3 = {112, 7, 16, 9},
+	virus = {0, 16},
+	virus2 = {16, 16},
+	virus3 = {32, 16},
+	virus4 = {48, 16},
+	virus5 = {64, 16, 16, 5},
+	virus6 = {64, 21, 16, 7},
+	virus7 = {64, 29, 16, 3},
+	atom = {80, 16},
+	can_spilled = {96, 16},
+	atom2 = {0, 32},
+	atom3 = {16, 32},
+	atom4 = {32, 32},
+	-- meteor = {48, 32, 32, 32},
+	nebula = {80, 32},
+	-- star = {96, 32},
+	-- star2 = {112, 32},
+	cloud = {0, 48},
+	cloud2 = {16, 48},
+	-- meteor2 = {32, 48},
+	nebula2 = {80, 48},
+	galaxy = {96, 48},
+	galaxy2 = {112, 48},
+	planet = {0, 64},
+	planet2 = {16, 64},
+	planet3 = {32, 64},
+	earth = {48, 64},
+	-- star3 = {64, 64},
+	ringplanet = {80, 64},
+	ringplanet2 = {96, 64, 32, 32},
+	plastic = {0, 80},
+	plastic2 = {16, 80},
+	plastic3 = {32, 80},
+	plasticbag = {48, 80},
+	can_end = {64, 80},
+	cd = {80, 80},
+	fish = {0, 96, 64},
+	logo = {64, 96, 64, 32},
 }
+
+for k, v in pairs(sprite_index) do
+	if (v[3] == nil) v[3] = 16
+	if (v[4] == nil) v[4] = 16
+	if (v[5] == nil) v[5] = false
+	sprite_index[k] = {
+		x = v[1],
+		y = v[2],
+		w = v[3],
+		h = v[4],
+		corner = v[5],
+	}
+end
 
 -- include stuff
 #include timeline.lua
