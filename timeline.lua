@@ -236,10 +236,22 @@ function _make_sprite_zoom_scene(bg_col, sprite, spr_z_start, size, x, y, flip_x
 	}
 end
 
+-- a: angle (0 == horizontal, 1 == 360 degrees)
+-- dist: offset from the centre of the field
+-- scale: scaling factor applied to the whole vein (inc. cell size, between-wall distance)
+-- r: scaling factor on cells
+-- line_r: scaling factor on walls (which also affects size of cells)
 function vein_curio(config)
+	-- TODO #bug: ensure that the vein is always possible. means either:
+	-- * the cell is small enough to go around, and the walls are far enough to
+	--   go inside
+	-- * the space between cell & wall, and the dist, are such that you can
+	--   squeeze between cell & wall
 	local curios = {}
 
+	-- spacing between cell & wall
 	local spacing = (config.line_r * config.scale) * 3
+	-- offset of {first wall, cells, second wall} from centre of the field
 	local dists = {
 		config.dist - config.r * config.scale - spacing,
 		config.dist,
@@ -357,9 +369,9 @@ function inf_line_curio(curio)
 	end
 	local sa, ca = sin(curio.a), cos(curio.a)
 	local very_far = 2000
-	curio.x1 = -very_far * ca + curio.dist * sa
+	curio.x1 = -very_far * ca - curio.dist * sa
 	curio.y1 = -very_far * sa + curio.dist * ca
-	curio.x2 = very_far * ca + curio.dist * sa
+	curio.x2 = very_far * ca - curio.dist * sa
 	curio.y2 = very_far * sa + curio.dist * ca
 	curio.dist = nil
 	curio.a = nil
