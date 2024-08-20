@@ -97,30 +97,46 @@ function _make_curio_spawner_scene(bg_col, plan, dust_spawner)
 			if (this.state.dust_spawner ~= nil) this.state.dust_spawner.maybe_spawn(this.state.dust_spawner)
 
 			-- potentially spawn new curios
-			local candidate = this.plan[this.state.plan_idx]
+			local results = {}
+			local current_idx = this.state.plan_idx
 
-			if not this.state.completed_indices[this.state.plan_idx] and progress > candidate.progress then
-				this.state.completed_indices[this.state.plan_idx] = true
-				this.state.plan_idx += 1
+			while current_idx <= #this.plan do
+				if not this.state.completed_indices[current_idx] then
+					local candidate = this.plan[current_idx]
+					if progress <= candidate.progress then
+						break
+					end
 
-				-- deepcopy the curio to make it easy to reset the scene and
-				-- have it still work next time around
-				local curios = deepcopy(candidate.curios)
+					this.state.completed_indices[current_idx] = true
 
-				if curios[1] == nil then
-					curios = {curios}
+					-- deepcopy the curio to make it easy to reset the scene and
+					-- have it still work next time around
+					local curios = deepcopy(candidate.curios)
+
+					if curios[1] == nil then
+						curios = {curios}
+					end
+
+					local result = {}
+					for _, curio in ipairs(curios) do
+						add(this.state.submitted, curio)
+						add(result, curio)
+					end
+
+					add(results, result)
 				end
-
-				local result = {}
-				for _, curio in ipairs(curios) do
-					add(this.state.submitted, curio)
-					add(result, curio)
-				end
-
-				return result
+				current_idx += 1
 			end
 
-			return {}
+			this.state.plan_idx = (current_idx - 1)
+			-- merge all the individual results lists into one
+			local res = {}
+			for _, ls in ipairs(results) do
+				for _, c in ipairs(ls) do
+					add(res, c)
+				end
+			end
+			return res
 		end,
 		draw_background=function(this, progress, next_bg_col)
 			reset_pal()
@@ -170,9 +186,10 @@ function _make_wipe_scene(bg_col, duration)
 	}
 end
 
--- size = the width of the sprite in the world (not on the sprite sheet)
---        for 'corner' sprites, this is the width of *one* of the corners.
-function _make_sprite_zoom_scene(bg_col, sprite, spr_z_start, size, x, y, flip_x, flip_y)
+-- width = the width of the sprite in the world (not on the sprite sheet)
+--         for 'corner' sprites, this is the width of *one* of the corners.
+function _make_sprite_zoom_scene(bg_col, sprite, width, spr_z_start, x, y, flip_x, flip_y)
+	if (spr_z_start == nil) spr_z_start = z_start
 	if (x == nil) x = 0
 	if (y == nil) y = 0
 	if (flip_x == nil) flip_x = false
@@ -195,7 +212,8 @@ function _make_sprite_zoom_scene(bg_col, sprite, spr_z_start, size, x, y, flip_x
 			end
 
 			local sx, sy = world_to_screen(x, y, z)
-			local ssize = cam.zoom * (size / z)
+			local sw = cam.zoom * (width / z)
+			local sh = sw * (sprite.h / sprite.w)
 
 			if sprite.corner then
 				-- NOTE: smush the quarters together by a pixel cause otherwise
@@ -203,33 +221,32 @@ function _make_sprite_zoom_scene(bg_col, sprite, spr_z_start, size, x, y, flip_x
 				-- top-left
 				sspr(sprite.x, sprite.y,
 				     sprite.w, sprite.h,
-				     (sx - ssize) + 1, (sy - ssize) + 1,
-				     ssize, ssize,
+				     (sx - sw) + 1, (sy - sh) + 1,
+				     sw, sh,
 				     true, false)
 				-- top-right
 				sspr(sprite.x, sprite.y,
 				     sprite.w, sprite.h,
-				     sx, (sy - ssize) + 1,
-				     ssize, ssize,
+				     sx, (sy - sh) + 1,
+				     sw, sh,
 				     false, false)
 				-- bottom-left
 				sspr(sprite.x, sprite.y,
 				     sprite.w, sprite.h,
-				     (sx - ssize) + 1, sy,
-				     ssize, ssize,
+				     (sx - sw) + 1, sy,
+				     sw, sh,
 				     true, true)
 				-- bottom-right
 				sspr(sprite.x, sprite.y,
 				     sprite.w, sprite.h,
 				     sx, sy,
-				     ssize, ssize,
+				     sw, sh,
 				     false, true)
 			else
-				local srad = ssize / 2
 				sspr(sprite.x, sprite.y,    -- sprite_x, sprite_y
 				     sprite.w, sprite.h,    -- sprite_w, sprite_h
-				     sx - srad, sy - srad,  -- x, y
-				     ssize, ssize,          -- w, h
+				     sx - sw/2, sy - sh/2,  -- x, y
+				     sw, sh,                -- w, h
 				     false, false)          -- flip_x, flip_y
 			 end
 		end,
@@ -262,7 +279,7 @@ function vein_curio(config)
 	for i=-3,3 do
 		local dist = i * (spacing + sprite_r * 2)
 		add(curios, sprite_curio({
-			x = dist * ca + dists[2] * sa,
+			x = dist * ca - dists[2] * sa,
 			y = dist * sa + dists[2] * ca,
 			r = sprite_r,
 			id = "bloodcell",
@@ -385,7 +402,7 @@ timeline = {
 	-- * draw_background = function(this, progress, next_bg_col)
 	-- * update = function(this, progress)  (should return any new curios to handle)
 	-- * end_scene = function(this)
-	_make_sprite_zoom_scene(15, sprite_index.eye2, z_start, 32),
+	_make_sprite_zoom_scene(6, sprite_index.eye2, 32, z_start),
 	_make_curio_spawner_scene(0,
 		{
 			{
@@ -675,7 +692,7 @@ timeline = {
 				}),
 			},
 		}, _make_dust_spawner(4)),
-	_make_sprite_zoom_scene(2, sprite_index.virus4, 15, 32, -0.5, -0.5),
+	_make_sprite_zoom_scene(2, sprite_index.virus4, 32, 15, -0.5, -0.5),
 	_make_curio_spawner_scene(7,
 	{
 		{
@@ -749,73 +766,122 @@ timeline = {
 			})
 		},
 	}, _make_dust_spawner(6)),
-	_make_sprite_zoom_scene(7, sprite_index.atom, 10, 32, -0.5, -0.5),
+	_make_sprite_zoom_scene(7, sprite_index.atom, 32, 10, -0.5, -0.5),
 	_make_curio_spawner_scene(0,
 	{
 		{
 			progress = 0,
 			curios = sprite_curio({
 				x = 2, y = 2,
-				r = 6, id = "nebula2",
+				r = 6, id = "nebula",
 			}),
 		},
 		{
 			progress = 10,
 			curios = sprite_curio({
 				x = -3, y = 4,
-				r = 11, id = "nebula",
+				r = 11, id = "nebula2",
 			}),
 		},
 		{
 			progress = 14,
 			curios = sprite_curio({
 				x = -4, y = -3,
-				r = 13, id = "nebula2",
+				r = 13, id = "galaxy",
 			}),
 		},
 		{
 			progress = 20,
 			curios = sprite_curio({
 				x = 6, y = -4,
-				r = 16, id = "nebula2",
+				r = 16, id = "galaxy2",
 			}),
 		},
 		{
 			progress = 36,
 			curios = sprite_curio({
 				x = 0, y = 1,
-				r = 24, id = "nebula",
+				r = 24, id = "ringplanet",
 			}),
 		},
 		{
 			progress = 48,
 			curios = sprite_curio({
 				x = -45, y = -30,
-				r = 30, id = "nebula",
+				r = 30, id = "planet",
 			}),
 		},
 		{
 			progress = 54,
 			curios = sprite_curio({
 				x = 40, y = -17,
-				r = 33, id = "nebula2",
+				r = 33, id = "planet2",
 			}),
 		},
 		{
 			progress = 58,
 			curios = sprite_curio({
 				x = 4, y = -2,
-				r = 35, id = "nebula",
+				r = 35, id = "planet3",
 			}),
 		},
 		{
 			progress = 64,
 			curios = sprite_curio({
 				x = 2, y = -48,
-				r = 38, id = "nebula",
+				r = 38, id = "ringplanet2",
 			}),
 		},
 	}, _make_dust_spawner(6)),
+	_make_sprite_zoom_scene(0, sprite_index.earth, 32),
+	_make_curio_spawner_scene(12, {
+		{
+			progress = 0,
+			curios = sprite_curio({
+				x = 12, y = 12,
+				r = 16, id = "cloud",
+			})
+		},
+		{
+			progress = 5,
+			curios = sprite_curio({
+				x = 0, y = 0,
+				r = 16, id = "cloud2",
+			})
+		},
+	}, _make_dust_spawner(7)),
+	_make_wipe_scene(12, 10),
+	_make_curio_spawner_scene(-4, {
+		{
+			progress = 0,
+			curios = sprite_curio({
+				x = 12, y = 12,
+				r = 16, id = "plasticbag",
+			})
+		},
+		{
+			progress = 8,
+			curios = sprite_curio({
+				x = 0, y = 0,
+				r = 32, id = "plastic3",
+			})
+		},
+		{
+			progress = 16,
+			curios = sprite_curio({
+				x = 0, y = 0,
+				r = 32, id = "plastic",
+			})
+		},
+		{
+			progress = 24,
+			curios = sprite_curio({
+				x = 0, y = 0,
+				r = 32, id = "plastic2",
+			})
+		},
+	}, _make_dust_spawner(12)),
+	_make_sprite_zoom_scene(-4, sprite_index.fish, 32, z_start, -13),
 }
 
 function scene(idx)

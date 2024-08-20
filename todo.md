@@ -30,7 +30,7 @@
 * [ ] increase speed each loop
 * [x] score
 * [x] slightly nicer end screen
-* [ ] fill out the timeline
+* [~] fill out the timeline
 
 polish
 

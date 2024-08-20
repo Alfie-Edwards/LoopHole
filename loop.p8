@@ -52,7 +52,7 @@ loop_max_r = 48
 loop_min_r = 6
 loop_nudge_amount = 0.5
 
-loop_max_health = 12
+loop_max_health = 10
 loop_resize_rate = 2.5
 
 paralax_amount = 0.1
@@ -67,6 +67,7 @@ guides = {
 }
 
 speed = 0.08
+per_cycle_speed_multiplier = 1.2
 
 
 -- main behaviour
@@ -215,6 +216,9 @@ function update_gameplay_screen(t_started)
 		seen_obstacle_this_scene = false
 		timeline_idx = go_to_next_scene(timeline_idx)
 		t_started_scene = t()
+		if timeline_idx > 1 and (timeline_idx - 1) % #timeline == 0 then
+			speed *= per_cycle_speed_multiplier
+		end
 	else
 		local new_obstacles = update_scene(timeline_idx, scene_progress())
 		for _, obstacle in ipairs(new_obstacles) do
@@ -266,7 +270,8 @@ function update_gameplay_screen(t_started)
 		   curio.sprite == sprite_index.plastic2 or
 		   curio.sprite == sprite_index.plastic3 or
 		   curio.sprite == sprite_index.plasticbag or
-		   curio.sprite == sprite_index.can then
+		   curio.sprite == sprite_index.can or
+		   curio.sprite == sprite_index.cd then
 			woosh = wooshes.glug
 		elseif curio.r > 20 then
 			woosh = wooshes.big
@@ -950,7 +955,7 @@ sprite_index = {
 		w = 16,
 		h = 16,
 	},
-	cd = {
+	fish = {
 		x = 0 * 16,
 		y = 6 * 16,
 		w = 16 * 4,
