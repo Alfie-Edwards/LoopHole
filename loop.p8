@@ -52,7 +52,7 @@ loop_max_r = 48
 loop_min_r = 6
 loop_nudge_amount = 0.5
 
-loop_max_health = 10
+loop_max_health = 4
 loop_resize_rate = 2.5
 
 paralax_amount = 0.1

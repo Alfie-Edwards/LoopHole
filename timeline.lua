@@ -679,12 +679,12 @@ timeline = {
 					return sprite_curio({
 						a = rnd(1),
 						dist = dist,
-						r = 6 + progress,
+						r = 6 + progress * 0.9,
 						id = sprite_groups.virus[1 + (i % 7)],
 					})
 				end
 			),
-			for_progress(40, 55, 0.7,
+			for_progress(40, 55, 1.5,
 				function(i, progress)
 					return sprite_curio({
 						a = rnd(1),
