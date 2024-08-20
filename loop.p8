@@ -619,11 +619,14 @@ function curio_collides(curio)
 		assert(curio.id ~= nil)
 		local spr = sprite_index[curio.id]
 		assert(spr ~= nil)
+		if not point_circle_intersection(curio.x, curio.y, curio.r + loop.r, loop.x, loop.y) then
+			return false
+		end
 		local scale = (2 * curio.r) / sqrt((spr.w * spr.w) + (spr.h * spr.h))
 		local w, h = spr.w * scale, spr.h * scale
 		for y = 0, spr.h-1 do
 			for x = 0, spr.w-1 do
-				if sget(spr.x + x, spr.y + y) ~= 0 then
+				if sget(spr.x + x, spr.y + y) ~= 9 then
 					local px = curio.x + ((x / (spr.w-1)) - 0.5) * w
 					local py = curio.y + ((y / (spr.h-1)) - 0.5) * h
 					if point_circle_intersection(px, py, loop.r, loop.x, loop.y) and not

@@ -277,7 +277,7 @@ function vein_curio(config)
 	local curios = {}
 
 	-- spacing between cell & wall
-	local spacing = (config.line_r * config.scale) * 3
+	local spacing = (config.line_r * config.scale)
 	-- offset of {first wall, cells, second wall} from centre of the field
 	local dists = {
 		config.dist - config.r * config.scale - spacing,
@@ -291,7 +291,7 @@ function vein_curio(config)
 	local sprite_r = (dists[3] - dists[1] - 4 * spacing) / 2
 	local sa, ca = sin(config.a), cos(config.a)
 
-	for i=-3,3 do
+	for i=-20,20 do
 		local dist = i * (spacing + sprite_r * 2)
 		add(curios, sprite_curio({
 			x = dist * ca - dists[2] * sa,
@@ -588,7 +588,7 @@ timeline = {
 					dist = 0,
 					r = 10,
 					line_r = 1,
-					scale = 4,
+					scale = 4.85,
 				})
 			},
 		}, _make_dust_spawner(8)),
