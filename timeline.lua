@@ -999,26 +999,57 @@ timeline = {
 			}
 		},
 		{
-			progress = 7,
+			progress = 6,
 			curios = sprite_curio{
 				x = 5, y = 5,
 				r = 12, id = "cd",
 			}
 		},
 		{
-			progress = 9,
+			progress = 8,
 			curios = sprite_curio{
 				x = -5, y = -5,
 				r = 12, id = "can_spilled",
 				flip_y = false,
 			}
 		},
-
 		{
-			progress = 24,
+			progress = 10,
+			curios = sprite_curio{
+				x = 30, y = 12,
+				r = 24, id = "plastic2",
+			}
+		},
+		{
+			progress = 15,
+			curios = sprite_curio{
+				x = 16, y = 16,
+				r = 60, id = "plastic3",
+				flip_x = false, flip_y = false,
+			}
+		},
+		{
+			progress = 18,
+			curios = sprite_curio{
+				x = 70, y = 0,
+				r = 72, id = "plastic",
+				flip_x = false, flip_y = false,
+			}
+		},
+		{
+			progress = 23,
+			curios = sprite_curio{
+				x = 30, y = 6,
+				r = 132, id = "plastic2",
+				flip_x = false, flip_y = false,
+			}
+		},
+		{
+			progress = 28,
 			curios = sprite_curio{
 				x = 0, y = 0,
-				r = 32, id = "plastic2",
+				r = 132, id = "cd",
+				flip_x = false, flip_y = false,
 			}
 		},
 	}, _make_dust_spawner(12)),
