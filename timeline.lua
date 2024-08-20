@@ -323,7 +323,7 @@ function stick_and_ball_curio(config)
 				x = ball.x * scale + config.x,
 				y = ball.y * scale + config.y,
 				r = config.ball_r * scale,
-				id = "atom",
+				id = sprite_groups.atom[1+rnd(4)\1],
 			}))
 	end
 
@@ -704,13 +704,13 @@ timeline = {
 						a = progress * 0.2 + 0.25,
 						dist = 6 + progress * 1.3,
 						r = 6 + progress,
-						id = "atom",
+						id = sprite_groups.atom[1+rnd(4)\1],
 					}),
 					sprite_curio({
 						a = progress * 0.2 + 0.75,
 						dist = 6 + progress * 1.3,
 						r = 6 + progress,
-						id = "atom",
+						id = sprite_groups.atom[1+rnd(4)\1],
 					})
 				}
 			end
@@ -722,13 +722,13 @@ timeline = {
 						a = progress * 0.2 + 0.25,
 						dist = 6 + progress * 1.5,
 						r = 6 + progress,
-						id = "atom",
+						id = sprite_groups.atom[1+rnd(4)\1],
 					}),
 					sprite_curio({
 						a = progress * 0.2 + 0.75,
 						dist = 6 + progress * 1.5,
 						r = 6 + progress,
-						id = "atom",
+						id = sprite_groups.atom[1+rnd(4)\1],
 					})
 				}
 			end
@@ -807,7 +807,7 @@ timeline = {
 			})
 		},
 	}, _make_dust_spawner(6)),
-	_make_sprite_zoom_scene(7, sprite_index.atom, 32, 10, -0.5, -0.5),
+	_make_sprite_zoom_scene(7, sprite_index.atom2, 32, 10, -0.5, -0.5),
 	_make_curio_spawner_scene(0,
 	{
 		{
