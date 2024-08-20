@@ -531,7 +531,7 @@ function draw_gameplay_screen(t_started)
 	local loop_col = 7
 
 	if bg_col == loop_col then
-		loop_col = 4
+		loop_col = 1
 	end
 
 	local beat_state = get_beat_state()
