@@ -426,8 +426,10 @@ function draw_with_outline(outline_col, fn)
 	-- before drawing...
 	for y = -1, 1 do
 		for x = -1, 1 do
-			for i=0,15 do pal(i, outline_col) end
-			fn(x, y)
+			if x ~= 0 or y ~= 0 then
+				for i=0,15 do pal(i, outline_col) end
+				fn(x, y)
+			end
 		end
 	end
 
