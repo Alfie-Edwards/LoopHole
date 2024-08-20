@@ -129,7 +129,7 @@ function init_gameplay_screen(t_started)
 
 	curios = {}
 
-	timeline_idx = 11
+	timeline_idx = 19
 	t_started_scene = t()
 
 	t_last_damage = 0

@@ -1002,6 +1002,40 @@ timeline = {
 				r = 16, id = "cloud2",
 			}
 		},
+		for_progress(8, 24, 2,
+			function(i, progress)
+				local dist = 20 + progress * 2
+				if i % 5 == 0 then
+					dist = 0
+				end
+				return sprite_curio{
+					a = rnd(1),
+					dist = dist,
+					r = progress * 2,
+					id = sprite_groups.cloud[1 + (i % 2)],
+				}
+			end
+		),
+		for_progress(24, 28, 1,
+			function(i, progress)
+				return sprite_curio{
+					a = rnd(1),
+					dist = progress * 2,
+					r = progress * 2,
+					id = sprite_groups.cloud[1 + (i % 2)],
+				}
+			end
+		),
+		for_progress(28, 32, 0.5,
+			function(i, progress)
+				return sprite_curio{
+					a = rnd(1),
+					dist = progress * 2,
+					r = progress * 2,
+					id = sprite_groups.cloud[1 + (i % 2)],
+				}
+			end
+		),
 	}, _make_dust_spawner(7)),
 	_make_wipe_scene(12, 10),
 	{  -- play splash sound
