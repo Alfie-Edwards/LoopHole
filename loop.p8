@@ -695,6 +695,21 @@ wooshes = {
 	},
 }
 
+sprite_groups = {
+	bloodcell = {"bloodcell", "bloodcell2", "bloodcell3"},
+	bacteria = {"bacteria", "bacteria2", "bacteria3"},
+	cell = {"cell", "cell2", "cell3"},
+	virus = {"virus", "virus2", "virus3", "virus4", "virus5", "virus6", "virus7"},
+	star = {"star", "star2", "star3"},
+	cloud = {"cloud", "cloud2"},
+	meteor = {"meteor", "meteor2"},
+	nebula = {"nebula", "nebula2"},
+	galaxy = {"galaxy", "galaxy2"},
+	planet = {"planet", "planet2", "planet3"},
+	ringplanet = {"ringplanet", "ringplanet2"},
+	plastic = {"plastic", "plastic2", "plastic3"},
+}
+
 sprite_index = {
 	eye = {
 		x = 0 * 16,
