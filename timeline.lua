@@ -995,7 +995,7 @@ timeline = {
 			progress = 2,
 			curios = sprite_curio{
 				x = -30, y = -30,
-				r = 12, id = "plastic",
+				r = 12, id = "plastic2",
 			}
 		},
 		{
@@ -1017,7 +1017,7 @@ timeline = {
 			progress = 10,
 			curios = sprite_curio{
 				x = 30, y = 12,
-				r = 24, id = "plastic2",
+				r = 24, id = "can_end",
 			}
 		},
 		{
@@ -1031,8 +1031,8 @@ timeline = {
 		{
 			progress = 18,
 			curios = sprite_curio{
-				x = 70, y = 0,
-				r = 72, id = "plastic",
+				x = -70, y = 0,
+				r = 72, id = "plasticbag",
 				flip_x = false, flip_y = false,
 			}
 		},
