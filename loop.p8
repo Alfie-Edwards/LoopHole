@@ -539,10 +539,10 @@ function draw_gameplay_screen(t_started)
 	draw_with_outline(2, draw_health)
 
 	-- Cursor
-	pset(mouse.x + cam.x - 1, mouse.y + cam.y, 7)
-	pset(mouse.x + cam.x + 1, mouse.y + cam.y, 7)
-	pset(mouse.x + cam.x, mouse.y + cam.y - 1, 7)
-	pset(mouse.x + cam.x, mouse.y + cam.y + 1, 7)
+	pset(mouse.x + cam.x - 1, mouse.y + cam.y, loop_col)
+	pset(mouse.x + cam.x + 1, mouse.y + cam.y, loop_col)
+	pset(mouse.x + cam.x, mouse.y + cam.y - 1, loop_col)
+	pset(mouse.x + cam.x, mouse.y + cam.y + 1, loop_col)
 end
 
 function _draw()
