@@ -67,7 +67,7 @@ guides = {
 }
 
 start_speed = 0.08
-per_cycle_speed_multiplier = 1.3
+per_cycle_speed_multiplier = 1.1
 
 damage_cooldown = 0.5
 t_last_damage = 0
@@ -129,7 +129,7 @@ function init_gameplay_screen(t_started)
 
 	curios = {}
 
-	timeline_idx = 9
+	timeline_idx = 1
 	t_started_scene = t()
 
 	t_last_damage = 0
