@@ -604,7 +604,7 @@ function update_cam()
 end
 
 function curio_collides(curio)
-	if curio.z > loop.z or curio.z < speed then
+	if curio.z > (loop.z + speed) or curio.z < loop.z then
 		return false
 	end
 
