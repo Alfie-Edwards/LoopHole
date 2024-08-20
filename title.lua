@@ -41,7 +41,7 @@ function draw_title_screen(t_started)
 	local logo_sw = 8
 	local logo_sh = 4
 
-	local logo_y = 40 + sin((t() - t_started) * 0.25) * 5
+	local logo_y = 36 + sin((t() - t_started) * 0.25) * 5
 
 	local logo_x = 64 - (logo_sw * 4)
 
@@ -53,15 +53,30 @@ function draw_title_screen(t_started)
 
 	spr(logo_idx, logo_x, logo_y, logo_sw, logo_sh)
 
+	-- controls
+	function column(text1, text2, separation, y)
+		local cam_x = peek2(0x5f28)
+		local cam_y = peek2(0x5f2a)
+		local x1 = 64 - (separation/2 + lnpx(text1))
+		print(text1, x1 + cam_x, y + cam_y)
+		local x2 = 64 + separation/2
+		print(text2, x2 + cam_x, y + cam_y)
+	end
+	color(6)
+	local column_separation = 8
+	column("🅾️", "GROW", column_separation, 80)
+	column("❎", "SHRINK", column_separation, 88)
+	column("mouse", "MOVE", column_separation, 96)
+
 	-- prompt
 	color(1)
-	print_centred("🅾️/❎ TO START...", 101)
+	print_centred("🅾️/❎ TO START...", 111)
 	if strobe(0.66) then
 		color(7)
 	else
 		color(6)
 	end
-	print_centred("🅾️/❎ TO START...", 100)
+	print_centred("🅾️/❎ TO START...", 110)
 end
 
 function cleanup_title_screen(t_started)
