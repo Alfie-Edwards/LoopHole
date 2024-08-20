@@ -286,20 +286,20 @@ function vein_curio(config)
 		config.dist + config.r * config.scale + spacing,
 	}
 
-	add(curios, inf_line_curio({a = config.a, dist = dists[1], r = config.line_r * config.scale, color = 8}))
-	add(curios, inf_line_curio({a = config.a, dist = dists[3], r = config.line_r * config.scale, color = 8}))
+	add(curios, inf_line_curio{a = config.a, dist = dists[1], r = config.line_r * config.scale, color = 8})
+	add(curios, inf_line_curio{a = config.a, dist = dists[3], r = config.line_r * config.scale, color = 8})
 
 	local sprite_r = (dists[3] - dists[1] - 4 * spacing) / 2
 	local sa, ca = sin(config.a), cos(config.a)
 
 	for i=-20,20 do
 		local dist = i * (spacing + sprite_r * 2)
-		add(curios, sprite_curio({
-			x = dist * ca - dists[2] * sa,
-			y = dist * sa + dists[2] * ca,
-			r = sprite_r,
-			id = "bloodcell",
-		}))
+		add(curios, sprite_curio{
+				x = dist * ca - dists[2] * sa,
+				y = dist * sa + dists[2] * ca,
+				r = sprite_r,
+				id = "bloodcell",
+			})
 	end
 	return curios
 end
@@ -323,24 +323,24 @@ function stick_and_ball_curio(config)
 
 	for _, ball in ipairs(config.balls) do
 		add(curios,
-			sprite_curio({
+			sprite_curio{
 				x = ball.x * scale + config.x,
 				y = ball.y * scale + config.y,
 				r = config.ball_r * scale,
 				id = sprite_groups.atom[1+rnd(4)\1],
-			}))
+			})
 	end
 
 	for _, stick in ipairs(config.sticks) do
 		add(curios,
-			line_curio({
+			line_curio{
 				x1 = config.balls[stick[1]].x * scale + config.x,
 				y1 = config.balls[stick[1]].y * scale + config.y,
 				x2 = config.balls[stick[2]].x * scale + config.x,
 				y2 = config.balls[stick[2]].y * scale + config.y,
 				r = config.stick_r * scale / 2,
 				color = config.stick_color,
-			}))
+			})
 	end
 	return curios
 end
@@ -807,12 +807,12 @@ timeline = {
 		},
 		for_progress(3, 8, 1,
 			function(i, progress)
-				return sprite_curio({
+				return sprite_curio{
 					a = rnd(1),
 					dist = 30 + progress,
 					r = 25 + progress,
 					id = sprite_groups.nebula[1 + (i % 2)],
-				})
+				}
 			end
 		),
 		{
@@ -824,12 +824,12 @@ timeline = {
 		},
 		for_progress(14, 19, 1,
 			function(i, progress)
-				return sprite_curio({
+				return sprite_curio{
 					a = rnd(1),
 					dist = 30 + progress,
 					r = 25 + progress,
 					id = sprite_groups.nebula[1 + (i % 2)],
-				})
+				}
 			end
 		),
 		{
@@ -844,12 +844,12 @@ timeline = {
 	{
 		for_progress(0, 8, 1,
 			function(i, progress)
-				return sprite_curio({
+				return sprite_curio{
 					a = rnd(1),
 					dist = 40 + progress * 3,
 					r = 25 + progress * 3,
 					id = sprite_groups.galaxy[1 + (i % 2)],
-				})
+				}
 			end
 		),
 	}, _make_dust_spawner(6)),
@@ -899,12 +899,12 @@ timeline = {
 				if i % 5 == 0 then
 					dist = 0
 				end
-				return sprite_curio({
+				return sprite_curio{
 					a = rnd(1),
 					dist = dist,
 					r = 10 + progress * 0.5,
 					id = sprite_groups.meteor[1 + (i % 2)],
-				})
+				}
 			end
 		),
 	}, _make_dust_spawner(6)),
