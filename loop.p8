@@ -52,7 +52,7 @@ loop_max_r = 48
 loop_min_r = 6
 loop_nudge_amount = 0.5
 
-loop_max_health = 4
+loop_max_health = 6
 loop_resize_rate = 2.8
 
 paralax_amount = 0.1
@@ -129,7 +129,7 @@ function init_gameplay_screen(t_started)
 
 	curios = {}
 
-	timeline_idx = 1
+	timeline_idx = 11
 	t_started_scene = t()
 
 	t_last_damage = 0

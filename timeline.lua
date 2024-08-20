@@ -799,6 +799,47 @@ timeline = {
 			}
 		},
 	}, _make_dust_spawner(6)),
+	_make_curio_spawner_scene(7,
+	{
+		for_progress(0, 4, 1,
+			function(i, progress)
+				local dist = 30 + progress * 3
+				if i % 4 == 0 then
+					dist = 0
+				end
+				return sprite_curio{
+					a = rnd(1),
+					dist = dist,
+					r = 10 + progress,
+					id = sprite_groups.atom[1 + (i % 4)],
+				}
+			end
+		),
+		for_progress(12, 16, 1,
+			function(i, progress)
+				local dist = 30 + progress * 3
+				if i % 4 == 0 then
+					dist = 0
+				end
+				return sprite_curio{
+					a = rnd(1),
+					dist = dist,
+					r = 10 + progress,
+					id = sprite_groups.atom[1 + (i % 4)],
+				}
+			end
+		),
+		for_progress(20, 28, 3,
+			function(i, progress)
+				return sprite_curio{
+					a = rnd(1),
+					dist = progress * 3,
+					r = progress * 3,
+					id = sprite_groups.atom[1 + (i % 4)],
+				}
+			end
+		),
+	}, _make_dust_spawner(6)),
 	_make_sprite_zoom_scene(7, sprite_index.atom2, 32, 10, -0.5, -0.5),
 	_make_curio_spawner_scene(0,
 	{
@@ -846,7 +887,7 @@ timeline = {
 	}, _make_dust_spawner(6)),
 	_make_curio_spawner_scene(0,
 	{
-		for_progress(0, 8, 1,
+		for_progress(0, 8, 1.5,
 			function(i, progress)
 				return sprite_curio{
 					a = rnd(1),
@@ -888,6 +929,7 @@ timeline = {
 			curios = sprite_curio{
 				x = 0, y = 1,
 				r = 24, id = "ringplanet",
+				flip_x = false, flip_y = false,
 			},
 		},
 		{
@@ -916,7 +958,6 @@ timeline = {
 			curios = sprite_curio{
 				x = -70, y = 50,
 				r = 100, id = "planet",
-				flip_x = false, flip_y = false,
 			},
 		},
 		{
@@ -924,6 +965,7 @@ timeline = {
 			curios = sprite_curio{
 				x = 0.5, y = -2.5,
 				r = 240, id = "ringplanet2",
+				flip_x = false, flip_y = false,
 			},
 		},
 	}, _make_dust_spawner(6)),
