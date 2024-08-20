@@ -1,11 +1,11 @@
 * [x] drawing sprites
 * [x] checking collision
 * [x] drawing bar
-* [ ] sound
+* [x] sound
 	* [x] music
 	* [x] woosh
 	* [x] crash
-	* [ ] splash
+	* [x] splash
 * [x] curio management/loading
 * [x] background management/loading
 	* [x] palette-swapping orange
