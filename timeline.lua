@@ -695,118 +695,118 @@ timeline = {
 			),
 		}, _make_dust_spawner(6)),
 	_make_sprite_zoom_scene(8, sprite_index.virus4, 32, 15, -0.5, -0.5),
-		_make_curio_spawner_scene(7,
+	_make_curio_spawner_scene(7,
+	{
+		for_progress(0, 10, 0.5,
+			function(i, progress)
+				return {
+					sprite_curio({
+						a = progress * 0.2 + 0.25,
+						dist = 6 + progress * 1.3,
+						r = 6 + progress,
+						id = "atom",
+					}),
+					sprite_curio({
+						a = progress * 0.2 + 0.75,
+						dist = 6 + progress * 1.3,
+						r = 6 + progress,
+						id = "atom",
+					})
+				}
+			end
+		),
+		for_progress(15, 25, 0.5,
+			function(i, progress)
+				return {
+					sprite_curio({
+						a = progress * 0.2 + 0.25,
+						dist = 6 + progress * 1.5,
+						r = 6 + progress,
+						id = "atom",
+					}),
+					sprite_curio({
+						a = progress * 0.2 + 0.75,
+						dist = 6 + progress * 1.5,
+						r = 6 + progress,
+						id = "atom",
+					})
+				}
+			end
+		),
+	}, _make_dust_spawner(6)),
+	_make_curio_spawner_scene(7,
+	{
 		{
-			for_progress(0, 10, 0.5,
-				function(i, progress)
-					return {
-						sprite_curio({
-							a = progress * 0.2 + 0.25,
-							dist = 6 + progress * 1.3,
-							r = 6 + progress,
-							id = "atom",
-						}),
-						sprite_curio({
-							a = progress * 0.2 + 0.75,
-							dist = 6 + progress * 1.3,
-							r = 6 + progress,
-							id = "atom",
-						})
-					}
-				end
-			),
-			for_progress(15, 25, 0.5,
-				function(i, progress)
-					return {
-						sprite_curio({
-							a = progress * 0.2 + 0.25,
-							dist = 6 + progress * 1.5,
-							r = 6 + progress,
-							id = "atom",
-						}),
-						sprite_curio({
-							a = progress * 0.2 + 0.75,
-							dist = 6 + progress * 1.5,
-							r = 6 + progress,
-							id = "atom",
-						})
-					}
-				end
-			),
-		}, _make_dust_spawner(6)),
-		_make_curio_spawner_scene(7,
+			progress = 0,
+			curios = stick_and_ball_curio({
+				x = 0, y = 0, r = 12, scale = 0.16,
+				ball_r = 8, stick_r = 2,
+				stick_color = 6,
+				balls = ball_ring(4, 12),
+				sticks = {{1, 2}, {2, 4}, {3, 4}},
+			})
+		},
 		{
-			{
-				progress = 0,
-				curios = stick_and_ball_curio({
-					x = 0, y = 0, r = 12, scale = 0.16,
-					ball_r = 8, stick_r = 2,
-					stick_color = 6,
-					balls = ball_ring(4, 12),
-					sticks = {{1, 2}, {2, 4}, {3, 4}},
-				})
-			},
-			{
-				progress = 5,
-				curios = stick_and_ball_curio({
-					x = 0, y = 0, r = 12, scale = 0.2,
-					ball_r = 4, stick_r = 2,
-					stick_color = 6,
-					balls = ball_ring(3, 12),
-					sticks = sticks_open_loop(3),
-				})
-			},
-			{
-				progress = 10,
-				curios = stick_and_ball_curio({
-					x = -16, y = 0, r = 12, scale = 0.24,
-					ball_r = 4, stick_r = 2,
-					stick_color = 6,
-					balls = ball_ring(2, 12),
-					sticks = sticks_open_loop(2),
-				})
-			},
-			{
-				progress = 15,
-				curios = stick_and_ball_curio({
-					x = 12, y = -12, r = 12, scale = 0.28,
-					ball_r = 4, stick_r = 2,
-					stick_color = 6,
-					balls = ball_ring(3, 12),
-					sticks = sticks_open_loop(3),
-				})
-			},
-			{
-				progress = 20,
-				curios = stick_and_ball_curio({
-					x = 0, y = 0, r = 12, scale = 0.32,
-					ball_r = 4, stick_r = 2,
-					stick_color = 6,
-					balls = ball_ring(3, 12),
-					sticks = sticks_closed_loop(3),
-				})
-			},
-			{
-				progress = 25,
-				curios = stick_and_ball_curio({
-					x = -12, y = 12, r = 12, scale = 0.36,
-					ball_r = 4, stick_r = 2,
-					stick_color = 6,
-					balls = ball_ring(4, 12),
-					sticks = {{1, 2}, {2, 4}, {3, 4}, {1, 3}},
-				})
-			},
-			{
-				progress = 30,
-				curios = stick_and_ball_curio({
-					x = 0, y = 0, r = 12, scale = 0.5,
-					ball_r = 4, stick_r = 2,
-					stick_color = 6,
-					balls = ball_ring(5, 12),
-					sticks = sticks_open_loop(5),
-				})
-			},
-		}, _make_dust_spawner(6)),
+			progress = 5,
+			curios = stick_and_ball_curio({
+				x = 0, y = 0, r = 12, scale = 0.2,
+				ball_r = 4, stick_r = 2,
+				stick_color = 6,
+				balls = ball_ring(3, 12),
+				sticks = sticks_open_loop(3),
+			})
+		},
+		{
+			progress = 10,
+			curios = stick_and_ball_curio({
+				x = -16, y = 0, r = 12, scale = 0.24,
+				ball_r = 4, stick_r = 2,
+				stick_color = 6,
+				balls = ball_ring(2, 12),
+				sticks = sticks_open_loop(2),
+			})
+		},
+		{
+			progress = 15,
+			curios = stick_and_ball_curio({
+				x = 12, y = -12, r = 12, scale = 0.28,
+				ball_r = 4, stick_r = 2,
+				stick_color = 6,
+				balls = ball_ring(3, 12),
+				sticks = sticks_open_loop(3),
+			})
+		},
+		{
+			progress = 20,
+			curios = stick_and_ball_curio({
+				x = 0, y = 0, r = 12, scale = 0.32,
+				ball_r = 4, stick_r = 2,
+				stick_color = 6,
+				balls = ball_ring(3, 12),
+				sticks = sticks_closed_loop(3),
+			})
+		},
+		{
+			progress = 25,
+			curios = stick_and_ball_curio({
+				x = -12, y = 12, r = 12, scale = 0.36,
+				ball_r = 4, stick_r = 2,
+				stick_color = 6,
+				balls = ball_ring(4, 12),
+				sticks = {{1, 2}, {2, 4}, {3, 4}, {1, 3}},
+			})
+		},
+		{
+			progress = 30,
+			curios = stick_and_ball_curio({
+				x = 0, y = 0, r = 12, scale = 0.5,
+				ball_r = 4, stick_r = 2,
+				stick_color = 6,
+				balls = ball_ring(5, 12),
+				sticks = sticks_open_loop(5),
+			})
+		},
+	}, _make_dust_spawner(6)),
 	_make_sprite_zoom_scene(7, sprite_index.atom, 32, 10, -0.5, -0.5),
 	_make_curio_spawner_scene(0,
 	{

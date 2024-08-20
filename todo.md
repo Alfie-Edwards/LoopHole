@@ -27,7 +27,7 @@
 		* [x] goto next stage
 * [x] start screen
 * [x] end screen
-* [ ] increase speed each loop
+* [x] increase speed each loop
 * [x] score
 * [x] slightly nicer end screen
 * [~] fill out the timeline

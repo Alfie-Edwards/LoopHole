@@ -66,8 +66,11 @@ guides = {
 	color = 1,
 }
 
-speed = 0.08
-per_cycle_speed_multiplier = 1.2
+start_speed = 0.08
+per_cycle_speed_multiplier = 1.3
+
+damage_cooldown = 0.5
+t_last_damage = 0
 
 
 -- main behaviour
@@ -91,6 +94,8 @@ function _init()
 		y = 0,
 		zoom = 1,
 	}
+
+	speed = start_speed
 
 	curios = {}
 
@@ -120,10 +125,14 @@ function init_gameplay_screen(t_started)
 	loop.r = loop_max_r
 	loop.health = loop_max_health
 
+	speed = start_speed
+
 	curios = {}
 
 	timeline_idx = 1
 	t_started_scene = t()
+
+	t_last_damage = 0
 
 	seen_obstacle_scenes = 0
 	seen_obstacle_this_scene = false
@@ -264,14 +273,17 @@ function update_gameplay_screen(t_started)
 	end
 
 	-- play wooshes
-	for i, curio in ipairs(curios) do
+	for _, curio in ipairs(curios) do
+		if curio.type == "sprite" then
+		end
 		local woosh = nil
-		if curio.sprite == sprite_index.plastic or
-		   curio.sprite == sprite_index.plastic2 or
-		   curio.sprite == sprite_index.plastic3 or
-		   curio.sprite == sprite_index.plasticbag or
-		   curio.sprite == sprite_index.can or
-		   curio.sprite == sprite_index.cd then
+		if curio.type == "sprite" and
+		   (curio.id == "plastic" or
+		    curio.id == "plastic2" or
+		    curio.id == "plastic3" or
+		    curio.id == "plasticbag" or
+		    curio.id == "can" or
+		    curio.id == "cd") then
 			woosh = wooshes.glug
 		elseif curio.r > 20 then
 			woosh = wooshes.big
@@ -299,9 +311,10 @@ function update_gameplay_screen(t_started)
 		end
 	end
 
-	if player_hit then
+	if player_hit and (t() - t_last_damage) > damage_cooldown then
 		-- apply damage just once
 		loop.health = loop.health - 1
+		t_last_damage = t()
 		if loop.health == 0 then
 			return screens.dead
 		else
