@@ -7,3 +7,5 @@
 !*.lua
 !*.md
 !*.txt
+!index.html
+!update_webpage.py
