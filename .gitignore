@@ -8,4 +8,5 @@
 !*.md
 !*.txt
 !index.html
+!index.js
 !update_webpage.py
