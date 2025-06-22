@@ -185,6 +185,7 @@ end
 
 function _make_wipe_scene(bg_col, duration)
 	return {
+		is_transition = true,
 		background_colour = bg_col,
 		has_finished=function(this, progress)
 			return progress >= duration
@@ -215,6 +216,7 @@ function _make_sprite_zoom_scene(bg_col, sprite, width, spr_z_start, x, y, flip_
 	if (flip_y == nil) flip_y = false
 
 	return {
+		is_transition = true,
 		background_colour=bg_col,
 		has_finished=function(this, progress)
 			return progress >= spr_z_start
@@ -238,21 +240,23 @@ function _make_sprite_zoom_scene(bg_col, sprite, width, spr_z_start, x, y, flip_
 				-- NOTE: smush the quarters together by a pixel cause otherwise
 				--       you get thin gaps when far away
 				-- top-left
+				local l = sx - sw + 1
+				local t = sy - sh + 1
 				sspr(sprite.x, sprite.y,
 				     sprite.w, sprite.h,
-				     (sx - sw) + 1, (sy - sh) + 1,
+				     l, t,
 				     sw, sh,
 				     true, false)
 				-- top-right
 				sspr(sprite.x, sprite.y,
 				     sprite.w, sprite.h,
-				     sx, (sy - sh) + 1,
+				     sx, t,
 				     sw, sh,
 				     false, false)
 				-- bottom-left
 				sspr(sprite.x, sprite.y,
 				     sprite.w, sprite.h,
-				     (sx - sw) + 1, sy,
+				     l, sy,
 				     sw, sh,
 				     true, true)
 				-- bottom-right
@@ -574,21 +578,21 @@ timeline = {
 				},
 			},
 			{
-				progress = 28,
+				progress = 26,
 				curios = sprite_curio{
 					x = -53, y = -4,
 					r = 20, id = "bloodcell",
 				},
 			},
 			{
-				progress = 32,
+				progress = 30,
 				curios = sprite_curio{
 					x = -4, y = 3,
 					r = 22, id = "bloodcell3",
 				},
 			},
 			{
-				progress = 36,
+				progress = 34,
 				curios = vein_curio{
 					dist = 0,
 					r = 10,

@@ -51,8 +51,8 @@ ruler_z_start = 5
 loop_max_r = 48
 loop_min_r = 6
 loop_nudge_amount = 0.5
+loop_max_health = 3
 
-loop_max_health = 6
 loop_resize_rate = 2.8
 
 paralax_amount = 0.1
@@ -87,8 +87,6 @@ function _init()
 		w = 10,
 		health = 0,
 	}
-	loop.r = loop_max_r
-	loop.health = loop_max_health
 	cam = {
 		x = 0,
 		y = 0,
@@ -122,8 +120,9 @@ function init_gameplay_screen(t_started)
 		w = 10,
 		health = 0,
 	}
+	t_indicate = 0
 	loop.r = loop_max_r
-	loop.health = loop_max_health
+	loop.health = 1
 
 	speed = start_speed
 
@@ -220,6 +219,7 @@ function update_gameplay_screen(t_started)
 	update_cam()
 
 	if scene_should_end(timeline_idx, scene_progress()) then
+		local scene = timeline[timeline_idx]
 		seen_obstacle_this_scene = false
 		timeline_idx = go_to_next_scene(timeline_idx)
 		t_started_scene = t()
@@ -236,6 +236,10 @@ function update_gameplay_screen(t_started)
 		if #new_obstacles > 0 and not seen_obstacle_this_scene then
 			seen_obstacle_scenes += 1
 			seen_obstacle_this_scene = true
+			if loop.health < loop_max_health then
+				loop.health += 1
+				sfx(19)
+			end
 		end
 	end
 
@@ -245,16 +249,16 @@ function update_gameplay_screen(t_started)
 	loop.r = clamp(loop.r, loop_min_r, loop_max_r)
 
 	local loop_nudge_extent = loop_nudge_amount * loop.r
-	local mdx = (mouse.x * (loop_nudge_extent / 64)) - loop.x
-	local mdy = (mouse.y * (loop_nudge_extent / 64)) - loop.y
+	local mdx = mouse.x * loop_nudge_extent / 64 - loop.x
+	local mdy = mouse.y * loop_nudge_extent / 64 - loop.y
 	local md = sqrt(mdx * mdx + mdy * mdy)
 	local loop_speed = md / 4
 	if md == 0 or md < loop_speed then
 		loop.x = loop.x + mdx
 		loop.y = loop.y + mdy
 	else
-		loop.x = loop.x + mdx * (loop_speed / md)
-		loop.y = loop.y + mdy * (loop_speed / md)
+		loop.x = loop.x + mdx * loop_speed / md
+		loop.y = loop.y + mdy * loop_speed / md
 	end
 	loop.x = clamp(loop.x, -loop_nudge_extent, loop_nudge_extent)
 	loop.y = clamp(loop.y, -loop_nudge_extent, loop_nudge_extent)
@@ -272,8 +276,6 @@ function update_gameplay_screen(t_started)
 
 	-- play wooshes
 	for _, curio in ipairs(curios) do
-		if curio.type == "sprite" then
-		end
 		local woosh = nil
 		if curio.type == "sprite" and
 		   (curio.id == "plastic" or
@@ -293,10 +295,7 @@ function update_gameplay_screen(t_started)
 		-- assert(woosh ~= nil)
 
 		local time_left = (curio.z - loop.z) / (speed * 30)
-		if time_left + (1 / 30) > woosh.crossover_point and
-		   time_left <= woosh.crossover_point then
-			sfx(woosh.idx)
-		end
+		if (time_left + 1 / 30 > woosh.crossover_point and time_left <= woosh.crossover_point) sfx(woosh.idx)
 	end
 
 	-- check for collision
@@ -312,7 +311,7 @@ function update_gameplay_screen(t_started)
 
 	if player_hit and (t() - t_last_damage) > damage_cooldown then
 		-- apply damage just once
-		loop.health = loop.health - 1
+		loop.health -= 1
 		t_last_damage = t()
 		if loop.health == 0 then
 			return screens.dead
@@ -402,19 +401,41 @@ function draw_curio(c)
 		-- assert(spr ~= nil)
 
 		local sx, sy = world_to_screen(c.x, c.y, c.z)
-		local sr = cam.zoom * (c.r / c.z)
-		local scale = (2 * sr) / sqrt((spr.w * spr.w) + (spr.h * spr.h))
+		local sr = cam.zoom * c.r / c.z
+		local scale = 2 * sr / sqrt(spr.w ^ 2 + spr.h ^ 2)
 		local sw, sh = spr.w * scale, spr.h * scale
+		sx, sy = sx - sw/2, sy - sh/2
 		sspr(spr.x, spr.y,
-		     spr.w, spr.h,
-		     sx - sw/2, sy - sh/2,
-		     sw, sh,
-		     c.flip_x, c.flip_y)
+			 spr.w, spr.h,
+			 sx, sy,
+			 sw, sh,
+			 c.flip_x, c.flip_y)
+
+		local t_impact = c.z / speed / 30
+		if c.indicate == nil and t_impact < 2 then
+			if timeline_idx == 2 or t() == t_indicate or t() - t_indicate > 2 then
+				c.indicate = true
+				t_indicate = t()
+				sfx(20)
+			else
+				c.indicate = false
+				t_indicate = t() + 0.001
+			end
+		end
+		if c.indicate and t_impact > 1.3 and strobe(0.075) do
+			for i=0,15 do pal(i, 8, 0) end
+			sspr(spr.x, spr.y,
+				 spr.w, spr.h,
+				 sx * c.z, sy * c.z,
+				 sw * c.z, sh * c.z,
+				 c.flip_x, c.flip_y)
+		end
+
 	elseif c.type == "line" then
 		local sx1, sy1 = world_to_screen(c.x1, c.y1, c.z)
 		local sx2, sy2 = world_to_screen(c.x2, c.y2, c.z)
 
-		linefill(sx1, sy1, sx2, sy2, cam.zoom * (c.r / c.z), c.color, 9)
+		linefill(sx1, sy1, sx2, sy2, cam.zoom * c.r / c.z, c.color, 9)
 	end
 	fillp()
 	reset_pal()
@@ -440,9 +461,9 @@ function draw_ruler(x_offset, y_offset)
 	local x_pad = 3
 	local y_pad = 5
 
-	local x = (64 - x_pad) + cam.x + x_offset
-	local y_start = (y_pad - 64) + cam.y + y_offset
-	local y_end   = (64 - y_pad) + cam.y + y_offset
+	local x = 64 - x_pad + cam.x + x_offset
+	local y_start = y_pad - 64 + cam.y + y_offset
+	local y_end   = 64 - y_pad + cam.y + y_offset
 
 	-- Highlight on beat.
 	local beat_state = get_beat_state()
@@ -470,11 +491,11 @@ function get_beat_state()
 	local state = "none"
 	for _, curio in ipairs(curios) do
 		if curio.z <= loop.z and (loop.z - curio.z) < 0.5 then
-				if curio.has_hit_player then
-					return "bad"
-				else
-					state = "good"
-				end
+			if curio.has_hit_player then
+				return "bad"
+			else
+				state = "good"
+			end
 		end
 	end
 	return state
@@ -485,14 +506,14 @@ function draw_health(x_offset, y_offset)
 	for i = 0, loop.health - 1 do
 		health_str = health_str.."♥\n"
 	end
-	print(health_str, (4 - 64) + cam.x + x_offset, (4 - 64) + cam.y + y_offset, 8)
+	print(health_str, 4 - 64 + cam.x + x_offset, 4 - 64 + cam.y + y_offset, 8)
 
-	local missing_health_y = (#health_str / 2) * 6
+	local missing_health_y = #health_str * 6 / 2
 	local missing_health_str = ""
 	for i = loop.health, loop_max_health - 1 do
 		missing_health_str = missing_health_str.."♥\n"
 	end
-	print(missing_health_str, (4 - 64) + cam.x + x_offset, (4 - 64) + missing_health_y + cam.y + y_offset, 2)
+	print(missing_health_str, 4 - 64 + cam.x + x_offset, 4 - 64 + missing_health_y + cam.y + y_offset, 2)
 end
 
 function draw_gameplay_screen(t_started)
@@ -500,9 +521,7 @@ function draw_gameplay_screen(t_started)
 
 	-- Curios ahead of the loop
 	for _, curio in ipairs(curios) do
-		if curio.z > loop.z then
-			draw_curio(curio)
-		end
+		draw_curio(curio)
 	end
 
 	-- Guides
@@ -549,7 +568,7 @@ function draw_gameplay_screen(t_started)
 		loop_col = 8
 	end
 	for w=0,true_loop_width() do
-		circ(cam.zoom * loop.x, cam.zoom * loop.y, (cam.zoom * loop.r) - w, loop_col)
+		circ(cam.zoom * loop.x, cam.zoom * loop.y, cam.zoom * loop.r - w, loop_col)
 	end
 
 	-- Curios at/behind the loop
@@ -579,7 +598,7 @@ function _draw()
 end
 
 function true_loop_width()
-	return (cam.zoom * loop.w-1) * loop.r/64
+	return cam.zoom * (loop.w-1) * loop.r/64
 end
 
 function clamp(x, min_x, max_x)
@@ -593,7 +612,7 @@ function rnd_range(min, max)
 end
 
 function world_to_screen(x, y, z)
-	return cam.zoom * ((x / z) - cam.x + (cam.x / z)), cam.zoom * ((y / z) - cam.y + (cam.y / z))
+	return cam.zoom * (x / z - cam.x + cam.x / z), cam.zoom * (y / z - cam.y + cam.y / z)
 end
 
 function update_mouse()
@@ -623,13 +642,13 @@ function curio_collides(curio)
 		if not point_circle_intersection(curio.x, curio.y, curio.r + loop.r, loop.x, loop.y) then
 			return false
 		end
-		local scale = (2 * curio.r) / sqrt((spr.w * spr.w) + (spr.h * spr.h))
+		local scale = 2 * curio.r / sqrt(spr.w ^ 2 + spr.h ^ 2)
 		local w, h = spr.w * scale, spr.h * scale
 		for y = 0, spr.h-1 do
 			for x = 0, spr.w-1 do
 				if sget(spr.x + x, spr.y + y) ~= 9 then
-					local px = curio.x + ((x / (spr.w-1)) - 0.5) * w
-					local py = curio.y + ((y / (spr.h-1)) - 0.5) * h
+					local px = curio.x + (x / (spr.w-1) - 0.5) * w
+					local py = curio.y + (y / (spr.h-1) - 0.5) * h
 					if point_circle_intersection(px, py, loop.r, loop.x, loop.y) and not
 							point_circle_intersection(px, py, loop.r - true_loop_width(), loop.x, loop.y) then
 						return true
@@ -1110,6 +1129,8 @@ __sfx__
 011c002024742247422473224732247222472224712247122b7422b7422b7322b7322b7222b7222b7122b7122a7422a7422a7322a7322a7222a7222a7122a7122374223742237322373223722237222371223712
 89070000216702167025670296702d6702f6702f6702f6602d6602a650246501d65017640116300d6300962005610026100061000610000000000000000000000000000000000000000000000000000000000000
 cb010000025500e5501255015550125500c5500355000550005500055000550005000050000500005000050000500005000050000500005000050000500005000050000500005000050000500005000050000500
+000100000012000050010500105006750087500b75010750031500305003050030500405008750097500c7500e7501175016750177500f150100500f050100501405016050187501c7502175024750287502c750
+00070000117003f710007003f710000003f710157003f710237003f710007003f7000070015700157001570015700157000050000500005002e7002e700157001570015700157001570015700157000d5002f700
 __music__
 00 02424344
 03 06070849
